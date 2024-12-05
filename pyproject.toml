@@ -1,0 +1,124 @@
+[project]
+name = "AdcircSubgrid"
+version = "0.0.0"
+description = "The ADCIRC subgrid package is used to pre and postprocess ADCIRC subgrid correction data" 
+authors = [
+    { name = "Johnathan Woodruff", email = "jwoodruff@usgs.gov" },
+    { name = "Zach Cobell", email = "zcobell@thewaterinstitute.org" },
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+keywords = [ "adcirc" ] 
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Topic :: Scientific/Engineering :: Oceanography",
+    "Intended Audience :: Science/Research",
+]
+
+dependencies = [
+  "gdal",
+  "geopandas",
+  "pandas",
+  "netcdf4",
+  "pyyaml",
+  "numba",
+  "scipy",
+  "schema",
+  "numpy",
+  "shapely",
+  "xarray",
+  "pyproj",
+  "matplotlib",
+]
+
+[project.scripts]
+adcirc-subgrid = "AdcircSubgrid.subgrid_cli:cli_main"
+
+[project.urls]
+"Homepage" = "https://github.com/adcirc/adcirc-subgrid"
+"Bug Reports" = "https://github.com/adcirc/adcirc-subgrid/issues"
+"Source" = "https://github.com/adcirc/adcirc-subgrid.git"
+
+[build-system]
+requires = ["setuptools > 64.0.0", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff.lint]
+select = [
+  "E", "F", "W", # flake8
+  "B",           # flake8-bugbear
+  "I",           # isort
+  "C4",          # flake8-comprehensions
+  "EM",          # flake8-errmsg
+  "ICN",         # flake8-import-conventions
+  "ISC",         # flake8-implicit-str-concat
+  "PGH",         # pygrep-hooks
+  "PIE",         # flake8-pie
+  "PL",          # pylint
+  "PT",          # flake8-pytest-style
+  "RET",         # flake8-return
+  "RUF",         # Ruff-specific
+  "SIM",         # flake8-simplify
+  "UP",          # pyupgrade
+  "YTT",         # flake8-2020
+  "EXE",         # flake8-executable
+  "NPY",         # NumPy specific rules
+  "PD",          # pandas-vet
+  "D",           # pydocstyle
+  "ANN",         # flake8-annotations
+]
+
+ignore = [
+  "PLR0913", # Too many arguments
+  "PLR2004", # Magic number
+  "E501",   # Line too long
+  "PT004",  # Use underscore for non-returning fixture (use usefixture instead)
+  "RET505", # Unnecessary return statement
+  "RET506", # Unnecssary else
+  "RET507", # Unnecessary else after continue
+  "RET508", # Unnecssary elif after break
+  "SIM108", # Use ternary operator
+  "D100",   # Missing docstring in public module
+  "D104",   # Missing docstring in public package
+  "D200",   # One-line docstring should fit on one line with quotes
+  "D205",   # 1 blank line required between summary line and description
+  "D212",   # Multi-line docstring summary should start at the second line
+  "D415",   # First line should end with a period
+  "ANN101", # Missing type annotation for self in method
+  "ISC001"  # Implicit string concatenation
+]
+
+unfixable = [
+  "T20",  # Removes print statements
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.setuptools.dynamic]
+version = { attr = "AdcircSubgrid.__version__" }
+
+[tool.bumpver]
+current_version = "0.0.0"
+version_pattern = 'MAJOR.MINOR.PATCH[PYTAGNUM]'
+commit_message = "bump version {old_version} -> {new_version}"
+commit = true
+tag = true
+push = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version = "{version}"',
+]
+"src/adcirc_subgrid/__init__.py" = [
+    '__version__ = "{version}"',
+]

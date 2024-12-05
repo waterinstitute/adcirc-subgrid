@@ -145,3 +145,17 @@ cython_debug/
 logs/
 .minio.sys/
 .setupAGOLVariables.sh
+
+# Metget output netCDF
+*.nc
+filelist.json
+*.aux.xml
+.vscode/launch.json
+#pickle files for dev testing
+src/system/scripts/temp/**
+pointFile_WindGrid.txt
+# hdf files
+*.hdf
+
+**/.DS_Store
+.idea
