@@ -7,7 +7,7 @@ SUBGRID_SCHEMA = Schema(
         "manning_lookup": Use(str),
         "min_elevation": Use(float),
         "max_elevation": Use(float),
-        "elevation_step_size": Use(float),
+        "vertical_level_count": int,
         "dem": Use(str),
         "land_cover": Use(str),
     }

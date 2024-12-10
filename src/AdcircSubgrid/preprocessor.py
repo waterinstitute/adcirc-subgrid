@@ -1,4 +1,5 @@
 import logging
+import warnings
 
 import numpy as np
 import xarray as xr
@@ -12,12 +13,25 @@ from .raster_region import RasterRegion
 
 logger = logging.getLogger(__name__)
 
+# We need to suppress the numpy empty slice warning. The numpy package
+# issues warnings for slices that are all nan, but our slices aren't
+# empty, they're all nan, which is completely valid. We could check the
+# array for validity, however, that would be slow. And slow is bad.
+warnings.filterwarnings("ignore", message="Mean of empty slice")
+
 
 class SubgridPreprocessor:
     """
     The SubgridPreprocessor class is responsible for preprocessing the subgrid data
     into a format that can be used by the ADCIRC model
     """
+
+    # For areas that are dry, we compute the corrections
+    # on an 8cm water depth
+    DRY_PIXEL_WATER_DEPTH = 0.08
+
+    # Minimum quadratic friction coefficient
+    MIN_CF = 0.0025
 
     def __init__(self, config: InputFile, max_memory: int = 64) -> None:
         """
@@ -212,16 +226,10 @@ class SubgridPreprocessor:
             window_data: The data from the raster window
             node_index: The index of the node to process
         """
-        # Compute the minimum index set for this window that the node would
-        # need based on the bounds of its polygon
-        sub_window = self.__generate_sub_window(node_index, window)
+        plot_diagnostic = False
 
-        # Create a mask for the polygon that represents this node
-        node_data = self.__generate_sub_window_mask(node_index, sub_window)
-
-        # Generate numpy arrays for only the data in the polygon
-        dem_values, manning_values = self.__subset_raster_arrays_to_stencil(
-            node_data, sub_window, window_data
+        subset_data = self.__subset_raster_data_for_node(
+            node_index, window, window_data
         )
 
         # Compute the list of water levels where calculations will be performed
@@ -229,146 +237,252 @@ class SubgridPreprocessor:
         #       raster data rather than a defined interval
         wse_levels = self.__generate_calculation_intervals()
 
-        # Create a wet mask for each water level
+        subgrid_variables = self.__compute_subgrid_variables_at_node(
+            subset_data, wse_levels
+        )
+
+        if plot_diagnostic:
+            self.__plot_diagnostics(
+                window,
+                subset_data["sub_window"],
+                wse_levels,
+                subgrid_variables,
+            )
+
+    def __compute_subgrid_variables_at_node(
+        self, subset_data: dict, wse_levels: np.ndarray
+    ) -> dict:
+        """
+        Compute the subgrid variables at the node
+
+        Args:
+            subset_data: The subset data for the node
+            wse_levels: The water surface elevation levels to compute the variables at
+
+        Returns:
+            A dictionary with the subgrid variables
+        """
+        wet_level_counts, wet_masks, total_pixels = self.__compute_wet_pixel_mask(
+            subset_data["dem"], wse_levels
+        )
+
+        dp, dp_2d = self.__compute_water_depth_at_levels(
+            subset_data["dem"], wet_masks, wse_levels
+        )
+
+        cf, cf_2d = self.__compute_cf_at_levels(
+            dp_2d,
+            wet_masks,
+            subset_data["manning"],
+        )
+
+        rv = self.__compute_rv_at_levels(dp, dp_2d, cf_2d)
+        c_adv = self.__compute_advection_correction(
+            dp,
+            dp_2d,
+            rv,
+            cf_2d,
+        )
+        c_bf = self.__compute_bottom_friction_correction(rv, subset_data["manning"])
+
+        # Now, scale the percent of wet pixels
+        # NOTE: This previously was done using areas, but I assume since it is just a
+        # scaling, this should amount to the same thing
+        wet_fraction = wet_level_counts / float(total_pixels)
+        c_adv = c_adv * wet_fraction
+        c_bf = c_bf * wet_fraction
+        cf = cf * wet_fraction
+
+        # We need to set some minimum values for dp, cf, and c_bf
+        dp[
+            np.logical_or(dp < SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH, np.isnan(dp))
+        ] = SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
+        cf[np.logical_or(cf < SubgridPreprocessor.MIN_CF, np.isnan(cf))] = (
+            SubgridPreprocessor.MIN_CF
+        )
+        c_bf[np.logical_or(c_bf < SubgridPreprocessor.MIN_CF, np.isnan(cf))] = (
+            SubgridPreprocessor.MIN_CF
+        )
+
+        return {
+            "wet_level_counts": wet_level_counts,
+            "wet_masks": wet_masks,
+            "wet_fraction": wet_fraction,
+            "dp": dp,
+            # "dp_2d": dp_2d,
+            "cf": cf,
+            # "cf_2d": cf_2d,
+            "c_adv": c_adv,
+            "c_bf": c_bf,
+        }
+
+    @staticmethod
+    def __compute_bottom_friction_correction(
+        rv: np.ndarray, manning: np.ndarray
+    ) -> np.ndarray:
+        """
+        Compute the bottom friction correction for the subgrid
+
+        Returns:
+            The bottom friction correction as a 2D array
+        """
+        bf = np.square(rv)
+        bf[np.isnan(bf)] = SubgridPreprocessor.__compute_default_cf(manning)
+
+        return bf
+
+    @staticmethod
+    def __compute_advection_correction(
+        dp: np.ndarray,
+        dp2d: np.ndarray,
+        rv: np.ndarray,
+        cf2d: np.ndarray,
+    ) -> np.ndarray:
+        """
+        Compute the advection correction for the subgrid
+
+        Returns:
+            The advection correction as a 2D array
+        """
+        c_adv = np.multiply(
+            np.multiply(
+                np.reciprocal(dp),
+                np.nanmean(np.divide(np.square(dp2d), cf2d), axis=(1, 2)),
+            ),
+            np.square(rv),
+        )
+
+        c_adv[np.isnan(c_adv)] = 1.0
+
+        return c_adv
+
+    @staticmethod
+    def __compute_default_cf(manning: np.ndarray) -> float:
+        """
+        Compute the default friction coefficient for the subgrid
+
+        Returns:
+            The default friction coefficient as a 2D array
+        """
+        from scipy.constants import g
+
+        return (
+            g
+            * np.nanmean(np.square(manning))
+            / np.cbrt(SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH)
+        )
+
+    def __subset_raster_data_for_node(
+        self, node_index: int, window: RasterRegion, window_data: xr.Dataset
+    ) -> dict:
+        """
+        Subset the raster data to the polygon for the node
+
+        Args:
+            node_index: The index of the node
+            window: The raster window
+            window_data: The data from the raster window
+
+        Returns:
+            A dictionary with the subset data for the node
+        """
+        # Compute the minimum index set for this window that the node would
+        # need based on the bounds of its polygon
+        sub_window = self.__generate_sub_window(node_index, window)
+
+        # Create a mask for the polygon that represents this node
+        node_mask = self.__generate_sub_window_mask(node_index, sub_window)
+
+        # Generate numpy arrays for only the data in the polygon
+        dem_values, manning_values = self.__subset_raster_arrays_to_stencil(
+            node_mask, sub_window, window_data
+        )
+
+        return {
+            "dem": dem_values,
+            "manning": manning_values,
+            "sub_window": sub_window,
+        }
+
+    @staticmethod
+    def __compute_wet_pixel_mask(
+        dem_values: np.ndarray, wse_levels: np.ndarray
+    ) -> tuple[np.ndarray, np.ndarray, int]:
+        """
+        Compute the wet pixel mask for each water level
+
+        Args:
+            dem_values: The DEM values
+            wse_levels: The water surface elevation levels
+
+        Returns:
+            The number of wet pixels at each water level, the 2d wet pixel mask, and the total number of pixels
+        """
         wet_masks = np.where(
             np.array([dem_values < level for level in wse_levels], dtype=float),
             1.0,
             np.nan,
         )
         wet_level_counts = np.nansum(wet_masks, axis=(1, 2), dtype=float)
+        total_pixels = np.isfinite(dem_values).sum()
 
-        # Now create a manning array masked by the wet mask
-        manning_levels = wet_masks * manning_values
-        dp, dp_2d = self.__compute_water_depth_at_levels(
-            dem_values, wet_level_counts, wet_masks, wse_levels
-        )
-        cf, cf_2d = self.__compute_cf_at_levels(
-            dp, manning_levels, wet_level_counts, wse_levels
-        )
-        self.__compute_rv_at_levels(dp, cf_2d, wet_level_counts)
-
-        import matplotlib.pyplot as plt
-
-        xg, yg = np.meshgrid(
-            np.linspace(window.xll(), window.xur(), sub_window["i_size"]),
-            np.linspace(window.yll(), window.yur(), sub_window["j_size"]),
-        )
-
-        fig, ax = plt.subplots(2, 2, figsize=(10, 5))
-        ax[0, 0].plot(wse_levels, wet_level_counts)
-        ax[0, 0].set_xlabel("Water Level (m)")
-        ax[0, 0].set_ylabel("Number of Pixels")
-        ax[0, 0].set_xlim([min(wse_levels), max(wse_levels)])
-
-        ax[0, 1].plot(wse_levels, cf)
-        ax[0, 1].set_xlabel("Water Level (m)")
-        ax[0, 1].set_ylabel("Friction Coefficient")
-        ax[0, 1].set_xlim([min(wse_levels), max(wse_levels)])
-
-        f1 = ax[1, 0].pcolormesh(
-            xg, yg, manning_levels[-1], vmin=0.01, vmax=0.08, cmap="jet"
-        )
-        ax[1, 0].set_title(f"Manning for WL {wse_levels[-1]}")
-        fig.colorbar(f1, ax=ax[1, 0], orientation="horizontal")
-
-        f2 = ax[1, 1].pcolormesh(xg, yg, cf_2d[-1], vmin=0.0, vmax=0.2, cmap="jet")
-        ax[1, 1].set_title(f"CF for WL {wse_levels[-1]}")
-        fig.colorbar(f2, ax=ax[1, 1], orientation="horizontal")
-
-        plt.show()
-
-        # fig, ax = plt.subplots(1, 3, figsize=(10, 5))
-        # xg, yg = np.meshgrid(
-        #     np.linspace(window.xll(), window.xur(), sub_window["i_size"]),
-        #     np.linspace(window.yll(), window.yur(), sub_window["j_size"]),
-        # )
-        # for i, wl in enumerate(wse_levels):
-        #     f0 = ax[0].pcolormesh(xg, yg, wet_masks[i], vmin=0, vmax=1)
-        #     ax[0].set_title(f"Wet Mask for WL {wl}")
-        #
-        #     if i == 0:
-        #         fig.colorbar(f0, ax=ax[0], orientation="horizontal")
-        #
-        #     f1 = ax[1].pcolormesh(xg, yg, manning_levels[i], vmin=0.01, vmax=0.1)
-        #     ax[1].set_title(f"Manning for WL {wl}")
-        #     ax[1].pcolormesh(xg, yg, dp_2d[i])
-        #
-        #     if i == 0:
-        #         fig.colorbar(f1, ax=ax[1], orientation="horizontal")
-        #
-        #     f2 = ax[2].pcolormesh(xg, yg, cf_2d[i], vmin=0.0, vmax=20.0)
-        #     ax[2].set_title(f"CF for WL {wl}")
-        #
-        #     if i == 0:
-        #         fig.colorbar(f2, ax=ax[2], orientation="horizontal")
-        #
-        #     fig.canvas.draw()
-        #     plt.pause(0.1)
+        return wet_level_counts, wet_masks, total_pixels
 
     @staticmethod
     def __compute_rv_at_levels(
+        dp: np.ndarray,
         dp_levels: np.ndarray,
         cf_levels: np.ndarray,
-        wet_level_counts: np.ndarray,
     ) -> np.ndarray:
         """
         Compute the relative velocity at each water level
 
         Args:
+            dp: The mean water depth at each pixel per water level
             dp_levels: The water depth at each pixel per water level
             cf_levels: The friction coefficient at each pixel per water level
-            wet_level_counts: The number of pixels wet at each water level
 
-            h / dp ** (3/2) * cf ** (-1/2)
+            h / dp ** (3/2) *  1/ sqrt(cf)
 
         Returns:
             The relative velocity at each water level as a 2D array
         """
-        return np.array([])
+        return np.divide(
+            dp,
+            np.nanmean(
+                np.multiply(np.pow(dp_levels, 1.5), np.sqrt(np.reciprocal(cf_levels))),
+                axis=(1, 2),
+            ),
+        )
 
     @staticmethod
     def __compute_cf_at_levels(
-        dp: np.ndarray,
-        manning_levels: np.ndarray,
-        wet_level_counts: np.ndarray,
-        wse_levels: np.ndarray,
+        dp_levels: np.ndarray,
+        wet_masks: np.ndarray,
+        manning_values: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
         """
         Compute the friction coefficient at each water level
 
         Args:
-            dp: The water depth at each pixel per water level
-            manning_levels: The manning coefficient at each pixel per water level
-            wet_level_counts: The number of pixels wet at each water level
-            wse_levels: The water surface elevation levels
+            dp_levels: The water depth at each pixel per water level
+            wet_masks: The wet mask for each water level
+            manning_values: The Manning's n values
 
         Returns:
             The friction coefficient at each water level aggregated and as a 2D array
         """
-        cf_2d = np.array(
-            [
-                np.where(
-                    np.isfinite(manning_levels[level]) & np.isfinite(dp[level]),
-                    (9.81 * manning_levels[level] ** 2.0) / (dp[level] ** (1 / 3)),
-                    np.nan,
-                )
-                for level in range(len(wse_levels))
-            ]
-        )
+        from scipy.constants import g
 
-        cf_aggregated = np.array(
-            [
-                (np.nanmean(cf_2d[level]) if wet_level_counts[level] > 0 else np.nan)
-                for level in range(len(wse_levels))
-            ]
-        )
+        manning_levels_sq = wet_masks * np.square(manning_values)
+        cf_2d = np.divide(np.multiply(g, manning_levels_sq), np.cbrt(dp_levels))
+        cf_aggregated = np.nanmean(cf_2d, axis=(1, 2))
 
         return cf_aggregated, cf_2d
 
     @staticmethod
     def __compute_water_depth_at_levels(
         dem_values: np.ndarray,
-        wet_level_counts: np.ndarray,
         wet_masks: np.ndarray,
         wse_levels: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
@@ -377,7 +491,6 @@ class SubgridPreprocessor:
 
         Args:
             dem_values: The DEM values
-            wet_level_counts: The number of pixels wet at each water level
             wet_masks: The wet mask for each water level
             wse_levels: The water surface elevation levels
 
@@ -391,17 +504,14 @@ class SubgridPreprocessor:
             ]
         )
 
-        # Compute for each water level and divide by the number of pixels wet at that level
-        dp_agg = np.array(
-            [
-                (
-                    depth_levels[level] / wet_level_counts[level]
-                    if wet_level_counts[level] > 0
-                    else np.full_like(depth_levels[level], np.nan)
-                )
-                for level in range(len(wse_levels))
-            ]
+        # Check that water depths are greater than the dry pixel water depth
+        depth_levels = np.where(
+            depth_levels < SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH,
+            np.nan,
+            depth_levels,
         )
+
+        dp_agg = np.nanmean(depth_levels, axis=(1, 2))
 
         return dp_agg, depth_levels
 
@@ -414,12 +524,9 @@ class SubgridPreprocessor:
         """
         min_elevation = self.__config.data()["min_elevation"]
         max_elevation = self.__config.data()["max_elevation"]
-        elevation_step_size = self.__config.data()["elevation_step_size"]
-        return np.linspace(
-            min_elevation,
-            max_elevation,
-            int((max_elevation - min_elevation) / elevation_step_size + 1),
-        )
+        n_bins = self.__config.data()["vertical_level_count"]
+
+        return np.linspace(min_elevation, max_elevation, n_bins)
 
     @staticmethod
     def __subset_raster_arrays_to_stencil(
@@ -444,6 +551,7 @@ class SubgridPreprocessor:
             ],
             np.nan,
         )
+
         manning_values = np.where(
             node_mask,
             window_data.manning_n.to_numpy()[
@@ -516,3 +624,78 @@ class SubgridPreprocessor:
             "j_size": j_size,
             "transform": this_transform,
         }
+
+    @staticmethod
+    def __plot_diagnostics(
+        window: RasterRegion,
+        sub_window: dict,
+        wse_levels: np.ndarray,
+        data: dict,
+    ) -> None:
+        """
+        Quick diagnostic plot to check the results of the calculations
+
+        Args:
+            window: The raster window
+            sub_window: The sub-window for the node
+            wse_levels: The water surface elevation levels
+            data: The data dictionary containing the subgrid variables for the node
+        """
+        import matplotlib.pyplot as plt
+
+        # xg, yg = np.meshgrid(
+        #     np.linspace(window.xll(), window.xur(), sub_window["i_size"]),
+        #     np.linspace(window.yll(), window.yur(), sub_window["j_size"]),
+        # )
+
+        fig, ax = plt.subplots(2, 3, figsize=(15, 15))
+        ax[0, 0].plot(wse_levels, data["wet_fraction"])
+        ax[0, 0].set_xlabel("Water Level (m)")
+        ax[0, 0].set_ylabel("Wet Area (%)")
+        ax[0, 0].set_xlim([min(wse_levels), max(wse_levels)])
+        ax[0, 0].grid()
+
+        ax[0, 1].plot(wse_levels, data["dp"])
+        ax[0, 1].set_xlabel("Water Level (m)")
+        ax[0, 1].set_ylabel("Mean Water Depth (m)")
+        ax[0, 1].set_xlim([min(wse_levels), max(wse_levels)])
+        ax[0, 1].grid()
+
+        ax[0, 2].plot(wse_levels, data["cf"])
+        ax[0, 2].set_xlabel("Water Level (m)")
+        ax[0, 2].set_ylabel("Quadratic Friction Coefficient (c_f)")
+        ax[0, 2].set_xlim([min(wse_levels), max(wse_levels)])
+        ax[0, 2].grid()
+
+        ax[1, 0].plot(wse_levels, data["c_bf"])
+        ax[1, 0].set_xlabel("Water Level (m)")
+        ax[1, 0].set_ylabel("Correction (Bottom Friction)")
+        ax[1, 0].set_xlim([min(wse_levels), max(wse_levels)])
+        ax[1, 0].grid()
+
+        ax[1, 1].plot(wse_levels, data["c_adv"])
+        ax[1, 1].set_xlabel("Water Level (m)")
+        ax[1, 1].set_ylabel("Correction (Advection)")
+        ax[1, 1].set_xlim([min(wse_levels), max(wse_levels)])
+        ax[1, 1].grid()
+
+        # Convert the wet mask to a binary mask
+        # wm = np.where(data["wet_masks"][-1] > 0, 1, 0)
+        # f0 = ax[1, 0].pcolormesh(xg, yg, wm, vmin=0, vmax=1, cmap="jet")
+        # ax[1, 0].set_title(f"Pixel Mask for WL {wse_levels[-1]}")
+        # fig.colorbar(f0, ax=ax[1, 0], orientation="horizontal")
+        #
+        # f1 = ax[1, 1].pcolormesh(
+        #     xg, yg, data["dp_2d"][-1], vmin=-3, vmax=10, cmap="jet"
+        # )
+        # ax[1, 1].set_title(f"Depth for WL {wse_levels[-1]}")
+        # fig.colorbar(f1, ax=ax[1, 1], orientation="horizontal")
+        #
+        # f2 = ax[1, 2].pcolormesh(
+        #     xg, yg, data["cf_2d"][-1], vmin=0.0, vmax=0.2, cmap="jet"
+        # )
+        # ax[1, 2].set_title(f"CF for WL {wse_levels[-1]}")
+        # fig.colorbar(f2, ax=ax[1, 2], orientation="horizontal")
+
+        plt.tight_layout()
+        plt.show()
