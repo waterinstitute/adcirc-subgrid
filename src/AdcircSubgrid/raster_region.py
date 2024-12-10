@@ -1,6 +1,7 @@
 from typing import Union
 
 import numpy as np
+from rasterio.windows import Window
 from shapely.geometry import Point, Polygon
 
 
@@ -36,10 +37,10 @@ class RasterRegion:
         self.__yll = None
         self.__xur = None
         self.__yur = None
-        self.__x_start = None
-        self.__y_start = None
-        self.__x_end = None
-        self.__y_end = None
+        self.__i_start = None
+        self.__j_start = None
+        self.__i_end = None
+        self.__j_end = None
 
         xll_region, xur_region, yll_region, yur_region = self.__compute_region_geometry(
             x1, y1, x2, y2, x_size, y_size
@@ -109,24 +110,24 @@ class RasterRegion:
         self.__yur = min(yur_raster, yur_region)
 
         # Compute the starting and ending indices of the region
-        self.__x_start = int(
+        self.__i_start = int(
             (self.__xll - self.__geo_transform[0]) / self.__geo_transform[1]
         )
-        self.__x_end = int(
+        self.__i_end = int(
             (self.__xur - self.__geo_transform[0]) / self.__geo_transform[1]
         )
-        self.__y_start = int(
+        self.__j_start = int(
             (self.__geo_transform[3] - self.__yur) / -self.__geo_transform[5]
         )
-        self.__y_end = int(
+        self.__j_end = int(
             (self.__geo_transform[3] - self.__yll) / -self.__geo_transform[5]
         )
 
         # Clamp the region within the bounds of the raster
-        self.__x_start = max(0, self.__x_start)
-        self.__y_start = max(0, self.__y_start)
-        self.__x_end = min(self.__x_end, x_size - 1)
-        self.__y_end = min(self.__y_end, y_size - 1)
+        self.__i_start = max(0, self.__i_start)
+        self.__j_start = max(0, self.__j_start)
+        self.__i_end = min(self.__i_end, x_size - 1)
+        self.__j_end = min(self.__j_end, y_size - 1)
 
         return xll_region, xur_region, yll_region, yur_region
 
@@ -139,7 +140,7 @@ class RasterRegion:
         Returns:
             True if the region is valid, False otherwise
         """
-        return self.__x_start < self.__x_end and self.__y_start < self.__y_end
+        return self.__i_start < self.__i_end and self.__j_start < self.__j_end
 
     def __check_clamped(
         self, xll_region: float, yll_region: float, xur_region: float, yur_region: float
@@ -172,9 +173,9 @@ class RasterRegion:
         """
         return (
             f"RasterRegion(Bounds({self.__xll:0.3f}, {self.__yll:0.3f}, {self.__xur:0.3f}, {self.__yur:0.3f}),"
-            f" Start({self.__x_start}, {self.__y_start}),"
-            f" End({self.__x_end}, {self.__y_end}),"
-            f" Size({self.x_size()}, {self.y_size()}))"
+            f" Start({self.__i_start}, {self.__j_start}),"
+            f" End({self.__i_end}, {self.__j_end}),"
+            f" Size({self.i_size()}, {self.j_size()}))"
         )
 
     def valid(self) -> bool:
@@ -231,59 +232,68 @@ class RasterRegion:
         """
         return self.__yur
 
-    def x_start(self) -> int:
+    def i_start(self) -> int:
         """
-        Get the starting x index
+        Get the starting i index
 
         Returns:
-            The starting x index
+            The starting i index
         """
-        return self.__x_start
+        return self.__i_start
 
-    def y_start(self) -> int:
+    def j_start(self) -> int:
         """
-        Get the starting y index
-
-        Returns:
-            The starting y index
-        """
-        return self.__y_start
-
-    def x_end(self) -> int:
-        """
-        Get the ending x index
+        Get the starting j index
 
         Returns:
-            The ending x index
+            The starting j index
         """
-        return self.__x_end
+        return self.__j_start
 
-    def y_end(self) -> int:
+    def i_end(self) -> int:
         """
-        Get the ending y index
-
-        Returns:
-            The ending y index
-        """
-        return self.__y_end
-
-    def x_size(self) -> int:
-        """
-        Get the x size
+        Get the ending i index
 
         Returns:
-            The x size
+            The ending i index
         """
-        return self.__x_end - self.__x_start
+        return self.__i_end
 
-    def y_size(self) -> int:
+    def j_end(self) -> int:
         """
-        Get the y size
+        Get the ending j index
 
         Returns:
-            The y size
+            The ending j index
         """
-        return self.__y_end - self.__y_start
+        return self.__j_end
+
+    def i_size(self) -> int:
+        """
+        Get the i size
+
+        Returns:
+            The i size
+        """
+        return self.__i_end - self.__i_start
+
+    def j_size(self) -> int:
+        """
+        Get the j size
+
+        Returns:
+            The j size
+        """
+        return self.__j_end - self.__j_start
+
+    def cell_size(self) -> float:
+        """
+        Get the cell size
+
+        Returns:
+            The cell size
+        """
+        return self.__geo_transform[1]
 
     def x_pts(self) -> np.ndarray:
         """
@@ -294,12 +304,12 @@ class RasterRegion:
         """
         return np.linspace(
             self.__geo_transform[0]
-            + self.__x_start * self.__geo_transform[1]
+            + self.__i_start * self.__geo_transform[1]
             + 0.5 * self.__geo_transform[1],
             self.__geo_transform[0]
-            + self.__x_end * self.__geo_transform[1]
+            + self.__i_end * self.__geo_transform[1]
             - 0.5 * self.__geo_transform[1],
-            self.__x_end - self.__x_start,
+            self.__i_end - self.__i_start,
         )
 
     def y_pts(self) -> np.ndarray:
@@ -311,12 +321,12 @@ class RasterRegion:
         """
         return np.linspace(
             self.__geo_transform[3]
-            + self.__y_start * self.__geo_transform[5]
+            + self.__j_start * self.__geo_transform[5]
             + 0.5 * self.__geo_transform[5],
             self.__geo_transform[3]
-            + self.__y_end * self.__geo_transform[5]
+            + self.__j_end * self.__geo_transform[5]
             - 0.5 * self.__geo_transform[5],
-            self.__y_end - self.__y_start,
+            self.__j_end - self.__j_start,
         )
 
     def polygon(self) -> Polygon:
@@ -339,3 +349,12 @@ class RasterRegion:
             True if the geometry is within the region, False otherwise
         """
         return self.__polygon.contains(geometry)
+
+    def rio_window(self) -> Window:
+        """
+        Get the rasterio window for the region
+
+        Returns:
+            The rasterio window for the region
+        """
+        return Window(self.__i_start, self.__j_start, self.i_size(), self.j_size())

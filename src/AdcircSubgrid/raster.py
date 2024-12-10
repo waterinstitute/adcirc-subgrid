@@ -1,6 +1,8 @@
 from typing import Optional
 
 import numpy as np
+import rasterio as rio
+import rioxarray  # noqa: F401
 import xarray as xr
 from matplotlib.patches import Polygon
 from osgeo import gdal
@@ -30,20 +32,16 @@ class Raster:
         self.__filename = filename
         self.__lookup_table = lookup_table
         self.__handle = None
-        self.__geo_transform = None
-        self.__bounds = None
         self.__bbox = None
-        self.__nodata_value = None
-        self.__coordinate_system = None
-        self.__pj_transform = None
-        self.__i_size = None
-        self.__j_size = None
         self.__x_resolution = None
         self.__y_resolution = None
+        self.__i_size = None
+        self.__j_size = None
         self.__x_start = None
         self.__y_start = None
         self.__x_end = None
         self.__y_end = None
+        self.__pj_transform = None
         self.__initialize_raster()
 
     def __repr__(self) -> str:
@@ -53,16 +51,7 @@ class Raster:
         Returns:
             A string representation of the Raster object
         """
-        nodata = (
-            "None" if self.__nodata_value is None else f"{self.__nodata_value:0.3f}"
-        )
-        return (
-            f"Raster("
-            f"Bounds: ({self.__bounds[0]:0.3f}, {self.__bounds[1]:0.3f}, {self.__bounds[2]:0.3f}, {self.__bounds[3]:0.3f}),"
-            f" Resolution: ({self.__geo_transform[1]:0.3e}, {self.__geo_transform[5]:0.3e}),"
-            f" NoData Value: {nodata},"
-            f" Lookup Table: {self.__lookup_table is not None})"
-        )
+        return str(self.__handle)
 
     def __initialize_raster(self) -> None:
         """
@@ -71,50 +60,87 @@ class Raster:
         Returns:
             None
         """
-        self.__handle = gdal.Open(self.__filename)
-        self.__geo_transform = self.__handle.GetGeoTransform()
-        self.__nodata_value = self.__handle.GetRasterBand(1).GetNoDataValue()
-        self.__i_size = self.__handle.RasterXSize
-        self.__j_size = self.__handle.RasterYSize
-        self.__bounds = (
-            self.__geo_transform[0],
-            self.__geo_transform[3],
-            self.__geo_transform[0]
-            + self.__geo_transform[1] * self.__handle.RasterXSize,
-            self.__geo_transform[3]
-            + self.__geo_transform[5] * self.__handle.RasterYSize,
-        )
+        self.__handle = rio.open(self.__filename)
         self.__bbox = Polygon(
             [
-                (self.__bounds[0], self.__bounds[1]),
-                (self.__bounds[2], self.__bounds[1]),
-                (self.__bounds[2], self.__bounds[3]),
-                (self.__bounds[0], self.__bounds[3]),
+                (self.__handle.bounds.left, self.__handle.bounds.bottom),
+                (self.__handle.bounds.left, self.__handle.bounds.top),
+                (self.__handle.bounds.right, self.__handle.bounds.top),
+                (self.__handle.bounds.right, self.__handle.bounds.bottom),
             ]
         )
+        self.__x_resolution, self.__y_resolution = self.__handle.res
+        self.__i_size = self.__handle.width
+        self.__j_size = self.__handle.height
+        self.__x_start, self.__y_start = (
+            self.__handle.bounds.left,
+            self.__handle.bounds.bottom,
+        )
+        self.__x_end, self.__y_end = (
+            self.__handle.bounds.right,
+            self.__handle.bounds.top,
+        )
+        self.__nodata_value = self.__handle.nodata
 
-        self.__x_resolution = self.__geo_transform[1]
-        self.__y_resolution = self.__geo_transform[5]
-        self.__x_start = self.__bounds[0]
-        self.__y_start = self.__bounds[1]
-        self.__x_end = self.__bounds[2]
-        self.__y_end = self.__bounds[3]
-
-        self.__coordinate_system = self.__handle.GetProjection()
         self.__pj_transform = Transformer.from_crs(
             CRS.from_string("EPSG:4326"),
-            CRS.from_string(self.__coordinate_system),
+            self.__handle.crs,
             always_xy=True,
         )
 
-    def bounds(self) -> list[float]:
+    def x_resolution(self) -> float:
+        """
+        Get the x resolution of the raster
+
+        Returns:
+            The x resolution of the raster
+        """
+        return self.__x_resolution
+
+    def y_resolution(self) -> float:
+        """
+        Get the y resolution of the raster
+
+        Returns:
+            The y resolution of the raster
+        """
+        return self.__y_resolution
+
+    def transform(self) -> rio.transform.Affine:
+        """
+        Get the geo transform of the raster
+
+        Returns:
+            The geo transform of the raster
+        """
+        return self.__handle.transform
+
+    def geo_transform(self) -> list[float]:
+        """
+        Get the geo transform of the raster
+
+        Returns:
+            The geo transform of the raster
+        """
+        return self.__handle.transform.to_gdal()
+
+    def coordinate_system(self) -> rio.crs.CRS:
+        """
+        Get the coordinate system of the raster
+
+        Returns:
+            The coordinate system of the raster
+        """
+        return self.__handle.crs
+
+    def bounds(self) -> rio.coords.BoundingBox:
         """
         Get the bounds of the raster
 
         Returns:
             The bounds of the raster
         """
-        return self.__bounds
+        return self.__handle.bounds
 
     def bbox(self) -> Polygon:
         """
@@ -125,52 +151,54 @@ class Raster:
         """
         return self.__bbox
 
-    def get_region(self, x1: float, y1: float, x2: float, y2: float) -> xr.Dataset:
+    def get_region(
+        self, x1: float, y1: float, x2: float, y2: float, target_name: str = "values"
+    ) -> xr.Dataset:
         """
         Get a region from the raster data
 
         Args:
-            x1: The minimum x-coordinate
-            y1: The minimum y-coordinate
-            x2: The maximum x-coordinate
-            y2: The maximum y-coordinate
+            x1: The minimum x-coordinate in raster units
+            y1: The minimum y-coordinate in raster units
+            x2: The maximum x-coordinate in raster units
+            y2: The maximum y-coordinate in raster units
+            target_name: The name of the target variable (default: "values")
 
         Returns:
             A xarray Dataset with the region data
         """
-        # Transform the coordinates to the raster coordinate system
-        x1p, y1p = self.__pj_transform.transform(x1, y1)
-        x2p, y2p = self.__pj_transform.transform(x2, y2)
-
         region = RasterRegion(
-            self.__geo_transform, self.__i_size, self.__j_size, x1p, y1p, x2p, y2p
+            self.geo_transform(), self.__i_size, self.__j_size, x1, y1, x2, y2
         )
 
-        data = self.__handle.ReadAsArray(
-            region.x_start(),
-            region.y_start(),
-            region.x_size(),
-            region.y_size(),
-        )
-        data = np.where(data == self.__nodata_value, np.nan, data)
-
+        data = self.__handle.read(1, window=region.rio_window())
         if self.__lookup_table:
             data = self.__apply_lookup_table(data)
+        else:
+            data = np.where(data == self.__nodata_value, np.nan, data)
 
-        x_pt = region.x_pts()
-        y_pt = region.y_pts()
+        x_pt = np.linspace(region.xll(), region.xur(), region.i_size())
+        y_pt = np.linspace(region.yll(), region.yur(), region.j_size())
 
-        xg, yg = np.meshgrid(x_pt, y_pt)
-
-        # Transform the coordinates back to lat/lon
-        xg_ll, yg_ll = self.__pj_transform.transform(xg, yg, direction="INVERSE")
-
-        return xr.Dataset(
+        # Return a dataset with the appropriate coordinates and rio transform
+        out_ds = xr.Dataset(
             {
-                "values": (("y", "x"), data),
+                target_name: (("lat", "lon"), data),
             },
-            coords={"lon": (("y", "x"), xg_ll), "lat": (("y", "x"), yg_ll)},
+            coords={"lon": x_pt, "lat": y_pt},
         )
+        out_ds.rio.set_spatial_dims("lon", "lat", inplace=True)
+        out_ds.rio.write_crs(self.__handle.crs, inplace=True)
+        transform_this = rio.transform.from_bounds(
+            region.xll(),
+            region.yur(),
+            region.xur(),
+            region.yll(),
+            region.i_size(),
+            region.j_size(),
+        )
+        out_ds.rio.write_transform(transform_this, inplace=True)
+        return out_ds
 
     def __apply_lookup_table(self, data: np.ndarray) -> np.ndarray:
         """
@@ -223,7 +251,7 @@ class Raster:
 
                 windows.append(
                     RasterRegion(
-                        self.__geo_transform,
+                        self.geo_transform(),
                         self.__i_size,
                         self.__j_size,
                         region_x_start,

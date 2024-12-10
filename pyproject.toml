@@ -1,7 +1,7 @@
 [project]
 name = "AdcircSubgrid"
 version = "0.0.0"
-description = "The ADCIRC subgrid package is used to pre and postprocess ADCIRC subgrid correction data" 
+description = "The ADCIRC subgrid package is used to pre and postprocess ADCIRC subgrid correction data"
 authors = [
     { name = "Johnathan Woodruff", email = "jwoodruff@usgs.gov" },
     { name = "Zach Cobell", email = "zcobell@thewaterinstitute.org" },
@@ -9,7 +9,7 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
-keywords = [ "adcirc" ] 
+keywords = [ "adcirc" ]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Development Status :: 3 - Alpha",
