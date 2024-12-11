@@ -1,4 +1,6 @@
+import netCDF4
 from netCDF4 import Dataset
+import numpy as np
 
 from .subgrid_data import SubgridData
 
@@ -32,24 +34,27 @@ class SubgridOutputFile:
             binary_vertex_list.description = "Vertex subgrid residency flag"
 
             phi = dataset.createVariable("phi", "f4", ("phi",), zlib=True, complevel=2)
-            phi.description = "Levels at which the subgrid data is stored"
+            phi.description = "Percent wet for the subgrid element"
 
-            dataset.createVariable(
+            wet_fraction_elevation = dataset.createVariable(
                 "wetFractionDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+            )
+            wet_fraction_elevation.description = (
+                "Water surface elevation for the phi wet fraction"
             )
 
             wet_tot_wat_depth_vertex = dataset.createVariable(
                 "wetTotWatDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
             )
             wet_tot_wat_depth_vertex.description = (
-                "Mean water depth in the wet fraction of the subgrid"
+                "Depth sum divided by the number of wet pixels in the subgrid"
             )
 
             grid_tot_wat_depth_vertex = dataset.createVariable(
                 "gridTotWatDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
             )
             grid_tot_wat_depth_vertex.description = (
-                "Mean water depth for wet and non-wet areas in the subgrid"
+                "Depth sum divided by the total number of pixels in the subgrid"
             )
 
             cf_vertex = dataset.createVariable(
@@ -78,13 +83,39 @@ class SubgridOutputFile:
                 "This file contains the output of the ADCIRC subgrid preprocessor"
             )
 
+            # Write the variables to netCDF and replace data where the
+            # vertex is not included in the subgrid with the fill value
             binary_vertex_list[:] = sg_data.vertex_flag()
+
+            # Make a 2D mask to fill for all nodes not in the vertex flag
+            mask2d = np.repeat(sg_data.vertex_flag()[:, np.newaxis], sg_data.phi_count(), axis=1)
+            mask2d = mask2d == 0
+
             phi[:] = sg_data.phi()
-            wet_tot_wat_depth_vertex[:, :] = sg_data.wet_water_depth()
-            grid_tot_wat_depth_vertex[:, :] = sg_data.wet_total_depth()
-            cf_vertex[:, :] = sg_data.c_f()
-            cbf_vertex[:, :] = sg_data.c_bf()
-            cadv_vertex[:, :] = sg_data.c_adv()
+
+            wet_fraction_elevation_out = sg_data.water_level()
+            wet_fraction_elevation_out[mask2d] = netCDF4.default_fillvals["f4"]
+            wet_fraction_elevation[:, :] = wet_fraction_elevation_out
+
+            wet_tot_wat_depth_vertex_out = sg_data.wet_water_depth()
+            wet_tot_wat_depth_vertex_out[mask2d] = netCDF4.default_fillvals["f4"]
+            wet_tot_wat_depth_vertex[:, :] = wet_tot_wat_depth_vertex_out
+
+            grid_tot_wat_depth_vertex_out = sg_data.wet_total_depth()
+            grid_tot_wat_depth_vertex_out[mask2d] = netCDF4.default_fillvals["f4"]
+            grid_tot_wat_depth_vertex[:, :] = grid_tot_wat_depth_vertex_out
+
+            cf_vertex_out = sg_data.c_f()
+            cf_vertex_out[mask2d] = netCDF4.default_fillvals["f4"]
+            cf_vertex[:, :] = cf_vertex_out
+
+            cbf_vertex_out = sg_data.c_bf()
+            cbf_vertex_out[mask2d] = netCDF4.default_fillvals["f4"]
+            cbf_vertex[:, :] = cbf_vertex_out
+
+            cadv_vertex_out = sg_data.c_adv()
+            cadv_vertex_out[mask2d] = netCDF4.default_fillvals["f4"]
+            cadv_vertex[:, :] = cadv_vertex_out
 
     @staticmethod
     def read(filename: str) -> SubgridData:
@@ -110,6 +141,7 @@ class SubgridOutputFile:
             # Read the data from the file
             vertex_flag = dataset.variables["binaryVertexList"][:].value
             phi = dataset.variables["phi"][:].value
+            water_levels = dataset.variables["wetFractionDepthVertex"][:].value
             wet_water_depth = dataset.variables["wetTotWatDepthVertex"][:].value
             wet_total_depth = dataset.variables["gridTotWatDepthVertex"][:].value
             c_f = dataset.variables["cfVertex"][:].value
@@ -118,7 +150,14 @@ class SubgridOutputFile:
 
             # Set the data in the SubgridData object
             sg_data.set_data(
-                vertex_flag, phi, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+                vertex_flag,
+                phi,
+                water_levels,
+                wet_water_depth,
+                wet_total_depth,
+                c_f,
+                c_bf,
+                c_adv,
             )
 
         return sg_data

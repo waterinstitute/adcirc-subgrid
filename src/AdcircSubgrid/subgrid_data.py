@@ -34,6 +34,7 @@ class SubgridData:
             raise ValueError(msg)
 
         self.__phi_set = np.linspace(0.0, 1.0, self.__phi_count)
+        self.__water_level = np.zeros((self.__node_count, self.__phi_count))
         self.__wet_water_depth = np.zeros((self.__node_count, self.__phi_count))
         self.__wet_total_depth = np.zeros((self.__node_count, self.__phi_count))
         self.__c_f = np.zeros((self.__node_count, self.__phi_count))
@@ -77,6 +78,15 @@ class SubgridData:
             The phi values
         """
         return self.__phi_set
+
+    def water_level(self) -> np.ndarray:
+        """
+        Return the water level values
+
+        Returns:
+            The water level values
+        """
+        return self.__water_level
 
     def wet_water_depth(self) -> np.ndarray:
         """
@@ -136,6 +146,7 @@ class SubgridData:
         self,
         vertex_flag: np.ndarray,
         phi: np.ndarray,
+        water_levels: np.ndarray,
         wet_water_depth: np.ndarray,
         wet_total_depth: np.ndarray,
         c_f: np.ndarray,
@@ -148,6 +159,7 @@ class SubgridData:
         Args:
             vertex_flag: The vertex flag values
             phi: The phi values
+            water_levels: The water level values
             wet_water_depth: The wet water depth values
             wet_total_depth: The wet total depth values
             c_f: The quadratic friction values
@@ -157,6 +169,7 @@ class SubgridData:
         if (
             vertex_flag.shape != (self.__node_count,)
             or phi.shape != (self.__phi_count,)
+            or water_levels.shape != (self.__node_count, self.__phi_count)
             or wet_water_depth.shape != (self.__node_count, self.__phi_count)
             or wet_total_depth.shape != (self.__node_count, self.__phi_count)
             or c_f.shape != (self.__node_count, self.__phi_count)
@@ -167,6 +180,8 @@ class SubgridData:
             raise ValueError(msg)
 
         self.__vertex_flag = vertex_flag
+        self.__phi_set = phi
+        self.__water_level = water_levels
         self.__wet_water_depth = wet_water_depth
         self.__wet_total_depth = wet_total_depth
         self.__c_f = c_f
@@ -176,6 +191,7 @@ class SubgridData:
     def add_vertex(
         self,
         vertex: int,
+        water_levels: np.ndarray,
         wet_fraction: np.ndarray,
         wet_water_depth: np.ndarray,
         wet_total_depth: np.ndarray,
@@ -188,6 +204,7 @@ class SubgridData:
 
         Args:
             vertex: The vertex number
+            water_levels: The water level values
             wet_fraction: The wet fraction values
             wet_water_depth: The wet water depth values
             wet_total_depth: The wet total depth values
@@ -198,6 +215,7 @@ class SubgridData:
         # Check if the shape of the input arrays is correct
         if (
             wet_fraction.shape != (self.__sg_count,)
+            or water_levels.shape != (self.__sg_count,)
             or wet_water_depth.shape != (self.__sg_count,)
             or wet_total_depth.shape != (self.__sg_count,)
             or c_f.shape != (self.__sg_count,)
@@ -210,7 +228,7 @@ class SubgridData:
         self.__vertex_flag[vertex] = 1
         if self.__interpolation_method == "linear":
             self.__interp_linear(
-                vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+                vertex, water_levels, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
             )
         else:
             msg = f"Invalid interpolation method: {self.__interpolation_method}"
@@ -219,6 +237,7 @@ class SubgridData:
     def __interp_linear(
         self,
         vertex: int,
+        water_levels: np.ndarray,
         wet_fraction: np.ndarray,
         wet_water_depth: np.ndarray,
         wet_total_depth: np.ndarray,
@@ -231,6 +250,7 @@ class SubgridData:
 
         Args:
             vertex: The vertex number
+            water_levels: The water level values
             wet_fraction: The wet fraction values
             wet_water_depth: The wet water depth values
             wet_total_depth: The wet total depth values
@@ -238,6 +258,9 @@ class SubgridData:
             c_bf: The friction correction values
             c_adv: The advection correction values
         """
+        self.__water_level[vertex] = np.interp(
+            self.__phi_set, wet_fraction, water_levels
+        )
         self.__wet_water_depth[vertex] = np.interp(
             self.__phi_set,
             wet_fraction,
