@@ -82,46 +82,9 @@ class SubgridOutput:
             self.__interp_linear(
                 vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
             )
-        elif self.__interpolation_method == "cubic":
-            self.__interpolate_cubic(
-                vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
-            )
         else:
             msg = f"Invalid interpolation method: {self.__interpolation_method}"
             raise ValueError(msg)
-
-    def __interpolate_cubic(
-        self,
-        vertex: int,
-        wet_fraction: np.ndarray,
-        wet_water_depth: np.ndarray,
-        wet_total_depth: np.ndarray,
-        c_f: np.ndarray,
-        c_bf: np.ndarray,
-        c_adv: np.ndarray,
-    ) -> None:
-        """
-        Interpolate the input data using cubic splines
-
-        Args:
-            vertex: The vertex number
-            wet_fraction: The wet fraction values
-            wet_water_depth: The wet water depth values
-            wet_total_depth: The wet total depth values
-            c_f: The quadratic friction values
-            c_bf: The friction correction values
-            c_adv: The advection correction values
-        """
-        cubic_spline = CubicSpline(wet_fraction, wet_water_depth)
-        self.__wet_water_depth[vertex] = cubic_spline(self.__phi_set)
-        cubic_spline = CubicSpline(wet_fraction, wet_total_depth)
-        self.__wet_total_depth[vertex] = cubic_spline(self.__phi_set)
-        cubic_spline = CubicSpline(wet_fraction, c_f)
-        self.__c_f[vertex] = cubic_spline(self.__phi_set)
-        cubic_spline = CubicSpline(wet_fraction, c_bf)
-        self.__c_bf[vertex] = cubic_spline(self.__phi_set)
-        cubic_spline = CubicSpline(wet_fraction, c_adv)
-        self.__c_adv[vertex] = cubic_spline(self.__phi_set)
 
     def __interp_linear(
         self,

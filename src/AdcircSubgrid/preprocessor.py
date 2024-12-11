@@ -61,6 +61,17 @@ class SubgridPreprocessor:
             max_memory, self.__compute_overlap_size()
         )
 
+        logger.info(
+            "Subgrid parameters will be computed on {} levels".format(
+                self.__config.data()["n_subgrid_levels"]
+            )
+        )
+        logger.info(
+            "Subgrid parameters will be written to {} phi levels".format(
+                self.__config.data()["n_phi_levels"]
+            )
+        )
+
     def __check_raster_projection(self) -> None:
         """
         The raster projections should match so that we can more easily interpolate between them
