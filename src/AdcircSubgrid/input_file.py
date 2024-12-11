@@ -1,15 +1,14 @@
-from schema import Schema, Use
+from schema import Schema, Use, Optional
 
 SUBGRID_SCHEMA = Schema(
     {
         "output_filename": Use(str),
         "adcirc_mesh": Use(str),
         "manning_lookup": Use(str),
-        "min_elevation": Use(float),
-        "max_elevation": Use(float),
-        "vertical_level_count": int,
+        Optional("n_subgrid_levels", default=11): Use(int),
         "dem": Use(str),
         "land_cover": Use(str),
+        Optional("progress_bar_increment", default=10): Use(int),
     }
 )
 

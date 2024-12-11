@@ -22,6 +22,7 @@ def run_preprocessor(args: argparse.Namespace) -> None:
 
     preprocessor = SubgridPreprocessor(InputFile(args.config))
     preprocessor.process()
+    preprocessor.write()
 
 
 def run_postprocessor(args: argparse.Namespace) -> None:

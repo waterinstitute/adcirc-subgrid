@@ -10,6 +10,7 @@ from .mesh import Mesh
 from .progress_bar import ProgressBar
 from .raster import Raster
 from .raster_region import RasterRegion
+from .output import SubgridOutput
 
 logger = logging.getLogger(__name__)
 
@@ -45,13 +46,14 @@ class SubgridPreprocessor:
         self.__max_memory = max_memory
         self.__adcirc_mesh = Mesh(config.data()["adcirc_mesh"])
         self.__lulc_lut = LookupTable(config.data()["manning_lookup"])
-
         self.__dem_raster = Raster(config.data()["dem"])
         self.__lulc_raster = Raster(
             config.data()["land_cover"], lookup_table=self.__lulc_lut
         )
-
         self.__check_raster_projection()
+        self.__output = SubgridOutput(
+            self.__adcirc_mesh.num_nodes(), self.__config.data()["n_subgrid_levels"]
+        )
 
         self.__processing_windows = self.__generate_raster_windows(
             max_memory, self.__compute_overlap_size()
@@ -113,6 +115,13 @@ class SubgridPreprocessor:
         """
         self.__process_mesh_nodes()
 
+    def write(self) -> None:
+        """
+        Write the output to a file
+        """
+        logger.info(f"Writing output to {self.__config.data()['output_filename']}")
+        self.__output.write(self.__config.data()["output_filename"])
+
     def __generate_raster_windows(
         self, window_size: int, overlap: float
     ) -> list[RasterRegion]:
@@ -157,7 +166,9 @@ class SubgridPreprocessor:
         """
         node_index, node_count = self.__find_nodes_in_window()
 
-        progress = ProgressBar(node_count, 20, logger)
+        progress = ProgressBar(
+            node_count, self.__config.data()["progress_bar_increment"], logger
+        )
 
         for window_idx, window in enumerate(self.__processing_windows):
             logger.debug(
@@ -190,7 +201,19 @@ class SubgridPreprocessor:
 
         # Create a list of the indices of the nodes that fall into the window
         for node in np.where(node_index == window_index)[0]:
-            self.__process_node(window, window_data, node)
+            result = self.__process_node(window, window_data, node)
+
+            # Add the results to the output
+            self.__output.add_vertex(
+                node,
+                result["wet_fraction"],
+                result["dp"],
+                result["dp"],  # TODO: Fix this to be the total depth
+                result["cf"],
+                result["c_bf"],
+                result["c_adv"],
+            )
+
             progress.increment()
 
     def __read_window_data(self, window: RasterRegion) -> xr.Dataset:
@@ -217,7 +240,7 @@ class SubgridPreprocessor:
 
     def __process_node(
         self, window: RasterRegion, window_data: xr.Dataset, node_index: int
-    ) -> None:
+    ) -> dict:
         """
         Process the node within the given raster window
 
@@ -233,9 +256,7 @@ class SubgridPreprocessor:
         )
 
         # Compute the list of water levels where calculations will be performed
-        # TODO: Johnathan thinks he can do this with a moving window over the
-        #       raster data rather than a defined interval
-        wse_levels = self.__generate_calculation_intervals()
+        wse_levels = self.__generate_calculation_intervals(subset_data["dem"])
 
         subgrid_variables = self.__compute_subgrid_variables_at_node(
             subset_data, wse_levels
@@ -248,6 +269,8 @@ class SubgridPreprocessor:
                 wse_levels,
                 subgrid_variables,
             )
+
+        return subgrid_variables
 
     def __compute_subgrid_variables_at_node(
         self, subset_data: dict, wse_levels: np.ndarray
@@ -515,18 +538,20 @@ class SubgridPreprocessor:
 
         return dp_agg, depth_levels
 
-    def __generate_calculation_intervals(self) -> np.ndarray:
+    def __generate_calculation_intervals(
+        self, dem_elevations: np.ndarray
+    ) -> np.ndarray:
         """
         Generate the calculation intervals for the water surface elevation
 
         Returns:
             An array of water surface elevation levels
         """
-        min_elevation = self.__config.data()["min_elevation"]
-        max_elevation = self.__config.data()["max_elevation"]
-        n_bins = self.__config.data()["vertical_level_count"]
-
-        return np.linspace(min_elevation, max_elevation, n_bins)
+        min_elevation = np.nanmin(dem_elevations)
+        max_elevation = np.nanmax(dem_elevations)
+        return np.linspace(
+            min_elevation, max_elevation, self.__config.data()["n_subgrid_levels"]
+        )
 
     @staticmethod
     def __subset_raster_arrays_to_stencil(
