@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class SubgridOutput:
+class SubgridData:
     """
     Class to store the output of the subgrid calculations
     """
@@ -41,6 +41,137 @@ class SubgridOutput:
         self.__c_adv = np.zeros((self.__node_count, self.__phi_count))
         self.__vertex_list = np.zeros(self.__node_count, dtype=int)
         self.__vertex_flag = np.zeros(self.__node_count, dtype=int)
+
+    def node_count(self) -> int:
+        """
+        Return the number of nodes in the subgrid
+
+        Returns:
+            The number of nodes in the subgrid
+        """
+        return self.__node_count
+
+    def sg_count(self) -> int:
+        """
+        Return the number of subgrid levels
+
+        Returns:
+            The number of subgrid levels
+        """
+        return self.__sg_count
+
+    def phi_count(self) -> int:
+        """
+        Return the number of phi values
+
+        Returns:
+            The number of phi values
+        """
+        return self.__phi_count
+
+    def phi(self) -> np.ndarray:
+        """
+        Return the phi values
+
+        Returns:
+            The phi values
+        """
+        return self.__phi_set
+
+    def wet_water_depth(self) -> np.ndarray:
+        """
+        Return the wet water depth values
+
+        Returns:
+            The wet water depth values
+        """
+        return self.__wet_water_depth
+
+    def wet_total_depth(self) -> np.ndarray:
+        """
+        Return the wet total depth values
+
+        Returns:
+            The wet total depth values
+        """
+        return self.__wet_total_depth
+
+    def c_f(self) -> np.ndarray:
+        """
+        Return the quadratic friction values
+
+        Returns:
+            The quadratic friction values
+        """
+        return self.__c_f
+
+    def c_bf(self) -> np.ndarray:
+        """
+        Return the friction correction values
+
+        Returns:
+            The friction correction values
+        """
+        return self.__c_bf
+
+    def c_adv(self) -> np.ndarray:
+        """
+        Return the advection correction values
+
+        Returns:
+            The advection correction values
+        """
+        return self.__c_adv
+
+    def vertex_flag(self) -> np.ndarray:
+        """
+        Return the vertex flag values
+
+        Returns:
+            The vertex flag values
+        """
+        return self.__vertex_flag
+
+    def set_data(
+        self,
+        vertex_flag: np.ndarray,
+        phi: np.ndarray,
+        wet_water_depth: np.ndarray,
+        wet_total_depth: np.ndarray,
+        c_f: np.ndarray,
+        c_bf: np.ndarray,
+        c_adv: np.ndarray,
+    ) -> None:
+        """
+        Set the output data for all vertices
+
+        Args:
+            vertex_flag: The vertex flag values
+            phi: The phi values
+            wet_water_depth: The wet water depth values
+            wet_total_depth: The wet total depth values
+            c_f: The quadratic friction values
+            c_bf: The friction correction values
+            c_adv: The advection correction values
+        """
+        if (
+            vertex_flag.shape != (self.__node_count,)
+            or phi.shape != (self.__phi_count,)
+            or wet_water_depth.shape != (self.__node_count, self.__phi_count)
+            or wet_total_depth.shape != (self.__node_count, self.__phi_count)
+            or c_f.shape != (self.__node_count, self.__phi_count)
+            or c_bf.shape != (self.__node_count, self.__phi_count)
+            or c_adv.shape != (self.__node_count, self.__phi_count)
+        ):
+            msg = "Invalid shape for input arrays"
+            raise ValueError(msg)
+
+        self.__vertex_flag = vertex_flag
+        self.__wet_water_depth = wet_water_depth
+        self.__wet_total_depth = wet_total_depth
+        self.__c_f = c_f
+        self.__c_bf = c_bf
+        self.__c_adv = c_adv
 
     def add_vertex(
         self,
@@ -118,72 +249,3 @@ class SubgridOutput:
         self.__c_f[vertex] = np.interp(self.__phi_set, wet_fraction, c_f)
         self.__c_bf[vertex] = np.interp(self.__phi_set, wet_fraction, c_bf)
         self.__c_adv[vertex] = np.interp(self.__phi_set, wet_fraction, c_adv)
-
-    def write(self, output_file: str) -> None:
-        """
-        Write the output data to a file
-
-        Args:
-            output_file: The output file to write the data to
-        """
-        from netCDF4 import Dataset
-
-        with Dataset(output_file, "w", format="NETCDF4") as dataset:
-            dataset.createDimension("node", self.__node_count)
-            dataset.createDimension("phi", self.__phi_count)
-
-            binaryVertexList = dataset.createVariable(
-                "binaryVertexList", "i4", ("node",), zlib=True, complevel=2
-            )
-            binaryVertexList.description = "Vertex subgrid residency flag"
-
-            phi = dataset.createVariable("phi", "f4", ("phi",), zlib=True, complevel=2)
-            phi.description = "Levels at which the subgrid data is stored"
-
-            wetTotWatDepthVertex = dataset.createVariable(
-                "wetTotWatDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
-            )
-            wetTotWatDepthVertex.description = (
-                "Mean water depth in the wet fraction of the subgrid"
-            )
-
-            gridTotWatDepthVertex = dataset.createVariable(
-                "gridTotWatDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
-            )
-            gridTotWatDepthVertex.description = (
-                "Mean water depth for wet and non-wet areas in the subgrid"
-            )
-
-            cfVertex = dataset.createVariable(
-                "cfVertex", "f4", ("node", "phi"), zlib=True, complevel=2
-            )
-            cfVertex.description = "Quadratic friction coefficient for subgrid"
-
-            cbfVertex = dataset.createVariable(
-                "cmfVertex", "f4", ("node", "phi"), zlib=True, complevel=2
-            )
-            cbfVertex.description = (
-                "Quadratic friction correction coefficient for subgrid"
-            )
-
-            cadvVertex = dataset.createVariable(
-                "cadvVertex", "f4", ("node", "phi"), zlib=True, complevel=2
-            )
-            cadvVertex.description = "Advection correction coefficient for subgrid"
-
-            dataset.title = "ADCIRC subgrid input file"
-            dataset.institution = "The Water Institute"
-            dataset.source = "https://github.com/waterinstitute/adcirc-subgrid"
-            dataset.history = "Created by the ADCIRC subgrid preprocessor"
-            dataset.references = "https://adcirc.org/"
-            dataset.comment = (
-                "This file contains the output of the ADCIRC subgrid preprocessor"
-            )
-
-            binaryVertexList[:] = self.__vertex_flag
-            phi[:] = self.__phi_set
-            wetTotWatDepthVertex[:, :] = self.__wet_water_depth
-            gridTotWatDepthVertex[:, :] = self.__wet_total_depth
-            cfVertex[:, :] = self.__c_f
-            cbfVertex[:, :] = self.__c_bf
-            cadvVertex[:, :] = self.__c_adv

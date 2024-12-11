@@ -1,0 +1,124 @@
+from netCDF4 import Dataset
+
+from .subgrid_data import SubgridData
+
+
+class SubgridOutputFile:
+    """
+    Class to store the output of the subgrid calculations
+    """
+
+    def __init__(self) -> None:
+        """
+        Empty constructor
+        """
+
+    @staticmethod
+    def write(sg_data: SubgridData, output_file: str) -> None:
+        """
+        Write the output data to a file
+
+        Args:
+            sg_data: The SubgridData object to write to the file
+            output_file: The output file to write the data to
+        """
+        with Dataset(output_file, "w", format="NETCDF4") as dataset:
+            dataset.createDimension("node", sg_data.node_count())
+            dataset.createDimension("phi", sg_data.phi_count())
+
+            binary_vertex_list = dataset.createVariable(
+                "binaryVertexList", "i4", ("node",), zlib=True, complevel=2
+            )
+            binary_vertex_list.description = "Vertex subgrid residency flag"
+
+            phi = dataset.createVariable("phi", "f4", ("phi",), zlib=True, complevel=2)
+            phi.description = "Levels at which the subgrid data is stored"
+
+            dataset.createVariable(
+                "wetFractionDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+            )
+
+            wet_tot_wat_depth_vertex = dataset.createVariable(
+                "wetTotWatDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+            )
+            wet_tot_wat_depth_vertex.description = (
+                "Mean water depth in the wet fraction of the subgrid"
+            )
+
+            grid_tot_wat_depth_vertex = dataset.createVariable(
+                "gridTotWatDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+            )
+            grid_tot_wat_depth_vertex.description = (
+                "Mean water depth for wet and non-wet areas in the subgrid"
+            )
+
+            cf_vertex = dataset.createVariable(
+                "cfVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+            )
+            cf_vertex.description = "Quadratic friction coefficient for subgrid"
+
+            cbf_vertex = dataset.createVariable(
+                "cmfVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+            )
+            cbf_vertex.description = (
+                "Quadratic friction correction coefficient for subgrid"
+            )
+
+            cadv_vertex = dataset.createVariable(
+                "cadvVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+            )
+            cadv_vertex.description = "Advection correction coefficient for subgrid"
+
+            dataset.title = "ADCIRC subgrid input file"
+            dataset.institution = "The Water Institute"
+            dataset.source = "https://github.com/waterinstitute/adcirc-subgrid"
+            dataset.history = "Created by the ADCIRC subgrid preprocessor"
+            dataset.references = "https://adcirc.org/"
+            dataset.comment = (
+                "This file contains the output of the ADCIRC subgrid preprocessor"
+            )
+
+            binary_vertex_list[:] = sg_data.vertex_flag()
+            phi[:] = sg_data.phi()
+            wet_tot_wat_depth_vertex[:, :] = sg_data.wet_water_depth()
+            grid_tot_wat_depth_vertex[:, :] = sg_data.wet_total_depth()
+            cf_vertex[:, :] = sg_data.c_f()
+            cbf_vertex[:, :] = sg_data.c_bf()
+            cadv_vertex[:, :] = sg_data.c_adv()
+
+    @staticmethod
+    def read(filename: str) -> SubgridData:
+        """
+        Read the output data from a file
+
+        Args:
+            filename: The filename to read the data from
+
+        Returns:
+            The SubgridData object
+        """
+        with Dataset(filename, "r") as dataset:
+            # Get the dimensioning information
+            node_count = dataset.dimensions["node"].size
+            phi_count = dataset.dimensions["phi"].size
+            sg_count = phi_count
+
+            # Note that we set the sg_count and phi_count equal since
+            # there is information loss when writing the data to a file
+            sg_data = SubgridData(node_count, sg_count, phi_count)
+
+            # Read the data from the file
+            vertex_flag = dataset.variables["binaryVertexList"][:].value
+            phi = dataset.variables["phi"][:].value
+            wet_water_depth = dataset.variables["wetTotWatDepthVertex"][:].value
+            wet_total_depth = dataset.variables["gridTotWatDepthVertex"][:].value
+            c_f = dataset.variables["cfVertex"][:].value
+            c_bf = dataset.variables["cmfVertex"][:].value
+            c_adv = dataset.variables["cadvVertex"][:].value
+
+            # Set the data in the SubgridData object
+            sg_data.set_data(
+                vertex_flag, phi, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+            )
+
+        return sg_data

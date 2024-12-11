@@ -7,10 +7,10 @@ import xarray as xr
 from .input_file import InputFile
 from .lookup_table import LookupTable
 from .mesh import Mesh
-from .output import SubgridOutput
 from .progress_bar import ProgressBar
 from .raster import Raster
 from .raster_region import RasterRegion
+from .subgrid_data import SubgridData
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class SubgridPreprocessor:
             config.data()["land_cover"], lookup_table=self.__lulc_lut
         )
         self.__check_raster_projection()
-        self.__output = SubgridOutput(
+        self.__output = SubgridData(
             self.__adcirc_mesh.num_nodes(),
             self.__config.data()["n_subgrid_levels"],
             self.__config.data()["n_phi_levels"],
@@ -132,8 +132,10 @@ class SubgridPreprocessor:
         """
         Write the output to a file
         """
+        from .subgrid_output_file import SubgridOutputFile
+
         logger.info(f"Writing output to {self.__config.data()['output_filename']}")
-        self.__output.write(self.__config.data()["output_filename"])
+        SubgridOutputFile.write(self.__output, self.__config.data()["output_filename"])
 
     def __generate_raster_windows(
         self, window_size: int, overlap: float
