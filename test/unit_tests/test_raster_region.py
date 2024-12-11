@@ -1,5 +1,6 @@
-from AdcircSubgrid.raster_region import RasterRegion
 from shapely.geometry import Polygon
+
+from AdcircSubgrid.raster_region import RasterRegion
 
 
 def test_raster_region() -> None:

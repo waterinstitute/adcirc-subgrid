@@ -1,0 +1,32 @@
+name: Testing
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: ${{matrix.python-version}}
+      - uses: actions/checkout@v4
+      - name: Install dependencies with conda
+        run: |
+          conda create -n test-environment -c conda-forge python=${{matrix.python-version}} \
+              pytest coverage gdal geopandas pandas netcdf4 pyyaml numba scipy \
+              schema numpy shapely xarray pyproj matplotlib rasterio rioxarray
+      - name: Install AdcircSubgrid package
+        run: conda run -n test-environment pip install -e .
+      - name: Test with pytest
+        run: |
+          conda run -n test-environment coverage run --source=src/AdcircSubgrid -m pytest && conda run -n test-environment coverage report -m
+#      - name: Upload coverage reports to Codecov
+#        uses: codecov/codecov-action@v4
+#        env:
+#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

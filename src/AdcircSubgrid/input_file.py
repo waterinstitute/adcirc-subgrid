@@ -1,19 +1,37 @@
-from schema import Schema, And, Use, Or, Optional
 import os
+
+from schema import And, Optional, Schema, Use
 
 SUBGRID_SCHEMA = Schema(
     {
-        "output_filename": Use(str), # Output filename (.nc)
-        "adcirc_mesh": Use(str), # Adcirc mesh filename (Note: Currently ascii only)
-        "manning_lookup": Use(str), # Manning lookup table filename or 'ccap' to use the default CCAP lookup table
-        Optional("n_subgrid_levels", default=11): Use(int), # Number of subgrid levels (default: 11)
-        Optional("n_phi_levels", default=11): Use(int), # Number of phi levels (default: 11)
+        "output_filename": Use(str),  # Output filename (.nc)
+        "adcirc_mesh": Use(str),  # Adcirc mesh filename (Note: Currently ascii only)
+        "manning_lookup": Use(
+            str
+        ),  # Manning lookup table filename or 'ccap' to use the default CCAP lookup table
+        Optional("n_subgrid_levels", default=11): Use(
+            int
+        ),  # Number of subgrid levels (default: 11)
+        Optional("n_phi_levels", default=11): Use(
+            int
+        ),  # Number of phi levels (default: 11)
         Optional("phi_interpolation_method", default="linear"): And(
-            str, lambda x: x in ["linear", "cubic"] # Interpolation method for phi levels (linear or cubic) (default: linear)
+            str,
+            lambda x: x
+            in [
+                "linear",
+                "cubic",
+            ],  # Interpolation method for phi levels (linear or cubic) (default: linear)
         ),
-        "dem": And(Use(str), os.path.exists), # Digital elevation model filename. (GDAL-readable formats are supported)
-        "land_cover": Use(str), # Land cover filename (GDAL-readable formats are supported)
-        Optional("progress_bar_increment", default=10): Use(int), # Increment for the progress bar (default: 10)
+        "dem": And(
+            Use(str), os.path.exists
+        ),  # Digital elevation model filename. (GDAL-readable formats are supported)
+        "land_cover": Use(
+            str
+        ),  # Land cover filename (GDAL-readable formats are supported)
+        Optional("progress_bar_increment", default=10): Use(
+            int
+        ),  # Increment for the progress bar (default: 10)
     }
 )
 

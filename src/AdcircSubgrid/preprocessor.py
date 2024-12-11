@@ -7,10 +7,10 @@ import xarray as xr
 from .input_file import InputFile
 from .lookup_table import LookupTable
 from .mesh import Mesh
+from .output import SubgridOutput
 from .progress_bar import ProgressBar
 from .raster import Raster
 from .raster_region import RasterRegion
-from .output import SubgridOutput
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class SubgridPreprocessor:
         self.__output = SubgridOutput(
             self.__adcirc_mesh.num_nodes(),
             self.__config.data()["n_subgrid_levels"],
-            self.__config.data()["n_phi_levels"]
+            self.__config.data()["n_phi_levels"],
         )
 
         self.__processing_windows = self.__generate_raster_windows(

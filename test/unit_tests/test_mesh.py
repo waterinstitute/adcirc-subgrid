@@ -1,6 +1,7 @@
 import numpy as np
-from AdcircSubgrid.mesh import Mesh
 from shapely.geometry import Polygon
+
+from AdcircSubgrid.mesh import Mesh
 
 
 def test_mesh() -> None:

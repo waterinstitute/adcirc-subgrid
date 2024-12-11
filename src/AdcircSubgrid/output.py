@@ -8,8 +8,12 @@ class SubgridOutput:
     """
 
     def __init__(
-        self, node_count: int, sg_count: int, phi_count: int, interpolation_method: str = "linear"
-    ):
+        self,
+        node_count: int,
+        sg_count: int,
+        phi_count: int,
+        interpolation_method: str = "linear",
+    ) -> None:
         """
         Initialize the SubgridOutput class
 
@@ -27,7 +31,7 @@ class SubgridOutput:
 
         # Allow the user to select either linear or cubic interpolation
         if self.__interpolation_method not in ["linear", "cubic"]:
-            msg = "Invalid interpolation method: {}".format(self.__interpolation_method)
+            msg = f"Invalid interpolation method: {self.__interpolation_method}"
             raise ValueError(msg)
 
         self.__phi_set = np.linspace(0.0, 1.0, self.__phi_count)
@@ -61,7 +65,6 @@ class SubgridOutput:
             c_bf: The friction correction values
             c_adv: The advection correction values
         """
-
         # Check if the shape of the input arrays is correct
         if (
             wet_fraction.shape != (self.__sg_count,)
@@ -71,7 +74,8 @@ class SubgridOutput:
             or c_bf.shape != (self.__sg_count,)
             or c_adv.shape != (self.__sg_count,)
         ):
-            raise ValueError("Invalid shape for input arrays")
+            msg = "Invalid shape for input arrays"
+            raise ValueError(msg)
 
         self.__vertex_flag[vertex] = 1
         if self.__interpolation_method == "linear":
@@ -83,11 +87,18 @@ class SubgridOutput:
                 vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
             )
         else:
-            msg = "Invalid interpolation method: {}".format(self.__interpolation_method)
+            msg = f"Invalid interpolation method: {self.__interpolation_method}"
             raise ValueError(msg)
 
     def __interpolate_cubic(
-        self, vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+        self,
+        vertex: int,
+        wet_fraction: np.ndarray,
+        wet_water_depth: np.ndarray,
+        wet_total_depth: np.ndarray,
+        c_f: np.ndarray,
+        c_bf: np.ndarray,
+        c_adv: np.ndarray,
     ) -> None:
         """
         Interpolate the input data using cubic splines
@@ -113,7 +124,14 @@ class SubgridOutput:
         self.__c_adv[vertex] = cubic_spline(self.__phi_set)
 
     def __interp_linear(
-        self, vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+        self,
+        vertex: int,
+        wet_fraction: np.ndarray,
+        wet_water_depth: np.ndarray,
+        wet_total_depth: np.ndarray,
+        c_f: np.ndarray,
+        c_bf: np.ndarray,
+        c_adv: np.ndarray,
     ) -> None:
         """
         Interpolate the input data using linear interpolation
