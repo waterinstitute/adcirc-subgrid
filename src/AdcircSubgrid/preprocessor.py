@@ -52,7 +52,9 @@ class SubgridPreprocessor:
         )
         self.__check_raster_projection()
         self.__output = SubgridOutput(
-            self.__adcirc_mesh.num_nodes(), self.__config.data()["n_subgrid_levels"]
+            self.__adcirc_mesh.num_nodes(),
+            self.__config.data()["n_subgrid_levels"],
+            self.__config.data()["n_phi_levels"]
         )
 
         self.__processing_windows = self.__generate_raster_windows(

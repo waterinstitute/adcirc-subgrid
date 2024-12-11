@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.interpolate import CubicSpline
 
 
 class SubgridOutput:
@@ -6,18 +7,30 @@ class SubgridOutput:
     Class to store the output of the subgrid calculations
     """
 
-    def __init__(self, node_count: int, phi_count: int):
+    def __init__(
+        self, node_count: int, sg_count: int, phi_count: int, interpolation_method: str = "linear"
+    ):
         """
         Initialize the SubgridOutput class
 
         Args:
             node_count: Number of nodes in the subgrid
+            sg_count: Number of subgrid levels
             phi_count: Number of phi values to store
+            interpolation_method: The interpolation method to use for the output
+                                  on phi levels (linear or cubic) (default: linear)
         """
         self.__node_count = node_count
+        self.__sg_count = sg_count
         self.__phi_count = phi_count
+        self.__interpolation_method = interpolation_method
+
+        # Allow the user to select either linear or cubic interpolation
+        if self.__interpolation_method not in ["linear", "cubic"]:
+            msg = "Invalid interpolation method: {}".format(self.__interpolation_method)
+            raise ValueError(msg)
+
         self.__phi_set = np.linspace(0.0, 1.0, self.__phi_count)
-        self.__wet_fraction = np.zeros((self.__node_count, self.__phi_count))
         self.__wet_water_depth = np.zeros((self.__node_count, self.__phi_count))
         self.__wet_total_depth = np.zeros((self.__node_count, self.__phi_count))
         self.__c_f = np.zeros((self.__node_count, self.__phi_count))
@@ -44,29 +57,87 @@ class SubgridOutput:
             wet_fraction: The wet fraction values
             wet_water_depth: The wet water depth values
             wet_total_depth: The wet total depth values
-            c_f: The c_f values
-            c_bf: The c_mf values
-            c_adv: The c_adv values
+            c_f: The quadratic friction values
+            c_bf: The friction correction values
+            c_adv: The advection correction values
         """
 
         # Check if the shape of the input arrays is correct
         if (
-            wet_fraction.shape != (self.__phi_count,)
-            or wet_water_depth.shape != (self.__phi_count,)
-            or wet_total_depth.shape != (self.__phi_count,)
-            or c_f.shape != (self.__phi_count,)
-            or c_bf.shape != (self.__phi_count,)
-            or c_adv.shape != (self.__phi_count,)
+            wet_fraction.shape != (self.__sg_count,)
+            or wet_water_depth.shape != (self.__sg_count,)
+            or wet_total_depth.shape != (self.__sg_count,)
+            or c_f.shape != (self.__sg_count,)
+            or c_bf.shape != (self.__sg_count,)
+            or c_adv.shape != (self.__sg_count,)
         ):
             raise ValueError("Invalid shape for input arrays")
 
         self.__vertex_flag[vertex] = 1
-        self.__wet_fraction[vertex] = wet_fraction
-        self.__wet_water_depth[vertex] = wet_water_depth
-        self.__wet_total_depth[vertex] = wet_total_depth
-        self.__c_f[vertex] = c_f
-        self.__c_bf[vertex] = c_bf
-        self.__c_adv[vertex] = c_adv
+        if self.__interpolation_method == "linear":
+            self.__interp_linear(
+                vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+            )
+        elif self.__interpolation_method == "cubic":
+            self.__interpolate_cubic(
+                vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+            )
+        else:
+            msg = "Invalid interpolation method: {}".format(self.__interpolation_method)
+            raise ValueError(msg)
+
+    def __interpolate_cubic(
+        self, vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+    ) -> None:
+        """
+        Interpolate the input data using cubic splines
+
+        Args:
+            vertex: The vertex number
+            wet_fraction: The wet fraction values
+            wet_water_depth: The wet water depth values
+            wet_total_depth: The wet total depth values
+            c_f: The quadratic friction values
+            c_bf: The friction correction values
+            c_adv: The advection correction values
+        """
+        cubic_spline = CubicSpline(wet_fraction, wet_water_depth)
+        self.__wet_water_depth[vertex] = cubic_spline(self.__phi_set)
+        cubic_spline = CubicSpline(wet_fraction, wet_total_depth)
+        self.__wet_total_depth[vertex] = cubic_spline(self.__phi_set)
+        cubic_spline = CubicSpline(wet_fraction, c_f)
+        self.__c_f[vertex] = cubic_spline(self.__phi_set)
+        cubic_spline = CubicSpline(wet_fraction, c_bf)
+        self.__c_bf[vertex] = cubic_spline(self.__phi_set)
+        cubic_spline = CubicSpline(wet_fraction, c_adv)
+        self.__c_adv[vertex] = cubic_spline(self.__phi_set)
+
+    def __interp_linear(
+        self, vertex, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+    ) -> None:
+        """
+        Interpolate the input data using linear interpolation
+
+        Args:
+            vertex: The vertex number
+            wet_fraction: The wet fraction values
+            wet_water_depth: The wet water depth values
+            wet_total_depth: The wet total depth values
+            c_f: The quadratic friction values
+            c_bf: The friction correction values
+            c_adv: The advection correction values
+        """
+        self.__wet_water_depth[vertex] = np.interp(
+            self.__phi_set,
+            wet_fraction,
+            wet_water_depth,
+        )
+        self.__wet_total_depth[vertex] = np.interp(
+            self.__phi_set, wet_fraction, wet_total_depth
+        )
+        self.__c_f[vertex] = np.interp(self.__phi_set, wet_fraction, c_f)
+        self.__c_bf[vertex] = np.interp(self.__phi_set, wet_fraction, c_bf)
+        self.__c_adv[vertex] = np.interp(self.__phi_set, wet_fraction, c_adv)
 
     def write(self, output_file: str) -> None:
         """
@@ -125,7 +196,9 @@ class SubgridOutput:
             dataset.source = "https://github.com/waterinstitute/adcirc-subgrid"
             dataset.history = "Created by the ADCIRC subgrid preprocessor"
             dataset.references = "https://adcirc.org/"
-            dataset.comment = "This file contains the output of the ADCIRC subgrid preprocessor"
+            dataset.comment = (
+                "This file contains the output of the ADCIRC subgrid preprocessor"
+            )
 
             binaryVertexList[:] = self.__vertex_flag
             phi[:] = self.__phi_set
