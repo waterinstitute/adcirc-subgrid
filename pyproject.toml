@@ -79,7 +79,6 @@ ignore = [
   "PLR0913", # Too many arguments
   "PLR2004", # Magic number
   "E501",   # Line too long
-  "PT004",  # Use underscore for non-returning fixture (use usefixture instead)
   "RET505", # Unnecessary return statement
   "RET506", # Unnecssary else
   "RET507", # Unnecessary else after continue
@@ -91,7 +90,6 @@ ignore = [
   "D205",   # 1 blank line required between summary line and description
   "D212",   # Multi-line docstring summary should start at the second line
   "D415",   # First line should end with a period
-  "ANN101", # Missing type annotation for self in method
   "ISC001"  # Implicit string concatenation
 ]
 
