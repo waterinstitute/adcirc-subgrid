@@ -7,7 +7,7 @@ def test_mesh() -> None:
     """
     Test the mesh class for adcirc ascii mesh I/O
     """
-    mesh_filename = "testing/test_files/fort.14"
+    mesh_filename = "test/test_files/fort.14"
     mesh = Mesh(mesh_filename)
 
     assert mesh.num_nodes() == 8303
