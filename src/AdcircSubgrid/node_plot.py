@@ -3,15 +3,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def node_inspector(
+def node_plot(
     filename: str, node: int, basis: str, show: bool, save: str, index_type: int = 1
 ) -> None:
     """
-    Inspect the subgrid variables for a node
+    Plot the subgrid variables for a node
 
     Args:
         filename: The name of the subgrid netCDF file
-        node: The node number to inspect
+        node: The node number to plot
         basis: The basis for plotting. Either wse or phi
         show: Whether to show the plot
         save: The name of the file to save the plot to
@@ -49,27 +49,33 @@ def node_inspector(
         logger.error(f"Invalid basis: {basis}")
         return
 
+    # If we have more than 100 phi levels, we won't use a marker
+    if len(x_basis) > 100:
+        plot_marker = None
+    else:
+        plot_marker = "o"
+
     fig, ax = plt.subplots(2, 2, figsize=(12, 8))
-    ax[0, 0].plot(x_basis, vertex_data["wet_water_depth"], marker="o")
-    ax[0, 0].plot(x_basis, vertex_data["wet_total_depth"], marker="o")
+    ax[0, 0].plot(x_basis, vertex_data["wet_water_depth"], marker=plot_marker)
+    ax[0, 0].plot(x_basis, vertex_data["wet_total_depth"], marker=plot_marker)
     ax[0, 0].set_xlim(x_basis[0], x_basis[-1])
     ax[0, 0].set_xlabel(x_basis_label)
     ax[0, 0].set_ylabel("Wet Water Depth (m)")
     ax[0, 0].grid()
 
-    ax[0, 1].plot(x_basis, vertex_data["c_f"], marker="o")
+    ax[0, 1].plot(x_basis, vertex_data["c_f"], marker=plot_marker)
     ax[0, 1].set_xlim(x_basis[0], x_basis[-1])
     ax[0, 1].set_xlabel(x_basis_label)
     ax[0, 1].set_ylabel("C_f")
     ax[0, 1].grid()
 
-    ax[1, 0].plot(x_basis, vertex_data["c_adv"], marker="o")
+    ax[1, 0].plot(x_basis, vertex_data["c_adv"], marker=plot_marker)
     ax[1, 0].set_xlim(x_basis[0], x_basis[-1])
     ax[1, 0].set_xlabel(x_basis_label)
     ax[1, 0].set_ylabel("C_adv")
     ax[1, 0].grid()
 
-    ax[1, 1].plot(x_basis, vertex_data["c_bf"], marker="o")
+    ax[1, 1].plot(x_basis, vertex_data["c_bf"], marker=plot_marker)
     ax[1, 1].set_xlim(x_basis[0], x_basis[-1])
     ax[1, 1].set_xlabel(x_basis_label)
     ax[1, 1].set_ylabel("C_bf")
