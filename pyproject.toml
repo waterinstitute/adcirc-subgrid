@@ -119,6 +119,6 @@ push = false
     'current_version = "{version}"',
     'version = "{version}"',
 ]
-"src/adcirc_subgrid/__init__.py" = [
+"src/AdcircSubgrid/__init__.py" = [
     '__version__ = "{version}"',
 ]
