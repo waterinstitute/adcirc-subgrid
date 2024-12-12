@@ -90,6 +90,10 @@ def run_node_plot(args: argparse.Namespace) -> None:
     """
     from .node_plot import node_plot
 
+    if not args.show and not args.save:
+        msg = "Either --show or --save must be specified"
+        raise ValueError(msg)
+
     node_plot(
         args.filename, args.node, args.basis, args.show, args.save, args.index_base
     )
