@@ -4,7 +4,7 @@
 ![black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 The ADCIRC Subgrid Preprocessor is a Python package which generates the subgrid input file for ADCIRC. ADCIRC's subgrid
-input file allows for the specification of subgrid correction terms, which account for the effects of unresolved 
+input file allows for the specification of subgrid correction terms, which account for the effects of unresolved
 bathymetric, topographic, and frictional features on the flow field. The result is a more accurate result without the
 need for a high-resolution mesh.
 
@@ -12,8 +12,8 @@ This work is an adaptation of the original ADCIRC subgrid code [here](https://gi
 
 ## Installation
 
-> [!IMPORTANT] 
-> Once this package is stable, it will be distributed via normal Python package channels. Until then, it can only 
+> [!IMPORTANT]
+> Once this package is stable, it will be distributed via normal Python package channels. Until then, it can only
 > be installed manually using the instructions below.
 
 The ADCIRC Subgrid Preprocessor can be installed via pip from the root directory of the repository:
@@ -30,7 +30,7 @@ conda create -n adcirc-subgrid -c conda-forge python=3 gdal geopandas pandas net
 The package has multiple command line options which can be used to generate the subgrid file and examine the output.
 
 When creating the subgrid input file, the user must provide an ADCIRC mesh file, a Gdal-compatible DEM file, a land use
-file, and the subgrid input file. Importantly, we currently recommend that all input files are in the WGS84 projection. 
+file, and the subgrid input file. Importantly, we currently recommend that all input files are in the WGS84 projection.
 
 The format of the yaml input file is as follows:
 

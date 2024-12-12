@@ -39,8 +39,18 @@ def node_plot(
     x_basis, x_basis_label, plot_marker = __get_x_axis(basis, vertex_data)
 
     fig, ax = plt.subplots(2, 2, figsize=(12, 8))
-    ax[0, 0].plot(x_basis, vertex_data["wet_water_depth"], marker=plot_marker, label="Wet Water Depth")
-    ax[0, 0].plot(x_basis, vertex_data["wet_total_depth"], marker=plot_marker, label="Total Water Depth")
+    ax[0, 0].plot(
+        x_basis,
+        vertex_data["wet_water_depth"],
+        marker=plot_marker,
+        label="Wet Water Depth",
+    )
+    ax[0, 0].plot(
+        x_basis,
+        vertex_data["wet_total_depth"],
+        marker=plot_marker,
+        label="Total Water Depth",
+    )
     ax[0, 0].set_xlim(x_basis[0], x_basis[-1])
     ax[0, 0].set_xlabel(x_basis_label)
     ax[0, 0].set_ylabel("Wet Water Depth (m)")
