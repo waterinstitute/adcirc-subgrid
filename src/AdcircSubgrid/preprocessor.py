@@ -295,7 +295,9 @@ class SubgridPreprocessor:
         Returns:
             A dictionary with the subgrid variables
         """
-        wse_levels = self.__generate_calculation_intervals(subset_data["dem"])
+        wse_levels = self.__generate_calculation_intervals(
+            self.__config.data()["phi_level_distribution"], subset_data["dem"]
+        )
 
         wet_level_counts, wet_masks, total_pixels = self.__compute_wet_pixel_mask(
             subset_data["dem"], wse_levels
@@ -318,7 +320,9 @@ class SubgridPreprocessor:
             rv,
             cf_2d,
         )
-        c_bf = self.__compute_bottom_friction_correction(rv, subset_data["manning"])
+        c_bf = self.__compute_bottom_friction_correction(
+            dp_tot, rv, subset_data["manning"]
+        )
 
         # Now, scale the percent of wet pixels
         # NOTE: This previously was done using areas, but I assume since it is just a
@@ -350,15 +354,20 @@ class SubgridPreprocessor:
 
     @staticmethod
     def __compute_bottom_friction_correction(
-        rv: np.ndarray, manning: np.ndarray
+        dp: np.ndarray, rv: np.ndarray, manning: np.ndarray
     ) -> np.ndarray:
         """
         Compute the bottom friction correction for the subgrid
 
+        Args:
+            dp: The mean water depth at each pixel per water level
+            rv: The R_v at each water
+            manning: The Manning's n values
+
         Returns:
             The bottom friction correction as a 1D vector
         """
-        bf = np.square(rv)
+        bf = np.multiply(dp, np.square(rv))
         bf[np.isnan(bf)] = SubgridPreprocessor.__compute_default_cf(manning)
 
         return bf
@@ -384,7 +393,7 @@ class SubgridPreprocessor:
         """
         c_adv = np.multiply(
             np.multiply(
-                np.reciprocal(dp),
+                np.reciprocal(dp, out=np.zeros_like(dp), where=dp != 0),
                 np.nanmean(np.divide(np.square(dp2d), cf2d), axis=(1, 2)),
             ),
             np.square(rv),
@@ -532,59 +541,88 @@ class SubgridPreprocessor:
             dem_values: The DEM values
             wet_masks: The wet mask for each water level
             wse_levels: The water surface elevation levels
+            total_pixels: The total number of pixels
 
         Returns:
             The mean pixel water depth at each water level
         """
-        depth_levels = wet_masks * (wse_levels[:, np.newaxis, np.newaxis] - dem_values)
+        wet_depth_levels = wet_masks * (
+            wse_levels[:, np.newaxis, np.newaxis] - dem_values
+        )
 
         # Check that water depths are greater than the dry pixel water depth
-        depth_levels = np.where(
-            depth_levels < SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH,
+        wet_depth_levels = np.where(
+            wet_depth_levels < SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH,
             np.nan,
-            depth_levels,
+            wet_depth_levels,
         )
 
+        tot_depth_levels = wse_levels[:, np.newaxis, np.newaxis] - dem_values
+
         # Compute the mean wet depth and the mean depth
-        dp_sum = np.nansum(depth_levels, axis=(1, 2))
+        wet_dp_sum = np.nansum(wet_depth_levels, axis=(1, 2))
         pixels_per_level = np.nansum(wet_masks, axis=(1, 2))
         dp_wet_agg = np.divide(
-            dp_sum,
+            wet_dp_sum,
             pixels_per_level,
-            out=np.zeros_like(dp_sum),
+            out=np.zeros_like(wet_dp_sum),
             where=pixels_per_level != 0,
         )
-        dp_tot_agg = dp_sum / float(total_pixels)
+
+        tot_dp_sum = np.nansum(tot_depth_levels, axis=(1, 2))
+        dp_tot_agg = tot_dp_sum / float(total_pixels)
 
         dp_tot_agg[
             np.logical_or(
                 dp_tot_agg < SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH,
                 np.isnan(dp_tot_agg),
             )
-        ] = SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
+        ] = 0.0
         dp_wet_agg[
             np.logical_or(
                 dp_wet_agg < SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH,
                 np.isnan(dp_wet_agg),
             )
-        ] = SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
+        ] = 0.0
 
-        return dp_wet_agg, dp_tot_agg, depth_levels
+        return dp_wet_agg, dp_tot_agg, wet_depth_levels
 
     def __generate_calculation_intervals(
-        self, dem_elevations: np.ndarray
+        self, method: str, dem_elevations: np.ndarray
     ) -> np.ndarray:
         """
         Generate the calculation intervals for the water surface elevation
 
+        Args:
+            method: The method to use for generating the intervals (linear or normal)
+            dem_elevations: The DEM elevations
+
         Returns:
             An array of water surface elevation levels
         """
-        min_elevation = np.nanmin(dem_elevations)
-        max_elevation = np.nanmax(dem_elevations)
-        return np.linspace(
-            min_elevation, max_elevation, self.__config.data()["n_subgrid_levels"]
-        )
+        from scipy import stats
+
+        q1 = np.nanpercentile(dem_elevations, 25)
+        q3 = np.nanpercentile(dem_elevations, 75)
+        iqr = q3 - q1
+
+        start_elev = q1 - 1.5 * iqr
+        end_elev = q3 + 1.5 * iqr
+
+        if method == "linear":
+            return np.linspace(
+                start_elev, end_elev, self.__config.data()["n_subgrid_levels"]
+            )
+        elif method == "normal":
+            dist = stats.norm(
+                loc=(start_elev + end_elev) / 2, scale=(end_elev - start_elev) / 6
+            )
+            return dist.ppf(
+                np.linspace(0.01, 0.99, self.__config.data()["n_subgrid_levels"])
+            )
+        else:
+            msg = f"Invalid phi method: {method}"
+            raise ValueError(msg)
 
     @staticmethod
     def __subset_raster_arrays_to_stencil(

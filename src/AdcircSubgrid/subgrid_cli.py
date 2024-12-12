@@ -42,9 +42,57 @@ def initialize_preprocessor_parser(subparsers) -> None:  # noqa: ANN001
     Args:
         subparsers: The subparsers object
     """
-    prep_parser = subparsers.add_parser("prep", help="Preprocessor help")
+    prep_parser = subparsers.add_parser(
+        "prep", help="Process data into subgrid variables"
+    )
     prep_parser.add_argument("config", help="Path to the yaml configuration file")
     prep_parser.set_defaults(func=run_preprocessor)
+
+
+def initialize_inspection_parser(subparsers) -> None:  # noqa: ANN001
+    """
+    Initialize the inspection parser
+
+    Args:
+        subparsers: The subparsers object
+    """
+    insp_parser = subparsers.add_parser(
+        "inspect", help="Inspect subgrid variables for a node"
+    )
+    insp_parser.add_argument(
+        "--filename", help="Name of the subgrid netCDF file", type=str, required=True
+    )
+    insp_parser.add_argument("--show", help="Show the plot", action="store_true")
+    insp_parser.add_argument(
+        "--save", help="Save the plot to a file", type=str, default=None
+    )
+    insp_parser.add_argument(
+        "--node", help="Node number to inspect", type=int, default=None, required=True
+    )
+    insp_parser.add_argument(
+        "--basis", help="Basis for plotting (wse or phi) (default=phi)", type=str
+    )
+    insp_parser.add_argument(
+        "--index-base",
+        help="Index base (0 [ie. netCDF] or 1 [ie. ADCIRC]) (default=0)",
+        type=int,
+        default=0,
+    )
+    insp_parser.set_defaults(func=run_inspection)
+
+
+def run_inspection(args: argparse.Namespace) -> None:
+    """
+    Run the subgrid inspection
+
+    Args:
+        args: An argparse.Namespace object
+    """
+    from .node_inspector import node_inspector
+
+    node_inspector(
+        args.filename, args.node, args.basis, args.show, args.save, args.index_base
+    )
 
 
 def initialize_postprocessor_parser(subparsers) -> None:  # noqa: ANN001
@@ -67,6 +115,7 @@ def cli_main() -> None:
     parser = argparse.ArgumentParser(description="Adcirc Subgrid Processor")
     subparsers = parser.add_subparsers(help="Sub-command help")
     initialize_preprocessor_parser(subparsers)
+    initialize_inspection_parser(subparsers)
     initialize_postprocessor_parser(subparsers)
 
     args = parser.parse_args()

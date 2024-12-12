@@ -40,7 +40,6 @@ class SubgridData:
         self.__c_f = np.zeros((self.__node_count, self.__phi_count))
         self.__c_bf = np.zeros((self.__node_count, self.__phi_count))
         self.__c_adv = np.zeros((self.__node_count, self.__phi_count))
-        self.__vertex_list = np.zeros(self.__node_count, dtype=int)
         self.__vertex_flag = np.zeros(self.__node_count, dtype=int)
 
     def node_count(self) -> int:
@@ -142,6 +141,31 @@ class SubgridData:
         """
         return self.__vertex_flag
 
+    def get_vertex(self, vertex: int) -> dict:
+        """
+        Get the output data for a single vertex
+
+        Args:
+            vertex: The vertex number
+
+        Returns:
+            The output data for the vertex in a dictionary
+        """
+        if vertex < 0 or vertex >= self.__node_count:
+            msg = f"Invalid vertex number: {vertex}"
+            raise ValueError(msg)
+
+        return {
+            "resident": bool(self.__vertex_flag[vertex] == 1),
+            "phi": self.__phi_set,
+            "water_level": self.__water_level[vertex],
+            "wet_water_depth": self.__wet_water_depth[vertex],
+            "wet_total_depth": self.__wet_total_depth[vertex],
+            "c_f": self.__c_f[vertex],
+            "c_bf": self.__c_bf[vertex],
+            "c_adv": self.__c_adv[vertex],
+        }
+
     def set_data(
         self,
         vertex_flag: np.ndarray,
@@ -228,7 +252,14 @@ class SubgridData:
         self.__vertex_flag[vertex] = 1
         if self.__interpolation_method == "linear":
             self.__interp_linear(
-                vertex, water_levels, wet_fraction, wet_water_depth, wet_total_depth, c_f, c_bf, c_adv
+                vertex,
+                water_levels,
+                wet_fraction,
+                wet_water_depth,
+                wet_total_depth,
+                c_f,
+                c_bf,
+                c_adv,
             )
         else:
             msg = f"Invalid interpolation method: {self.__interpolation_method}"

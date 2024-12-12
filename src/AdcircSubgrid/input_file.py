@@ -15,6 +15,9 @@ SUBGRID_SCHEMA = Schema(
         Optional("n_phi_levels", default=11): Use(
             int
         ),  # Number of phi levels (default: 11)
+        Optional("phi_level_distribution", default="linear"): And(
+            Use(str), lambda x: x in ["linear", "normal"]
+        ),  # Phi level distribution (linear or log)
         "dem": And(
             Use(str), os.path.exists
         ),  # Digital elevation model filename. (GDAL-readable formats are supported)
