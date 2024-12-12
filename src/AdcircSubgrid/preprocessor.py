@@ -134,10 +134,10 @@ class SubgridPreprocessor:
         """
         from .subgrid_output_file import SubgridOutputFile
 
-        logger.info(f"Writing output to {self.__config.data()["output"]['filename']}")
-        SubgridOutputFile.write(
-            self.__output, self.__config.data()["output"]["filename"]
-        )
+        filename = self.__config.data()["output"]["filename"]
+
+        logger.info(f"Writing output to {filename}")
+        SubgridOutputFile.write(self.__output, filename)
 
     def __generate_raster_windows(
         self, window_size: int, overlap: float
@@ -630,7 +630,8 @@ class SubgridPreprocessor:
                 )
             )
         else:
-            msg = f"Invalid phi method: {self.__config.data()["options"]["subgrid_level_distribution"]}"
+            dist_name = self.__config.data()["options"]["subgrid_level_distribution"]
+            msg = f"Invalid phi method: {dist_name}"
             raise ValueError(msg)
 
         return levels
