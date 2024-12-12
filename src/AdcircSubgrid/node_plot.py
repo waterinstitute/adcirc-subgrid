@@ -1,10 +1,17 @@
 import logging
 
+import numpy as np
+
 logger = logging.getLogger(__name__)
 
 
 def node_plot(
-    filename: str, node: int, basis: str, show: bool, save: str, index_type: int = 1
+    filename: str,
+    node: int,
+    basis: str,
+    show: bool,
+    save_filename: str,
+    index_type: int = 1,
 ) -> None:
     """
     Plot the subgrid variables for a node
@@ -14,7 +21,7 @@ def node_plot(
         node: The node number to plot
         basis: The basis for plotting. Either wse or phi
         show: Whether to show the plot
-        save: The name of the file to save the plot to
+        save_filename: The name of the file to save the plot to
         index_type: The type of indexing to use (one-based or zero-based)
     """
     import matplotlib.pyplot as plt
@@ -22,38 +29,14 @@ def node_plot(
     from .subgrid_output_file import SubgridOutputFile
 
     subgrid_data = SubgridOutputFile.read(filename)
-
-    # Note that ADCIRC uses 1-based indexing for nodes, so we need to
-    # subtract 1 to get the correct index
-    if index_type == 1:
-        node_index = node - 1
-    elif index_type == 0:
-        node_index = node
-    else:
-        logger.error(f"Invalid index type: {index_type}")
-        return
-
+    node_index = __get_node_index(index_type, node)
     vertex_data = subgrid_data.get_vertex(node_index)
 
     if not vertex_data["resident"]:
         logger.error(f"Node '{node_index}' is not resident in the subgrid")
         return
 
-    if basis == "phi":
-        x_basis = vertex_data["phi"]
-        x_basis_label = "Phi"
-    elif basis == "wse":
-        x_basis = vertex_data["water_level"]
-        x_basis_label = "Water Level (m)"
-    else:
-        logger.error(f"Invalid basis: {basis}")
-        return
-
-    # If we have more than 100 phi levels, we won't use a marker
-    if len(x_basis) > 100:
-        plot_marker = None
-    else:
-        plot_marker = "o"
+    x_basis, x_basis_label, plot_marker = __get_x_axis(basis, vertex_data)
 
     fig, ax = plt.subplots(2, 2, figsize=(12, 8))
     ax[0, 0].plot(x_basis, vertex_data["wet_water_depth"], marker=plot_marker)
@@ -84,4 +67,62 @@ def node_plot(
     fig.suptitle(f"Node {node_index} Subgrid Variables")
 
     plt.tight_layout()
-    plt.show()
+
+    if save_filename:
+        plt.savefig(save_filename)
+
+    if show:
+        plt.show()
+
+
+def __get_x_axis(basis: str, vertex_data: dict) -> tuple[np.ndarray, str, str]:
+    """
+    Get the x-axis data for the plot based on the selected basis
+
+    Args:
+        basis: The basis for plotting. Either wse or phi
+        vertex_data: The vertex data
+
+    Returns:
+        The x-axis data, the x-axis label, and the plot marker
+    """
+    if basis == "phi":
+        x_basis = vertex_data["phi"]
+        x_basis_label = "Phi"
+    elif basis == "wse":
+        x_basis = vertex_data["water_level"]
+        x_basis_label = "Water Level (m)"
+    else:
+        msg = "Basis must be either 'wse' or 'phi'"
+        raise ValueError(msg)
+
+    # If we have more than 100 phi levels, we won't use a marker
+    if len(x_basis) > 100:
+        plot_marker = None
+    else:
+        plot_marker = "o"
+
+    return x_basis, x_basis_label, plot_marker
+
+
+def __get_node_index(index_type: int, node: int) -> int:
+    """
+    Get the node index based on the index type
+
+    Args:
+        index_type: The type of indexing to use (0 or 1)
+        node: The node number
+
+    Returns:
+        The node index
+    """
+    # Note that ADCIRC uses 1-based indexing for nodes, so we need to
+    # subtract 1 to get the correct index
+    if index_type == 1:
+        node_index = node - 1
+    elif index_type == 0:
+        node_index = node
+    else:
+        msg = "Index type must be either 0 (zero-based) or 1 (one-based)"
+        raise ValueError(msg)
+    return node_index
