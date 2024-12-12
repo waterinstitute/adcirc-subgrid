@@ -44,17 +44,17 @@ class SubgridPreprocessor:
         """
         self.__config = config
         self.__max_memory = max_memory
-        self.__adcirc_mesh = Mesh(config.data()["adcirc_mesh"])
-        self.__lulc_lut = LookupTable(config.data()["manning_lookup"])
-        self.__dem_raster = Raster(config.data()["dem"])
+        self.__adcirc_mesh = Mesh(config.data()["input"]["adcirc_mesh"])
+        self.__lulc_lut = LookupTable(config.data()["input"]["manning_lookup"])
+        self.__dem_raster = Raster(config.data()["input"]["dem"])
         self.__lulc_raster = Raster(
-            config.data()["land_cover"], lookup_table=self.__lulc_lut
+            config.data()["input"]["land_cover"], lookup_table=self.__lulc_lut
         )
         self.__check_raster_projection()
         self.__output = SubgridData(
             self.__adcirc_mesh.num_nodes(),
-            self.__config.data()["n_subgrid_levels"],
-            self.__config.data()["n_phi_levels"],
+            self.__config.data()["options"]["n_subgrid_levels"],
+            self.__config.data()["options"]["n_phi_levels"],
         )
 
         self.__processing_windows = self.__generate_raster_windows(
@@ -63,12 +63,12 @@ class SubgridPreprocessor:
 
         logger.info(
             "Subgrid parameters will be computed on {} levels".format(
-                self.__config.data()["n_subgrid_levels"]
+                self.__config.data()["options"]["n_subgrid_levels"]
             )
         )
         logger.info(
             "Subgrid parameters will be written to {} phi levels".format(
-                self.__config.data()["n_phi_levels"]
+                self.__config.data()["options"]["n_phi_levels"]
             )
         )
 
@@ -134,8 +134,10 @@ class SubgridPreprocessor:
         """
         from .subgrid_output_file import SubgridOutputFile
 
-        logger.info(f"Writing output to {self.__config.data()['output_filename']}")
-        SubgridOutputFile.write(self.__output, self.__config.data()["output_filename"])
+        logger.info(f"Writing output to {self.__config.data()["output"]['filename']}")
+        SubgridOutputFile.write(
+            self.__output, self.__config.data()["output"]["filename"]
+        )
 
     def __generate_raster_windows(
         self, window_size: int, overlap: float
@@ -182,7 +184,7 @@ class SubgridPreprocessor:
         node_index, node_count = self.__find_nodes_in_window()
 
         progress = ProgressBar(
-            node_count, self.__config.data()["progress_bar_increment"], logger
+            node_count, self.__config.data()["output"]["progress_bar_increment"], logger
         )
 
         for window_idx, window in enumerate(self.__processing_windows):
@@ -295,9 +297,7 @@ class SubgridPreprocessor:
         Returns:
             A dictionary with the subgrid variables
         """
-        wse_levels = self.__generate_calculation_intervals(
-            self.__config.data()["phi_level_distribution"], subset_data["dem"]
-        )
+        wse_levels = self.__generate_calculation_intervals(subset_data["dem"])
 
         wet_level_counts, wet_masks, total_pixels = self.__compute_wet_pixel_mask(
             subset_data["dem"], wse_levels
@@ -588,13 +588,12 @@ class SubgridPreprocessor:
         return dp_wet_agg, dp_tot_agg, wet_depth_levels
 
     def __generate_calculation_intervals(
-        self, method: str, dem_elevations: np.ndarray
+        self, dem_elevations: np.ndarray
     ) -> np.ndarray:
         """
         Generate the calculation intervals for the water surface elevation
 
         Args:
-            method: The method to use for generating the intervals (linear or normal)
             dem_elevations: The DEM elevations
 
         Returns:
@@ -602,27 +601,39 @@ class SubgridPreprocessor:
         """
         from scipy import stats
 
+        # TODO: I think there are a lot of interesting things we could do here.
+        #       it wouldn't be that hard to compute the wet levels on an overly
+        #       fine grid and back out the exact % of wet the subgrid element is
+        #       How much it matters is probably an unknown
+
         q1 = np.nanpercentile(dem_elevations, 25)
         q3 = np.nanpercentile(dem_elevations, 75)
         iqr = q3 - q1
-
         start_elev = q1 - 1.5 * iqr
         end_elev = q3 + 1.5 * iqr
 
-        if method == "linear":
-            return np.linspace(
-                start_elev, end_elev, self.__config.data()["n_subgrid_levels"]
+        if self.__config.data()["options"]["subgrid_level_distribution"] == "linear":
+            levels = np.linspace(
+                start_elev,
+                end_elev,
+                self.__config.data()["options"]["n_subgrid_levels"],
             )
-        elif method == "normal":
+        elif self.__config.data()["options"]["subgrid_level_distribution"] == "normal":
+            std_dev = np.nanstd(dem_elevations)
             dist = stats.norm(
-                loc=(start_elev + end_elev) / 2, scale=(end_elev - start_elev) / 6
+                loc=(start_elev + end_elev) / 2,
+                scale=std_dev / self.__config.data()["options"]["distribution_factor"],
             )
-            return dist.ppf(
-                np.linspace(0.01, 0.99, self.__config.data()["n_subgrid_levels"])
+            levels = dist.ppf(
+                np.linspace(
+                    0.01, 0.99, self.__config.data()["options"]["n_subgrid_levels"]
+                )
             )
         else:
-            msg = f"Invalid phi method: {method}"
+            msg = f"Invalid phi method: {self.__config.data()["options"]["subgrid_level_distribution"]}"
             raise ValueError(msg)
+
+        return levels
 
     @staticmethod
     def __subset_raster_arrays_to_stencil(

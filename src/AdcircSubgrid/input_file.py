@@ -4,29 +4,26 @@ from schema import And, Optional, Schema, Use
 
 SUBGRID_SCHEMA = Schema(
     {
-        "output_filename": Use(str),  # Output filename (.nc)
-        "adcirc_mesh": Use(str),  # Adcirc mesh filename (Note: Currently ascii only)
-        "manning_lookup": Use(
-            str
-        ),  # Manning lookup table filename or 'ccap' to use the default CCAP lookup table
-        Optional("n_subgrid_levels", default=11): Use(
-            int
-        ),  # Number of subgrid levels (default: 11)
-        Optional("n_phi_levels", default=11): Use(
-            int
-        ),  # Number of phi levels (default: 11)
-        Optional("phi_level_distribution", default="linear"): And(
-            Use(str), lambda x: x in ["linear", "normal"]
-        ),  # Phi level distribution (linear or log)
-        "dem": And(
-            Use(str), os.path.exists
-        ),  # Digital elevation model filename. (GDAL-readable formats are supported)
-        "land_cover": Use(
-            str
-        ),  # Land cover filename (GDAL-readable formats are supported)
-        Optional("progress_bar_increment", default=10): Use(
-            int
-        ),  # Increment for the progress bar (default: 10)
+        "input": {
+            "adcirc_mesh": Use(str),
+            "manning_lookup": Use(str),
+            "dem": And(Use(str), os.path.exists),
+            "land_cover": And(Use(str), os.path.exists),
+        },
+        "output": {
+            "filename": Use(str),
+            Optional("progress_bar_increment", default=10): Use(int),
+        },
+        "options": {
+            Optional("n_subgrid_levels", default=11): Use(int),
+            Optional("n_phi_levels", default=11): Use(int),
+            Optional("subgrid_level_distribution", default="linear"): And(
+                Use(str), lambda x: x in ["linear", "normal"]
+            ),
+            Optional("distribution_factor", default=1.0): And(
+                Use(float), lambda x: x > 0.0
+            ),
+        },
     }
 )
 
