@@ -103,9 +103,9 @@ class SubgridPreprocessor:
             The overlap size in raster units
         """
         x_min = self.__dem_raster.bounds()[0]
-        y_min = self.__dem_raster.bounds()[3]
+        y_min = self.__dem_raster.bounds()[1]
         x_max = self.__dem_raster.bounds()[2]
-        y_max = self.__dem_raster.bounds()[1]
+        y_max = self.__dem_raster.bounds()[3]
 
         overlap_size = 0
         for poly in self.__adcirc_mesh.subarea_polygons().polygons():
@@ -117,8 +117,10 @@ class SubgridPreprocessor:
             ):
                 continue
 
-            overlap_size = max(overlap_size, poly.bounds[2] - poly.bounds[0])
-            overlap_size = max(overlap_size, poly.bounds[3] - poly.bounds[1])
+            dp = 1.1 * max(
+                poly.bounds[2] - poly.bounds[0], poly.bounds[3] - poly.bounds[1]
+            )
+            overlap_size = max(overlap_size, dp)
 
         return overlap_size
 
@@ -296,7 +298,7 @@ class SubgridPreprocessor:
 
         # If there isn't enough data to compute the subgrid variables, then we
         # duck out here and continue to the next node
-        if subset["dem"].size < 2:
+        if subset["dem"].size < 10:
             logger.warning(
                 f"Not enough data to compute subgrid variables for node {node_index}"
             )
@@ -398,6 +400,7 @@ class SubgridPreprocessor:
         )
 
         return {
+            "node": node_index,
             "i_start": i_start,
             "j_start": j_start,
             "i_end": i_end,
@@ -428,16 +431,6 @@ class SubgridPreprocessor:
         depth_info = self.__compute_water_depth_at_levels(
             subset_data["data"]["dem"], wse_levels
         )
-
-        if subset_data["node"] == 325:
-            import matplotlib.pyplot as plt
-
-            f, ax = plt.subplots(1, 1, figsize=(10, 10))
-            for i in range(len(wse_levels)):
-                ax.imshow(depth_info["depth"][i, :, :], cmap="jet", vmin=0, vmax=10)
-                ax.set_title(f"Depth for WL {wse_levels[i]}")
-                f.canvas.draw()
-                plt.pause(0.25)
 
         default_cf = SubgridPreprocessor.__compute_default_cf(
             subset_data["data"]["manning_n"]
@@ -516,12 +509,10 @@ class SubgridPreprocessor:
         """
         from scipy import stats
 
-        start_elev = (
-            np.nanmin(dem_elevations) - 2 * SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
-        )
-        end_elev = (
-            np.nanmax(dem_elevations) + 2 * SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
-        )
+        dz_dry = SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH * 2
+
+        start_elev = np.nanmin(dem_elevations) - dz_dry
+        end_elev = np.nanmax(dem_elevations) + dz_dry
         std_dev = np.nanstd(dem_elevations)
 
         dist = stats.norm(

@@ -238,13 +238,13 @@ class Raster:
         overlap = int(overlap_width / self.__x_resolution / 2)
 
         windows = []
-        for i in range(0, self.__i_size - window_size + overlap, window_size):
+        for i in range(0, self.__i_size, window_size - overlap):
             region_i_start = max(0, i - overlap)
             region_i_end = min(self.__i_size, i + window_size + overlap)
             region_x_start = self.__x_start + region_i_start * self.__x_resolution
             region_x_end = self.__x_start + region_i_end * self.__x_resolution
 
-            for j in range(0, self.__j_size - window_size + overlap, window_size):
+            for j in range(0, self.__j_size, window_size - overlap):
                 region_j_start = max(0, j - overlap)
                 region_j_end = min(self.__j_size, j + window_size + overlap)
                 region_y_start = self.__y_start + region_j_start * self.__y_resolution
