@@ -178,7 +178,7 @@ class Raster:
             data = np.where(data == self.__nodata_value, np.nan, data)
 
         x_pt = np.linspace(region.xll(), region.xur(), region.i_size())
-        y_pt = np.linspace(region.yll(), region.yur(), region.j_size())
+        y_pt = np.linspace(region.yur(), region.yll(), region.j_size())
 
         # Return a dataset with the appropriate coordinates and rio transform
         out_ds = xr.Dataset(
@@ -187,13 +187,14 @@ class Raster:
             },
             coords={"lon": x_pt, "lat": y_pt},
         )
+
         out_ds.rio.set_spatial_dims("lon", "lat", inplace=True)
         out_ds.rio.write_crs(self.__handle.crs, inplace=True)
         transform_this = rio.transform.from_bounds(
             region.xll(),
-            region.yur(),
-            region.xur(),
             region.yll(),
+            region.xur(),
+            region.yur(),
             region.i_size(),
             region.j_size(),
         )

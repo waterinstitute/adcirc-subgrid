@@ -358,3 +358,16 @@ class RasterRegion:
             The rasterio window for the region
         """
         return Window(self.__i_start, self.__j_start, self.i_size(), self.j_size())
+
+    def affine_transform(self) -> np.ndarray:
+        """
+        Get the affine transform for the region
+
+        Returns:
+            The affine transform for the region
+        """
+        from rasterio import transform
+
+        return transform.from_bounds(
+            *self.__polygon.bounds, self.i_size(), self.j_size()
+        )

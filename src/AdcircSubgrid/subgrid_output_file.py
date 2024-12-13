@@ -25,52 +25,66 @@ class SubgridOutputFile:
             output_file: The output file to write the data to
         """
         with Dataset(output_file, "w", format="NETCDF4") as dataset:
-            dataset.createDimension("node", sg_data.node_count())
-            dataset.createDimension("phi", sg_data.phi_count())
+            dataset.createDimension("numNode", sg_data.node_count())
+            dataset.createDimension("numPhi", sg_data.phi_count())
 
             binary_vertex_list = dataset.createVariable(
-                "binaryVertexList", "i4", ("node",), zlib=True, complevel=2
+                "binaryVertexList", "i4", ("numNode",), zlib=True, complevel=2
             )
             binary_vertex_list.description = "Vertex subgrid residency flag"
 
-            phi = dataset.createVariable("phi", "f4", ("phi",), zlib=True, complevel=2)
+            phi = dataset.createVariable(
+                "phiSet", "f4", ("numPhi",), zlib=True, complevel=2
+            )
             phi.description = "Percent wet for the subgrid element"
 
             wet_fraction_elevation = dataset.createVariable(
-                "wetFractionDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+                "wetFractionVertex",
+                "f4",
+                ("numNode", "numPhi"),
+                zlib=True,
+                complevel=2,
             )
             wet_fraction_elevation.description = (
                 "Water surface elevation for the phi wet fraction"
             )
 
             wet_tot_wat_depth_vertex = dataset.createVariable(
-                "wetTotWatDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+                "wetTotWatDepthVertex",
+                "f4",
+                ("numNode", "numPhi"),
+                zlib=True,
+                complevel=2,
             )
             wet_tot_wat_depth_vertex.description = (
                 "Depth sum divided by the number of wet pixels in the subgrid"
             )
 
             grid_tot_wat_depth_vertex = dataset.createVariable(
-                "gridTotWatDepthVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+                "gridTotWatDepthVertex",
+                "f4",
+                ("numNode", "numPhi"),
+                zlib=True,
+                complevel=2,
             )
             grid_tot_wat_depth_vertex.description = (
                 "Depth sum divided by the total number of pixels in the subgrid"
             )
 
             cf_vertex = dataset.createVariable(
-                "cfVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+                "cfVertex", "f4", ("numNode", "numPhi"), zlib=True, complevel=2
             )
             cf_vertex.description = "Quadratic friction coefficient for subgrid"
 
             cbf_vertex = dataset.createVariable(
-                "cmfVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+                "cmfVertex", "f4", ("numNode", "numPhi"), zlib=True, complevel=2
             )
             cbf_vertex.description = (
                 "Quadratic friction correction coefficient for subgrid"
             )
 
             cadv_vertex = dataset.createVariable(
-                "cadvVertex", "f4", ("node", "phi"), zlib=True, complevel=2
+                "cadvVertex", "f4", ("numNode", "numPhi"), zlib=True, complevel=2
             )
             cadv_vertex.description = "Advection correction coefficient for subgrid"
 
@@ -132,8 +146,8 @@ class SubgridOutputFile:
         """
         with Dataset(filename, "r") as dataset:
             # Get the dimensioning information
-            node_count = dataset.dimensions["node"].size
-            phi_count = dataset.dimensions["phi"].size
+            node_count = dataset.dimensions["numNode"].size
+            phi_count = dataset.dimensions["numPhi"].size
             sg_count = phi_count
 
             # Note that we set the sg_count and phi_count equal since
@@ -142,8 +156,8 @@ class SubgridOutputFile:
 
             # Read the data from the file
             vertex_flag = dataset.variables["binaryVertexList"][:].data
-            phi = dataset.variables["phi"][:].data
-            water_levels = dataset.variables["wetFractionDepthVertex"][:].data
+            phi = dataset.variables["phiSet"][:].data
+            water_levels = dataset.variables["wetFractionVertex"][:].data
             wet_water_depth = dataset.variables["wetTotWatDepthVertex"][:].data
             wet_total_depth = dataset.variables["gridTotWatDepthVertex"][:].data
             c_f = dataset.variables["cfVertex"][:].data
