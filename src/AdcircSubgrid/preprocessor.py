@@ -259,25 +259,14 @@ class SubgridPreprocessor:
             window_data: The data from the raster window
             node_index: The index of the node to process
         """
-        plot_diagnostic = False
-
         subset_data = self.__subset_raster_data_for_node(
             node_index, window, window_data
         )
 
-        if subset_data is not None:
-            subgrid_variables = self.__compute_subgrid_variables_at_node(subset_data)
-
-            if plot_diagnostic:
-                self.__plot_diagnostics(
-                    window,
-                    subset_data["sub_window"],
-                    subgrid_variables,
-                )
-
-            return subgrid_variables
-        else:
+        if subset_data is None:
             return None
+        else:
+            return self.__compute_subgrid_variables_at_node(subset_data)
 
     def __subset_raster_data_for_node(
         self, node_index: int, window: RasterRegion, window_data: dict
@@ -440,6 +429,16 @@ class SubgridPreprocessor:
             subset_data["data"]["dem"], wse_levels
         )
 
+        if subset_data["node"] == 325:
+            import matplotlib.pyplot as plt
+
+            f, ax = plt.subplots(1, 1, figsize=(10, 10))
+            for i in range(len(wse_levels)):
+                ax.imshow(depth_info["depth"][i, :, :], cmap="jet", vmin=0, vmax=10)
+                ax.set_title(f"Depth for WL {wse_levels[i]}")
+                f.canvas.draw()
+                plt.pause(0.25)
+
         default_cf = SubgridPreprocessor.__compute_default_cf(
             subset_data["data"]["manning_n"]
         )
@@ -534,8 +533,8 @@ class SubgridPreprocessor:
             np.linspace(0.01, 0.99, self.__config.data()["options"]["n_subgrid_levels"])
         )
 
-        calc_levels[0] = start_elev if calc_levels[0] < start_elev else calc_levels[0]
-        calc_levels[-1] = end_elev if calc_levels[-1] > end_elev else calc_levels[-1]
+        calc_levels[0] = start_elev if start_elev < calc_levels[0] else calc_levels[0]
+        calc_levels[-1] = end_elev if end_elev > calc_levels[-1] else calc_levels[-1]
 
         return calc_levels
 
@@ -721,78 +720,3 @@ class SubgridPreprocessor:
             "cf": cf,
             "cf_avg": cf_avg,
         }
-
-    @staticmethod
-    def __plot_diagnostics(
-        window: RasterRegion,
-        sub_window: dict,
-        data: dict,
-    ) -> None:
-        """
-        Quick diagnostic plot to check the results of the calculations
-
-        Args:
-            window: The raster window
-            sub_window: The sub-window for the node
-            data: The data dictionary containing the subgrid variables for the node
-        """
-        import matplotlib.pyplot as plt
-
-        # xg, yg = np.meshgrid(
-        #     np.linspace(window.xll(), window.xur(), sub_window["i_size"]),
-        #     np.linspace(window.yll(), window.yur(), sub_window["j_size"]),
-        # )
-
-        fig, ax = plt.subplots(2, 3, figsize=(10, 10))
-        ax[0, 0].plot(data["wse_levels"], data["wet_fraction"])
-        ax[0, 0].set_xlabel("Water Level (m)")
-        ax[0, 0].set_ylabel("Wet Area (%)")
-        ax[0, 0].set_xlim([min(data["wse_levels"]), max(data["wse_levels"])])
-        ax[0, 0].grid()
-
-        ax[0, 1].plot(data["wse_levels"], data["dp_wet"], label="Wet Depth")
-        ax[0, 1].plot(data["wse_levels"], data["dp_tot"], label="Total Depth")
-        ax[0, 1].set_xlabel("Water Level (m)")
-        ax[0, 1].set_ylabel("Mean Water Depth (m)")
-        ax[0, 1].set_xlim([min(data["wse_levels"]), max(data["wse_levels"])])
-        ax[0, 1].grid()
-        ax[0, 1].legend()
-
-        ax[0, 2].plot(data["wse_levels"], data["cf"])
-        ax[0, 2].set_xlabel("Water Level (m)")
-        ax[0, 2].set_ylabel("Quadratic Friction Coefficient (c_f)")
-        ax[0, 2].set_xlim([min(data["wse_levels"]), max(data["wse_levels"])])
-        ax[0, 2].grid()
-
-        ax[1, 0].plot(data["wse_levels"], data["c_bf"])
-        ax[1, 0].set_xlabel("Water Level (m)")
-        ax[1, 0].set_ylabel("Correction (Bottom Friction)")
-        ax[1, 0].set_xlim([min(data["wse_levels"]), max(data["wse_levels"])])
-        ax[1, 0].grid()
-
-        ax[1, 1].plot(data["wse_levels"], data["c_adv"])
-        ax[1, 1].set_xlabel("Water Level (m)")
-        ax[1, 1].set_ylabel("Correction (Advection)")
-        ax[1, 1].set_xlim([min(data["wse_levels"]), max(data["wse_levels"])])
-        ax[1, 1].grid()
-
-        # Convert the wet mask to a binary mask
-        # wm = np.where(data["wet_masks"][-1] > 0, 1, 0)
-        # f0 = ax[1, 0].pcolormesh(xg, yg, wm, vmin=0, vmax=1, cmap="jet")
-        # ax[1, 0].set_title(f"Pixel Mask for WL {wse_levels[-1]}")
-        # fig.colorbar(f0, ax=ax[1, 0], orientation="horizontal")
-        #
-        # f1 = ax[1, 1].pcolormesh(
-        #     xg, yg, data["dp_2d"][-1], vmin=-3, vmax=10, cmap="jet"
-        # )
-        # ax[1, 1].set_title(f"Depth for WL {wse_levels[-1]}")
-        # fig.colorbar(f1, ax=ax[1, 1], orientation="horizontal")
-        #
-        # f2 = ax[1, 2].pcolormesh(
-        #     xg, yg, data["cf_2d"][-1], vmin=0.0, vmax=0.2, cmap="jet"
-        # )
-        # ax[1, 2].set_title(f"CF for WL {wse_levels[-1]}")
-        # fig.colorbar(f2, ax=ax[1, 2], orientation="horizontal")
-
-        plt.tight_layout()
-        plt.show()
