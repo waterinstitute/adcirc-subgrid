@@ -440,6 +440,10 @@ class SubgridPreprocessor:
             subset_data["data"]["dem"], wse_levels
         )
 
+        default_cf = SubgridPreprocessor.__compute_default_cf(
+            subset_data["data"]["manning_n"]
+        )
+
         cf_info = self.__compute_cf_at_levels(
             depth_info["depth"],
             subset_data["data"]["manning_n"],
@@ -457,12 +461,11 @@ class SubgridPreprocessor:
         )
 
         c_bf = self.__compute_bottom_friction_correction(
-            depth_info["depth_avg_wet"], rv, subset_data["data"]["manning_n"]
+            depth_info["depth_avg_wet"], rv
         )
 
-        cf_info["cf_avg"][np.isnan(cf_info["cf_avg"])] = self.__compute_default_cf(
-            subset_data["data"]["manning_n"]
-        )
+        cf_info["cf_avg"][np.isnan(cf_info["cf_avg"])] = default_cf
+        c_bf[np.isnan(c_bf)] = default_cf
 
         return {
             "wse_levels": wse_levels,
@@ -514,8 +517,12 @@ class SubgridPreprocessor:
         """
         from scipy import stats
 
-        start_elev = np.nanmin(dem_elevations)
-        end_elev = np.nanmax(dem_elevations)
+        start_elev = (
+            np.nanmin(dem_elevations) - 2 * SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
+        )
+        end_elev = (
+            np.nanmax(dem_elevations) + 2 * SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
+        )
         std_dev = np.nanstd(dem_elevations)
 
         dist = stats.norm(
@@ -523,9 +530,14 @@ class SubgridPreprocessor:
             scale=std_dev / self.__config.data()["options"]["distribution_factor"],
         )
 
-        return dist.ppf(
+        calc_levels = dist.ppf(
             np.linspace(0.01, 0.99, self.__config.data()["options"]["n_subgrid_levels"])
         )
+
+        calc_levels[0] = start_elev if calc_levels[0] < start_elev else calc_levels[0]
+        calc_levels[-1] = end_elev if calc_levels[-1] > end_elev else calc_levels[-1]
+
+        return calc_levels
 
     def __generate_calculation_intervals_linear(
         self, dem_elevations: np.ndarray
@@ -600,7 +612,8 @@ class SubgridPreprocessor:
 
     @staticmethod
     def __compute_bottom_friction_correction(
-        dp: np.ndarray, rv: np.ndarray, manning: np.ndarray
+        dp: np.ndarray,
+        rv: np.ndarray,
     ) -> np.ndarray:
         """
         Compute the bottom friction correction for the subgrid
@@ -608,15 +621,11 @@ class SubgridPreprocessor:
         Args:
             dp: The mean water depth at each pixel per water level
             rv: The R_v at each water
-            manning: The Manning's n values
 
         Returns:
             The bottom friction correction as a 1D vector
         """
-        bf = dp * (rv**2.0)
-        bf[np.isnan(bf)] = SubgridPreprocessor.__compute_default_cf(manning)
-
-        return bf
+        return np.multiply(dp, np.square(rv))
 
     @staticmethod
     def __compute_advection_correction(
@@ -637,10 +646,13 @@ class SubgridPreprocessor:
         Returns:
             The advection correction as a 1D vector
         """
-        one_over_dp_avg = np.reciprocal(
-            dp_avg, out=np.zeros_like(dp_avg), where=dp_avg != 0
+        c_adv = np.multiply(
+            np.reciprocal(dp_avg, out=np.zeros_like(dp_avg), where=dp_avg != 0),
+            np.multiply(
+                np.nanmean(np.divide(np.square(depth), cf), axis=(1, 2)), np.square(rv)
+            ),
         )
-        c_adv = one_over_dp_avg * np.nanmean(depth**2 / cf, axis=(1, 2)) * rv**2
+
         c_adv[np.isnan(c_adv)] = 1.0
 
         return c_adv
@@ -655,10 +667,9 @@ class SubgridPreprocessor:
         """
         from scipy.constants import g
 
-        return (
-            g
-            * np.nanmean(np.square(manning))
-            / np.cbrt(SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH)
+        return np.divide(
+            np.multiply(g, np.nanmean(np.square(manning))),
+            np.cbrt(SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH),
         )
 
     @staticmethod
@@ -681,7 +692,7 @@ class SubgridPreprocessor:
         return np.divide(
             dp_avg,
             np.nanmean(
-                dp ** (3 / 2) * cf ** (-1 / 2),
+                np.multiply(np.pow(dp, 1.5), np.sqrt(np.reciprocal(cf))),
                 axis=(1, 2),
             ),
         )
@@ -703,7 +714,7 @@ class SubgridPreprocessor:
         """
         from scipy.constants import g
 
-        cf = (g * manning_values**2) / (depth ** (1 / 3))
+        cf = np.divide(np.multiply(g, np.square(manning_values)), np.cbrt(depth))
         cf_avg = np.nanmean(cf, axis=(1, 2))
 
         return {
