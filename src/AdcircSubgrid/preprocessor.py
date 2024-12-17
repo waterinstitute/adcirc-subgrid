@@ -149,7 +149,7 @@ class SubgridPreprocessor:
         filename = self.__config.data()["output"]["filename"]
 
         logger.info(f"Writing output to {filename}")
-        SubgridOutputFile.write(self.__output, filename)
+        SubgridOutputFile.write(self.__output, self.__adcirc_mesh, filename)
 
     def __find_nodes_in_window(self) -> tuple[np.ndarray, int]:
         """

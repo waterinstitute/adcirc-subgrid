@@ -25,14 +25,21 @@ def run_preprocessor(args: argparse.Namespace) -> None:
     preprocessor.write()
 
 
-def run_postprocessor(args: argparse.Namespace) -> None:
+def run_mesh_plot(args: argparse.Namespace) -> None:
     """
     Run the subgrid postprocessor
     Args:
         args: An argparse.Namespace object
     """
-    msg = "Postprocessor not implemented"
-    raise NotImplementedError(msg)
+    from .mesh_plot import plot_mesh
+
+    plot_mesh(
+        args.filename,
+        args.water_level,
+        args.show,
+        args.output_filename,
+        args.mesh_file,
+    )
 
 
 def initialize_preprocessor_parser(subparsers) -> None:  # noqa: ANN001
@@ -106,15 +113,34 @@ def run_node_plot(args: argparse.Namespace) -> None:
     )
 
 
-def initialize_postprocessor_parser(subparsers) -> None:  # noqa: ANN001
+def initialize_mesh_plot_parser(subparsers) -> None:  # noqa: ANN001
     """
-    Initialize the postprocessor parser
+    Initialize the mesh plot parser
 
     Args:
         subparsers: The subparsers object
     """
-    post_parser = subparsers.add_parser("post", help="Postprocessor help")
-    post_parser.set_defaults(func=run_postprocessor)
+    mesh_plot_parser = subparsers.add_parser("plot-mesh", help="Mesh plot help")
+    mesh_plot_parser.add_argument(
+        "filename", help="Name of the subgrid netCDF file", type=str
+    )
+    mesh_plot_parser.add_argument(
+        "--water-level", help="Level to plot", type=float, default=0.0
+    )
+    mesh_plot_parser.add_argument(
+        "--mesh-file",
+        help="ADCIRC mesh file for plotting if not in the subgrid file",
+        type=str,
+        default=None,
+    )
+    mesh_plot_parser.add_argument("--show", help="Show the plot", action="store_true")
+    mesh_plot_parser.add_argument(
+        "--output-filename",
+        help="Output filename for the plot",
+        type=str,
+        default=None,
+    )
+    mesh_plot_parser.set_defaults(func=run_mesh_plot)
 
 
 def cli_main() -> None:
@@ -127,7 +153,6 @@ def cli_main() -> None:
     subparsers = parser.add_subparsers(help="Sub-command help")
     initialize_preprocessor_parser(subparsers)
     initialize_node_plot_parser(subparsers)
-    initialize_postprocessor_parser(subparsers)
-
+    initialize_mesh_plot_parser(subparsers)
     args = parser.parse_args()
     args.func(args)

@@ -2,6 +2,7 @@ import netCDF4
 import numpy as np
 from netCDF4 import Dataset
 
+from .mesh import Mesh
 from .subgrid_data import SubgridData
 
 
@@ -16,16 +17,19 @@ class SubgridOutputFile:
         """
 
     @staticmethod
-    def write(sg_data: SubgridData, output_file: str) -> None:
+    def write(sg_data: SubgridData, mesh: Mesh, output_file: str) -> None:
         """
         Write the output data to a file
 
         Args:
             sg_data: The SubgridData object to write to the file
+            mesh: The Mesh object to use for the output
             output_file: The output file to write the data to
         """
         with Dataset(output_file, "w", format="NETCDF4") as dataset:
-            dataset.createDimension("numNode", sg_data.node_count())
+            # Write the mesh data to the netCDF file
+            SubgridOutputFile.__write_mesh(mesh, dataset)
+
             dataset.createDimension("numPhi", sg_data.phi_count())
 
             binary_vertex_list = dataset.createVariable(
@@ -132,6 +136,47 @@ class SubgridOutputFile:
             cadv_vertex_out = sg_data.c_adv()
             cadv_vertex_out[mask2d] = netCDF4.default_fillvals["f4"]
             cadv_vertex[:, :] = cadv_vertex_out
+
+    @staticmethod
+    def __write_mesh(mesh: Mesh, dataset: Dataset) -> None:
+        """
+        Write the mesh data to the netCDF file
+
+        Args:
+            mesh: The Mesh object to write to the file
+            dataset: The netCDF dataset object to write to
+        """
+        dataset.createDimension("numNode", mesh.num_nodes())
+        dataset.createDimension("numElem", mesh.num_elements())
+        dataset.createDimension("numVert", 3)
+
+        node_x = dataset.createVariable("x", "f8", ("numNode",), zlib=True, complevel=2)
+        node_x.description = "Node x-coordinate"
+        node_x.units = "degrees east"
+        node_x.axis = "X"
+
+        node_y = dataset.createVariable("y", "f8", ("numNode",), zlib=True, complevel=2)
+        node_y.description = "Node y-coordinate"
+        node_y.units = "degrees north"
+        node_y.axis = "Y"
+
+        node_z = dataset.createVariable(
+            "depth", "f8", ("numNode",), zlib=True, complevel=2
+        )
+        node_z.description = "Node depth"
+        node_z.units = "meters"
+        node_z.axis = "Z"
+
+        connectivity = dataset.createVariable(
+            "connectivity", "i4", ("numElem", "numVert"), zlib=True, complevel=2
+        )
+        connectivity.description = "Element connectivity"
+
+        # Write the mesh data to the netCDF file
+        node_x[:] = mesh.nodes()[:, 0]
+        node_y[:] = mesh.nodes()[:, 1]
+        node_z[:] = mesh.nodes()[:, 2]
+        connectivity[:, :] = mesh.elements()
 
     @staticmethod
     def read(filename: str) -> SubgridData:
