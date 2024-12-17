@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 import numpy as np
@@ -12,6 +13,8 @@ from .lookup_table import LookupTable
 from .raster_region import RasterRegion
 
 gdal.UseExceptions()
+
+logger = logging.getLogger(__name__)
 
 
 class Raster:
@@ -261,5 +264,7 @@ class Raster:
                         region_y_end,
                     )
                 )
+
+        logger.info(f"Raster will be read using {len(windows)} windows")
 
         return windows

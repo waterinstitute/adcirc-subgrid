@@ -3,8 +3,12 @@ import warnings
 from typing import Optional
 
 import numpy as np
+from numba import njit
+from scipy.constants import g as g_constant
 
+from .calculation_levels import CalculationLevels
 from .input_file import InputFile
+from .jit_helpers import nan_mean_jit, nan_sum_jit, reciprocal_jit
 from .lookup_table import LookupTable
 from .mesh import Mesh
 from .progress_bar import ProgressBar
@@ -34,13 +38,13 @@ class SubgridPreprocessor:
     # Minimum quadratic friction coefficient
     MIN_CF = 0.0025
 
-    def __init__(self, config: InputFile, max_memory: int = 64) -> None:
+    def __init__(self, config: InputFile, max_memory: int) -> None:
         """
         Initialize the SubgridPreprocessor class
 
         Args:
             config: Configuration dictionary (parsed from YAML)
-            max_memory: Maximum memory in MB to use for a single raster window
+            max_memory: Approximate maximum memory in MB to use for a single raster window
         """
         self.__config = config
         self.__max_memory = max_memory
@@ -55,6 +59,12 @@ class SubgridPreprocessor:
             self.__adcirc_mesh.num_nodes(),
             self.__config.data()["options"]["n_subgrid_levels"],
             self.__config.data()["options"]["n_phi_levels"],
+        )
+        self.__calculation_levels = CalculationLevels(
+            self.__config.data()["options"]["subgrid_level_distribution"],
+            self.__config.data()["options"]["n_subgrid_levels"],
+            self.__config.data()["options"]["distribution_factor"],
+            self.DRY_PIXEL_WATER_DEPTH,
         )
 
         self.__processing_windows = self.__dem_raster.generate_windows(
@@ -426,37 +436,37 @@ class SubgridPreprocessor:
         Returns:
             A dictionary with the subgrid variables
         """
-        wse_levels = self.__generate_calculation_intervals(subset_data["data"]["dem"])
+        wse_levels = self.__calculation_levels.get_levels(subset_data["data"]["dem"])
 
         depth_info = self.__compute_water_depth_at_levels(
             subset_data["data"]["dem"], wse_levels
         )
 
         default_cf = SubgridPreprocessor.__compute_default_cf(
-            subset_data["data"]["manning_n"]
+            subset_data["data"]["manning_n"], SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
         )
 
-        cf_info = self.__compute_cf_at_levels(
+        cf, cf_avg = self.__compute_cf_at_levels(
             depth_info["depth"],
             subset_data["data"]["manning_n"],
         )
 
         rv = self.__compute_rv_at_levels(
-            depth_info["depth"], depth_info["depth_avg_wet"], cf_info["cf"]
+            depth_info["depth"], depth_info["depth_avg_wet"], cf
         )
 
         c_adv = self.__compute_advection_correction(
             depth_info["depth_avg_wet"],
             depth_info["depth"],
             rv,
-            cf_info["cf"],
+            cf,
         )
 
         c_bf = self.__compute_bottom_friction_correction(
             depth_info["depth_avg_wet"], rv
         )
 
-        cf_info["cf_avg"][np.isnan(cf_info["cf_avg"])] = default_cf
+        cf_avg[np.isnan(cf_avg)] = default_cf
         c_bf[np.isnan(c_bf)] = default_cf
 
         return {
@@ -464,95 +474,10 @@ class SubgridPreprocessor:
             "wet_fraction": depth_info["wet_fraction"],
             "dp_wet": depth_info["depth_avg_wet"],
             "dp_tot": depth_info["depth_avg_tot"],
-            "c_f": cf_info["cf_avg"],
+            "c_f": cf_avg,
             "c_adv": c_adv,
             "c_bf": c_bf,
         }
-
-    def __generate_calculation_intervals(
-        self, dem_elevations: np.ndarray
-    ) -> np.ndarray:
-        """
-        Generate the calculation intervals for the water surface elevation
-
-        Args:
-            dem_elevations: The DEM elevations
-
-        Returns:
-            An array of water surface elevation levels
-        """
-        # TODO: I think there are a lot of interesting things we could do here.
-        #       it wouldn't be that hard to compute the wet levels on an overly
-        #       fine grid and back out the exact % of wet the subgrid element is
-        #       How much it matters is probably an unknown
-
-        if self.__config.data()["options"]["subgrid_level_distribution"] == "linear":
-            return self.__generate_calculation_intervals_linear(dem_elevations)
-        elif self.__config.data()["options"]["subgrid_level_distribution"] == "normal":
-            return self.__generate_calculation_intervals_normal(dem_elevations)
-        else:
-            dist_name = self.__config.data()["options"]["subgrid_level_distribution"]
-            msg = f"Invalid phi method: {dist_name}"
-            raise ValueError(msg)
-
-    def __generate_calculation_intervals_normal(
-        self, dem_elevations: np.ndarray
-    ) -> np.ndarray:
-        """
-        Generate the calculation intervals for the water surface elevation using a normal distribution
-
-        Args:
-            dem_elevations: The DEM elevations
-
-        Returns:
-            An array of water surface elevation levels
-        """
-        from scipy import stats
-
-        dz_dry = SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH * 2
-
-        start_elev = np.nanmin(dem_elevations) - dz_dry
-        end_elev = np.nanmax(dem_elevations) + dz_dry
-        std_dev = np.nanstd(dem_elevations)
-
-        dist = stats.norm(
-            loc=(start_elev + end_elev) / 2,
-            scale=std_dev / self.__config.data()["options"]["distribution_factor"],
-        )
-
-        calc_levels = dist.ppf(
-            np.linspace(0.01, 0.99, self.__config.data()["options"]["n_subgrid_levels"])
-        )
-
-        calc_levels[0] = start_elev if start_elev < calc_levels[0] else calc_levels[0]
-        calc_levels[-1] = end_elev if end_elev > calc_levels[-1] else calc_levels[-1]
-
-        return calc_levels
-
-    def __generate_calculation_intervals_linear(
-        self, dem_elevations: np.ndarray
-    ) -> np.ndarray:
-        """
-        Generate the calculation intervals for the water surface elevation using a linear distribution
-
-        Args:
-            dem_elevations: The DEM elevations
-
-        Returns:
-            An array of water surface elevation levels
-        """
-        q1 = np.nanpercentile(dem_elevations, 25)
-        q3 = np.nanpercentile(dem_elevations, 75)
-        iqr = q3 - q1
-
-        start_elev = q1 - 1.5 * iqr
-        end_elev = q3 + 1.5 * iqr
-
-        return np.linspace(
-            start_elev,
-            end_elev,
-            self.__config.data()["options"]["n_subgrid_levels"],
-        )
 
     @staticmethod
     def __compute_water_depth_at_levels(
@@ -574,8 +499,8 @@ class SubgridPreprocessor:
             wet_depth_levels < SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
         ] = np.nan
         wet_mask = np.isfinite(wet_depth_levels)
-        wet_counts = np.nansum(np.isfinite(wet_depth_levels), axis=(1, 2))
-        wet_depth_sum = np.nansum(wet_depth_levels, axis=(1, 2))
+        wet_counts = nan_sum_jit(np.isfinite(wet_depth_levels))
+        wet_depth_sum = nan_sum_jit(wet_depth_levels)
         total_pixels = np.isfinite(dem_values).sum()
 
         # Compute the mean wet depth and the mean depth
@@ -601,6 +526,7 @@ class SubgridPreprocessor:
         }
 
     @staticmethod
+    @njit
     def __compute_bottom_friction_correction(
         dp: np.ndarray,
         rv: np.ndarray,
@@ -615,9 +541,10 @@ class SubgridPreprocessor:
         Returns:
             The bottom friction correction as a 1D vector
         """
-        return np.multiply(dp, np.square(rv))
+        return dp * rv
 
     @staticmethod
+    @njit
     def __compute_advection_correction(
         dp_avg: np.ndarray,
         depth: np.ndarray,
@@ -636,33 +563,28 @@ class SubgridPreprocessor:
         Returns:
             The advection correction as a 1D vector
         """
-        c_adv = np.multiply(
-            np.reciprocal(dp_avg, out=np.zeros_like(dp_avg), where=dp_avg != 0),
-            np.multiply(
-                np.nanmean(np.divide(np.square(depth), cf), axis=(1, 2)), np.square(rv)
-            ),
-        )
-
+        c_adv = reciprocal_jit(dp_avg) * nan_mean_jit(depth**2 / cf) * rv
         c_adv[np.isnan(c_adv)] = 1.0
 
         return c_adv
 
     @staticmethod
-    def __compute_default_cf(manning: np.ndarray) -> float:
+    @njit
+    def __compute_default_cf(manning: np.ndarray, dry_pixel_depth: float) -> float:
         """
         Compute the default friction coefficient for the subgrid
+
+        Args:
+            manning: The Manning's n values
+            dry_pixel_depth: The dry pixel water depth
 
         Returns:
             The default friction coefficient
         """
-        from scipy.constants import g
-
-        return np.divide(
-            np.multiply(g, np.nanmean(np.square(manning))),
-            np.cbrt(SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH),
-        )
+        return g_constant * np.nanmean(manning**2) / dry_pixel_depth ** (1.0 / 3.0)
 
     @staticmethod
+    @njit
     def __compute_rv_at_levels(
         dp: np.ndarray,
         dp_avg: np.ndarray,
@@ -679,19 +601,14 @@ class SubgridPreprocessor:
         Returns:
             The R_v at each water level as a 2D array
         """
-        return np.divide(
-            dp_avg,
-            np.nanmean(
-                np.multiply(np.pow(dp, 1.5), np.sqrt(np.reciprocal(cf))),
-                axis=(1, 2),
-            ),
-        )
+        return (dp_avg / nan_mean_jit(dp**1.5 * np.sqrt(1.0 / cf))) ** 2
 
     @staticmethod
+    @njit
     def __compute_cf_at_levels(
         depth: np.ndarray,
         manning_values: np.ndarray,
-    ) -> dict:
+    ) -> tuple:
         """
         Compute the friction coefficient at each water level
 
@@ -702,12 +619,7 @@ class SubgridPreprocessor:
         Returns:
             The friction coefficient at each water level
         """
-        from scipy.constants import g
+        cf = g_constant * manning_values**2 / depth ** (1.0 / 3.0)
+        cf_avg = nan_mean_jit(cf)
 
-        cf = np.divide(np.multiply(g, np.square(manning_values)), np.cbrt(depth))
-        cf_avg = np.nanmean(cf, axis=(1, 2))
-
-        return {
-            "cf": cf,
-            "cf_avg": cf_avg,
-        }
+        return cf, cf_avg

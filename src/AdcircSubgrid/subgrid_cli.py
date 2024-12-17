@@ -20,7 +20,7 @@ def run_preprocessor(args: argparse.Namespace) -> None:
 
     logger.info(f"Running preprocessor with config file {args.config}")
 
-    preprocessor = SubgridPreprocessor(InputFile(args.config))
+    preprocessor = SubgridPreprocessor(InputFile(args.config), args.window_memory)
     preprocessor.process()
     preprocessor.write()
 
@@ -46,6 +46,13 @@ def initialize_preprocessor_parser(subparsers) -> None:  # noqa: ANN001
         "prep", help="Process data into subgrid variables"
     )
     prep_parser.add_argument("config", help="Path to the yaml configuration file")
+    prep_parser.add_argument(
+        "--window-memory",
+        help="Raster window memory limit (approx) in mb (default=64)",
+        type=int,
+        default=64,
+        required=False,
+    )
     prep_parser.set_defaults(func=run_preprocessor)
 
 
