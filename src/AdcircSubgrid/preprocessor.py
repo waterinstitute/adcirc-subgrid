@@ -469,6 +469,9 @@ class SubgridPreprocessor:
         cf_avg[np.isnan(cf_avg)] = default_cf
         c_bf[np.isnan(c_bf)] = default_cf
 
+        cf_avg[cf_avg < self.MIN_CF] = self.MIN_CF
+        c_bf[c_bf < self.MIN_CF] = self.MIN_CF
+
         return {
             "wse_levels": wse_levels,
             "wet_fraction": depth_info["wet_fraction"],

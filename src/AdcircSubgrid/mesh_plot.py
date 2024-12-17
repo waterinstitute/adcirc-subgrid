@@ -72,11 +72,11 @@ def plot_mesh(  # noqa: PLR0915
     wf_ticks = np.linspace(0, 1, 10)
     wf_levels = np.linspace(0, 1, 100)
 
-    cf_ticks = np.linspace(0, 0.2, 10)
-    cf_levels = np.linspace(0, 0.2, 100)
+    cf_ticks = np.linspace(0.0025, 0.2, 10)
+    cf_levels = np.linspace(0.0025, 0.2, 100)
 
-    c_mf_ticks = np.linspace(0, 0.2, 10)
-    c_mf_levels = np.linspace(0, 0.2, 100)
+    c_mf_ticks = np.linspace(0.0025, 0.2, 10)
+    c_mf_levels = np.linspace(0.0025, 0.2, 100)
 
     c_adv_ticks = np.linspace(0.8, 1.2, 10)
     c_adv_levels = np.linspace(0.8, 1.2, 100)
@@ -203,6 +203,17 @@ def interpolate_phi_data(data: dict, water_level: float) -> dict:
             out_data["c_mf"][i] = np.nan
             out_data["c_adv"][i] = np.nan
             out_data["pct_wet"][i] = np.nan
+            continue
+        elif water_level > wl[-1]:
+            out_data["water_levels"][i] = water_level
+            out_data["wet_depth"][i] = data["wet_depth"][i, -1] + water_level - wl[-1]
+            out_data["total_depth"][i] = (
+                data["total_depth"][i, -1] + water_level - wl[-1]
+            )
+            out_data["cf"][i] = 0.0025
+            out_data["c_mf"][i] = 0.0025
+            out_data["c_adv"][i] = 1.0
+            out_data["pct_wet"][i] = 1.0
             continue
 
         pct_interp = np.interp(water_level, wl, percent_levels)
