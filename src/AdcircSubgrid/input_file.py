@@ -18,7 +18,7 @@ SUBGRID_SCHEMA = Schema(
             Optional("n_subgrid_levels", default=11): Use(int),
             Optional("n_phi_levels", default=11): Use(int),
             Optional("subgrid_level_distribution", default="linear"): And(
-                Use(str), lambda x: x in ["linear", "normal"]
+                Use(str), lambda x: x in ["linear", "histogram"]
             ),
             Optional("distribution_factor", default=1.0): And(
                 Use(float), lambda x: x > 0.0

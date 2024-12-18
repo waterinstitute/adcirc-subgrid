@@ -159,13 +159,17 @@ def plot_mesh(  # noqa: PLR0915
     ax[2, 1].set_ylabel("Latitude")
     fig.colorbar(f6, ax=ax[2, 1], orientation="vertical", ticks=c_adv_ticks)
 
+    fig.suptitle(f"Subgrid Data at Water Level: {level:.2f} m")
+
     plt.tight_layout()
+
+    if output_filename is not None:
+        plt.savefig(output_filename, dpi=300)
 
     if show:
         plt.show()
 
-    if output_filename is not None:
-        plt.savefig(output_filename, dpi=300)
+    plt.close()
 
 
 def interpolate_phi_data(data: dict, water_level: float) -> dict:

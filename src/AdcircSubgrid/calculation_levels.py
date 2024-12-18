@@ -1,4 +1,8 @@
+import logging
+
 import numpy as np
+
+log = logging.getLogger(__name__)
 
 
 class CalculationLevels:
@@ -44,15 +48,17 @@ class CalculationLevels:
 
         if self.__level_distribution == "linear":
             return self.__generate_calculation_intervals_linear(dem_elevations)
-        elif self.__level_distribution == "normal":
-            return self.__generate_calculation_intervals_normal(dem_elevations)
-        return None
+        elif self.__level_distribution == "histogram":
+            return self.__generate_calculation_intervals_histogram(dem_elevations)
+        else:
+            msg = "Invalid distribution type"
+            raise ValueError(msg)
 
-    def __generate_calculation_intervals_normal(
+    def __generate_calculation_intervals_histogram(
         self, dem_elevations: np.ndarray
     ) -> np.ndarray:
         """
-        Generate the calculation intervals for the water surface elevation using a normal distribution
+        Generate the calculation intervals for the water surface elevation using a histogram distribution
 
         Args:
             dem_elevations: The DEM elevations
@@ -60,25 +66,10 @@ class CalculationLevels:
         Returns:
             An array of water surface elevation levels
         """
-        from scipy import stats
+        dem_elevations_flat = dem_elevations.flatten()
+        dem_elevations_flat = dem_elevations_flat[~np.isnan(dem_elevations_flat)]
 
-        dz_dry = self.__dry_pixel_depth * 2
-
-        start_elev = np.nanmin(dem_elevations) - dz_dry
-        end_elev = np.nanmax(dem_elevations) + dz_dry
-        std_dev = np.nanstd(dem_elevations)
-
-        dist = stats.norm(
-            loc=(start_elev + end_elev) / 2,
-            scale=std_dev / self.__distribution_factor,
-        )
-
-        calc_levels = dist.ppf(np.linspace(0.01, 0.99, self.__n_subgrid_levels))
-
-        calc_levels[0] = start_elev if start_elev < calc_levels[0] else calc_levels[0]
-        calc_levels[-1] = end_elev if end_elev > calc_levels[-1] else calc_levels[-1]
-
-        return calc_levels
+        return np.histogram(dem_elevations_flat, bins=self.__n_subgrid_levels)[1][:-1]
 
     def __generate_calculation_intervals_linear(
         self, dem_elevations: np.ndarray
