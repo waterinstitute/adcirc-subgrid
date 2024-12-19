@@ -426,7 +426,7 @@ class SubgridPreprocessor:
     def __compute_subgrid_variables_at_node(
         self,
         subset_data: dict,
-    ) -> dict:
+    ) -> Optional[dict]:
         """
         Compute the subgrid variables at the node
 
@@ -441,6 +441,9 @@ class SubgridPreprocessor:
         depth_info = self.__compute_water_depth_at_levels(
             subset_data["data"]["dem"], wse_levels
         )
+
+        if depth_info is None:
+            return None
 
         default_cf = SubgridPreprocessor.__compute_default_cf(
             subset_data["data"]["manning_n"], SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
@@ -486,7 +489,7 @@ class SubgridPreprocessor:
     def __compute_water_depth_at_levels(
         dem_values: np.ndarray,
         wse_levels: np.ndarray,
-    ) -> dict:
+    ) -> Optional[dict]:
         """
         Compute the water depth at each water level
 
@@ -505,6 +508,9 @@ class SubgridPreprocessor:
         wet_counts = nan_sum_jit(np.isfinite(wet_depth_levels))
         wet_depth_sum = nan_sum_jit(wet_depth_levels)
         total_pixels = np.isfinite(dem_values).sum()
+
+        if total_pixels == 0:
+            return None
 
         # Compute the mean wet depth and the mean depth
         dp_wet_agg = np.divide(
