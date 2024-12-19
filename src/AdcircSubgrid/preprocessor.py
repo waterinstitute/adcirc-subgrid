@@ -500,6 +500,10 @@ class SubgridPreprocessor:
         Returns:
             The mean pixel water depth at each water level
         """
+        total_pixels = np.isfinite(dem_values).sum()
+        if total_pixels == 0:
+            return None
+
         wet_depth_levels = wse_levels[:, np.newaxis, np.newaxis] - dem_values
         wet_depth_levels[
             wet_depth_levels < SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
@@ -507,10 +511,6 @@ class SubgridPreprocessor:
         wet_mask = np.isfinite(wet_depth_levels)
         wet_counts = nan_sum_jit(np.isfinite(wet_depth_levels))
         wet_depth_sum = nan_sum_jit(wet_depth_levels)
-        total_pixels = np.isfinite(dem_values).sum()
-
-        if total_pixels == 0:
-            return None
 
         # Compute the mean wet depth and the mean depth
         dp_wet_agg = np.divide(
