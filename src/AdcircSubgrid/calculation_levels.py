@@ -69,7 +69,26 @@ class CalculationLevels:
         dem_elevations_flat = dem_elevations.flatten()
         dem_elevations_flat = dem_elevations_flat[~np.isnan(dem_elevations_flat)]
 
-        return np.histogram(dem_elevations_flat, bins=self.__n_subgrid_levels)[1][:-1]
+        min_dem = np.nanmin(dem_elevations_flat) - 2 * self.__dry_pixel_depth
+        max_dem = np.nanmax(dem_elevations_flat) + 2 * self.__dry_pixel_depth
+
+        levels = np.histogram(dem_elevations_flat, bins=self.__n_subgrid_levels - 2)[1][
+            :-1
+        ]
+
+        if levels[0] > min_dem:
+            levels = np.insert(levels, 0, min_dem)
+        else:
+            levels_int = levels[0] + (levels[0] - levels[1])
+            levels = np.insert(levels, 1, levels_int)
+
+        if levels[-1] < max_dem:
+            levels = np.append(levels, max_dem)
+        else:
+            levels_int = levels[-1] + (levels[-1] - levels[-2])
+            levels = np.append(levels, levels_int)
+
+        return levels
 
     def __generate_calculation_intervals_linear(
         self, dem_elevations: np.ndarray
