@@ -35,10 +35,14 @@ def run_mesh_plot(args: argparse.Namespace) -> None:
 
     plot_mesh(
         args.filename,
+        args.variable,
         args.water_level,
         args.show,
         args.output_filename,
+        args.range,
+        args.bbox,
         args.mesh_file,
+        args.colorbar,
     )
 
 
@@ -132,6 +136,30 @@ def initialize_mesh_plot_parser(subparsers) -> None:  # noqa: ANN001
         help="ADCIRC mesh file for plotting if not in the subgrid file",
         type=str,
         default=None,
+    )
+    mesh_plot_parser.add_argument(
+        "--variable",
+        help="Variable to plot (percent_wet, wet_depth, total_depth, cf, c_mf, c_adv)",
+        type=str,
+        default="percent_wet",
+        choices=["percent_wet", "wet_depth", "total_depth", "cf", "c_mf", "c_adv"],
+    )
+    mesh_plot_parser.add_argument(
+        "--bbox",
+        help="Bounding box for the plot (minx, miny, maxx, maxy)",
+        type=float,
+        nargs=4,
+        default=None,
+    )
+    mesh_plot_parser.add_argument(
+        "--range",
+        help="Range for the plot (min, max)",
+        type=float,
+        nargs=2,
+        default=None,
+    )
+    mesh_plot_parser.add_argument(
+        "--colorbar", help="Name of the colorbar", type=str, default="jet"
     )
     mesh_plot_parser.add_argument("--show", help="Show the plot", action="store_true")
     mesh_plot_parser.add_argument(
