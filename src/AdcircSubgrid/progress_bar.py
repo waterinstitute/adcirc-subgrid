@@ -20,7 +20,7 @@ class ProgressBar:
         """
         self.__progress = tqdm(
             total=total,
-            ncols=50,
+            ncols=100,
             file=open(os.devnull, "w"),  # noqa:SIM115
         )
         self.__interval = interval / 100.0
