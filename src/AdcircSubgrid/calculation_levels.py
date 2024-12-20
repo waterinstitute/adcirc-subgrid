@@ -45,6 +45,9 @@ class CalculationLevels:
         #       it wouldn't be that hard to compute the wet levels on an overly
         #       fine grid and back out the exact % of wet the subgrid element is
         #       How much it matters is probably an unknown
+        if np.isfinite(dem_elevations).sum() <= 0:
+            # Return dummy data since we won't use it anyway 
+            return np.linspace(-1, 1, self.__n_subgrid_levels)
 
         if self.__level_distribution == "linear":
             return self.__generate_calculation_intervals_linear(dem_elevations)
