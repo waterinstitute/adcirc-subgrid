@@ -22,7 +22,7 @@ pip install .
 ```
 Note that the package requires GDAL to be installed on your system. It will likely be much easier to create a conda environment with the necessary dependencies:
 ```bash
-conda create -n adcirc-subgrid -c conda-forge python=3 gdal geopandas pandas netcdf4 pyyaml numba scipy schema numpy shapely xarray pyproj matplotlib rasterio rioxarray
+conda create -n adcirc-subgrid -c conda-forge python=3 gdal geopandas pandas netcdf4 pyyaml numba scipy schema numpy shapely xarray pyproj matplotlib rasterio rioxarray tdqm
 ```
 
 ## Usage
@@ -51,8 +51,7 @@ options:
   n_phi_levels: 50 # Controls the number of phi levels between 0 and 1 where output is written
 
   # Control for the way the subgrid water levels are distributed
-  subgrid_level_distribution: normal # Either 'normal' or 'linear'
-  distribution_factor: 1.0 #  Use for a normal distribution as 'std_dev / distribution_factor'
+  subgrid_level_distribution: histogram # Either 'histogram' or 'linear'
 ```
 The code can then be run using the following command:
 ```bash
