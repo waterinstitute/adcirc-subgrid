@@ -164,7 +164,20 @@ class SubgridPreprocessor:
         for node_idx, poly in enumerate(
             self.__adcirc_mesh.subarea_polygons().polygons()
         ):
+            node_x = self.__adcirc_mesh.nodes()[node_idx][0]
+            node_y = self.__adcirc_mesh.nodes()[node_idx][1]
+
             for window_idx, window in enumerate(self.__processing_windows):
+                # Do the fast check - are we in the bounding box?
+                if (
+                    node_x < window.xll()
+                    or node_x > window.xur()
+                    or node_y < window.yll()
+                    or node_y > window.yur()
+                ):
+                    continue
+
+                # Now, do the more expensive check - are we in the polygon?
                 if window.contains(Polygon(poly)):
                     node_window_index[node_idx] = window_idx
                     nodes_found += 1
@@ -306,11 +319,15 @@ class SubgridPreprocessor:
             node_mask, sub_window, window_data["dem"], window_data["manning_n"]
         )
 
+        # Count the number of valid pixels in the dem and manning arrays
+        valid_pixels_dem = np.isfinite(subset["dem"]).sum()
+        valid_pixels_manning = np.isfinite(subset["manning_n"]).sum()
+
         # If there isn't enough data to compute the subgrid variables, then we
         # duck out here and continue to the next node
-        if subset["dem"].size < 10:
+        if valid_pixels_dem < 10 or valid_pixels_manning < 10:
             logger.warning(
-                f"Not enough data to compute subgrid variables for node {node_index}"
+                f"Node {node_index} has too few valid pixels to compute subgrid variables"
             )
             return None
 
