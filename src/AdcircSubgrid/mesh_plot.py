@@ -294,5 +294,10 @@ def get_plotting_data(filename: str, subgrid_variable: str) -> dict:
             "active": dataset.variables["binaryVertexList"][:],
             "percent_wet": dataset.variables["phiSet"][:],
             "water_levels": dataset.variables["wetFractionVertex"][:],
+            "wet_depth": dataset.variables["wetTotWatDepthVertex"][:],
+            "total_depth": dataset.variables["gridTotWatDepthVertex"][:],
+            "cf": dataset.variables["cfVertex"][:],
+            "c_mf": dataset.variables["cmfVertex"][:],
+            "c_adv": dataset.variables["cadvVertex"][:],
             "data": dataset.variables[variable_name_map[subgrid_variable]][:],
         }
