@@ -19,7 +19,6 @@ def run_preprocessor(args: argparse.Namespace) -> None:
     from .preprocessor import SubgridPreprocessor
 
     logger.info(f"Running preprocessor with config file {args.config}")
-
     preprocessor = SubgridPreprocessor(InputFile(args.config), args.window_memory)
     preprocessor.process()
     preprocessor.write()

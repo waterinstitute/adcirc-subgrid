@@ -1,0 +1,18 @@
+input:
+  adcirc_mesh: ./fort.14
+  manning_lookup: ccap # Either a lookup file or 'ccap' to use the default table
+  dem: ./galveston_13_mhw_20073.TIF
+  land_cover: ./2021_CCAP_J1139301_4326.tif
+
+output:
+  filename: subgrid_updated.nc
+  progress_bar_increment: 5
+
+options:
+  # Control for the number of subgrid levels for calculation and output
+  n_subgrid_levels: 50 # Controls the number of levels the calculation is performed on
+  n_phi_levels: 50 # Controls the number of phi levels between 0 and 1 where output is written
+  existing_subgrid: ./subgrid.nc # add an existing subgrid file to build on
+
+  # Control for the way the subgrid water levels are distributed
+  subgrid_level_distribution: histogram # Either 'histogram' or 'linear'

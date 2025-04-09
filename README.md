@@ -57,3 +57,33 @@ The code can then be run using the following command:
 ```bash
 adcirc-subgrid prep input.yaml
 ```
+In order to create a subgrid input file for multiple areas you will have to run the prep code multiple times with a new
+yaml file, existing subgrid lookup table, and new dem and landcover datasets. The code will read in the existing table
+and add data for areas covered by the new datasets. If the new datasets overlap with existing subgrid areas, the existing
+areas will NOT be overwritten. Therefore, it is important to prioritize your datasets, with the best data being used first
+to build the subgrid lookup.
+
+Note: There is an additional line in the options section of the yaml that needs to be added to tell the code to read in an
+existing lookup table. The yaml format should be as follows:
+
+```yaml
+input:
+  adcirc_mesh: fort.14
+  manning_lookup: ccap # Either a lookup file or 'ccap' to use the default table
+  dem: All_Regions_v20240403_6m_m_4326_4_5.tif
+  land_cover: conus_2016_ccap_landcover_20200311_4326.tif
+
+output:
+  filename: subgrid_updated.nc
+  progress_bar_increment: 5
+
+options:
+  # Control for the number of subgrid levels for calculation and output
+  n_subgrid_levels: 50 # Controls the number of levels the calculation is performed on
+  n_phi_levels: 50 # Controls the number of phi levels between 0 and 1 where output is written
+  existing_subgrid: ./subgrid.nc # allows code to add to existing subgrid table
+
+  # Control for the way the subgrid water levels are distributed
+  subgrid_level_distribution: histogram # Either 'histogram' or 'linear'
+```
+Run the ```prep``` again as you did before, but with new yaml file.
