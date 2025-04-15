@@ -23,6 +23,7 @@ SUBGRID_SCHEMA = Schema(
             Optional("distribution_factor", default=1.0): And(
                 Use(float), lambda x: x > 0.0
             ),
+            Optional("existing_subgrid", default=None): And(Use(str), os.path.exists),
         },
     }
 )

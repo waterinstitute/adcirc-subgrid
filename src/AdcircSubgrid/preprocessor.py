@@ -15,6 +15,7 @@ from .progress_bar import ProgressBar
 from .raster import Raster
 from .raster_region import RasterRegion
 from .subgrid_data import SubgridData
+from .subgrid_output_file import SubgridOutputFile
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,7 @@ class SubgridPreprocessor:
         Args:
             config: Configuration dictionary (parsed from YAML)
             max_memory: Approximate maximum memory in MB to use for a single raster window
+            subgrid_table: Existing subgrid table to be added to
         """
         self.__config = config
         self.__max_memory = max_memory
@@ -55,11 +57,20 @@ class SubgridPreprocessor:
             config.data()["input"]["land_cover"], lookup_table=self.__lulc_lut
         )
         self.__check_raster_projection()
-        self.__output = SubgridData(
-            self.__adcirc_mesh.num_nodes(),
-            self.__config.data()["options"]["n_subgrid_levels"],
-            self.__config.data()["options"]["n_phi_levels"],
-        )
+
+        # Read the existing subgrid table if specified
+        if config.data()["options"]["existing_subgrid"] is None:
+            self.__output = SubgridData(
+                self.__adcirc_mesh.num_nodes(),
+                self.__config.data()["options"]["n_subgrid_levels"],
+                self.__config.data()["options"]["n_phi_levels"],
+            )
+        else:
+            subgrid_table = SubgridOutputFile.read(
+                config.data()["options"]["existing_subgrid"]
+            )
+            self.__output = subgrid_table
+
         self.__calculation_levels = CalculationLevels(
             self.__config.data()["options"]["subgrid_level_distribution"],
             self.__config.data()["options"]["n_subgrid_levels"],
@@ -164,24 +175,30 @@ class SubgridPreprocessor:
         for node_idx, poly in enumerate(
             self.__adcirc_mesh.subarea_polygons().polygons()
         ):
-            node_x = self.__adcirc_mesh.nodes()[node_idx][0]
-            node_y = self.__adcirc_mesh.nodes()[node_idx][1]
+            vertex_status = self.__output.vertex_flag()[node_idx]
 
-            for window_idx, window in enumerate(self.__processing_windows):
-                # Do the fast check - are we in the bounding box?
-                if (
-                    node_x < window.xll()
-                    or node_x > window.xur()
-                    or node_y < window.yll()
-                    or node_y > window.yur()
-                ):
-                    continue
+            # Skip nodes which have already been computed (i.e. from a prior run)
+            if vertex_status == 1:
+                continue
+            else:
+                node_x = self.__adcirc_mesh.nodes()[node_idx][0]
+                node_y = self.__adcirc_mesh.nodes()[node_idx][1]
 
-                # Now, do the more expensive check - are we in the polygon?
-                if window.contains(Polygon(poly)):
-                    node_window_index[node_idx] = window_idx
-                    nodes_found += 1
-                    break
+                for window_idx, window in enumerate(self.__processing_windows):
+                    # Do the fast check - are we in the bounding box?
+                    if (
+                        node_x < window.xll()
+                        or node_x > window.xur()
+                        or node_y < window.yll()
+                        or node_y > window.yur()
+                    ):
+                        continue
+
+                    # Now, do the more expensive check - are we in the polygon?
+                    if window.contains(Polygon(poly)):
+                        node_window_index[node_idx] = window_idx
+                        nodes_found += 1
+                        break
 
         logger.info(
             f"Found {nodes_found} of {self.__adcirc_mesh.num_nodes()} nodes "
