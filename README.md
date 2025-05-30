@@ -1,6 +1,5 @@
 # ADCIRC Subgrid Preprocessor
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Testing](https://github.com/waterinstitute/adcirc-subgrid/actions/workflows/pytest.yaml/badge.svg)](https://github.com/waterinstitute/adcirc-subgrid/actions/workflows/pytest.yaml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)[![Testing](https://github.com/waterinstitute/adcirc-subgrid/actions/workflows/pytest.yaml/badge.svg)](https://github.com/waterinstitute/adcirc-subgrid/actions/workflows/pytest.yaml)
 ![black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 The ADCIRC Subgrid Preprocessor is a Python package which generates the subgrid input file for ADCIRC. ADCIRC's subgrid
