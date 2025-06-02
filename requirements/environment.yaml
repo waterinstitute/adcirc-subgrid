@@ -1,0 +1,29 @@
+name: adcirc-subgrid
+platforms:
+  - linux-64
+  - linux-aarch64
+  - osx-64
+  - osx-arm64
+  - win-64
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pytest
+  - coverage
+  - gdal
+  - geopandas
+  - numba
+  - scipy
+  - netcdf4
+  - pyyaml
+  - pandas
+  - schema
+  - numpy
+  - shapely
+  - xarray
+  - pyproj
+  - matplotlib
+  - rasterio
+  - rioxarray
+  - pip

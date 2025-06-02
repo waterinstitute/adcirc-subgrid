@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.12"]
 
     steps:
       - uses: conda-incubator/setup-miniconda@v3
@@ -18,9 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install dependencies with conda
         run: |
-          conda create -n test-environment -c conda-forge python=${{matrix.python-version}} \
-              pytest coverage gdal geopandas pandas netcdf4 pyyaml numba scipy \
-              schema numpy shapely xarray pyproj matplotlib rasterio rioxarray
+          conda create -n test-environment --file requirements/adcirc-subgrid-conda-linux-64.yaml
       - name: Install AdcircSubgrid package
         run: conda run -n test-environment pip install -e .
       - name: Test with pytest
