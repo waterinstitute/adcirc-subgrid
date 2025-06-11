@@ -24,11 +24,17 @@ Note that the package requires GDAL to be installed on your system. It will like
 conda create -n adcirc-subgrid -c conda-forge python=3 gdal geopandas pandas netcdf4 pyyaml numba scipy schema numpy shapely xarray pyproj matplotlib rasterio rioxarray tdqm
 ```
 
+The conda solver, even with `libmamba` can sometimes take a while. For our CI environment, we use `conda-lock` to create a
+static environment file that can be used to quickly create the environment. You can do this by running:
+```bash
+conda install -n adcirc-subgrid --file ${repository_root}/requirements/adcirc-subgrid-conda-{os}-{arch}.yaml
+```
+
 ## Usage
 
 The package has multiple command line options which can be used to generate the subgrid file and examine the output.
 
-When creating the subgrid input file, the user must provide an ADCIRC mesh file, a Gdal-compatible DEM file, a land use
+When creating the subgrid input file, the user must provide an ADCIRC mesh file, a GDAL-compatible DEM file, a land use
 file, and the subgrid input file. Importantly, we currently recommend that all input files are in the WGS84 projection.
 
 The format of the yaml input file is as follows:
@@ -57,7 +63,7 @@ The code can then be run using the following command:
 adcirc-subgrid prep input.yaml
 ```
 In order to create a subgrid input file for multiple areas you will have to run the prep code multiple times with a new
-yaml file, existing subgrid lookup table, and new dem and landcover datasets. The code will read in the existing table
+yaml file, existing subgrid lookup table, and new DEM and landcover datasets. The code will read in the existing table
 and add data for areas covered by the new datasets. If the new datasets overlap with existing subgrid areas, the existing
 areas will NOT be overwritten. Therefore, it is important to prioritize your datasets, with the best data being used first
 to build the subgrid lookup.
