@@ -24,6 +24,12 @@ Note that the package requires GDAL to be installed on your system. It will like
 conda create -n adcirc-subgrid -c conda-forge python=3 gdal geopandas pandas netcdf4 pyyaml numba scipy schema numpy shapely xarray pyproj matplotlib rasterio rioxarray tdqm
 ```
 
+The conda solver, even with `libmamba` can sometimes take a while. For our CI environment, we use `conda-lock` to create a
+static environment file that can be used to quickly create the environment. You can do this by running:
+```bash
+conda install -n adcirc-subgrid --file ${repository_root}/requirements/adcirc-subgrid-conda-{os}-{arch}.yaml
+```
+
 ## Usage
 
 The package has multiple command line options which can be used to generate the subgrid file and examine the output.
