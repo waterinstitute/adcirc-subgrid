@@ -14,6 +14,7 @@
 from typing import Union
 
 import numpy as np
+from rasterio import transform
 from rasterio.windows import Window
 from shapely.geometry import Point, Polygon
 
@@ -379,8 +380,6 @@ class RasterRegion:
         Returns:
             The affine transform for the region
         """
-        from rasterio import transform
-
         return transform.from_bounds(
             *self.__polygon.bounds, self.i_size(), self.j_size()
         )

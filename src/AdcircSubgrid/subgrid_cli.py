@@ -14,11 +14,6 @@
 import argparse
 import logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s",
-)
-
 logger = logging.getLogger(__name__)
 
 
@@ -190,9 +185,27 @@ def cli_main() -> None:
     import argparse
 
     parser = argparse.ArgumentParser(description="Adcirc Subgrid Processor")
+    parser.add_argument("--verbose", help="Use verbose logging", action="store_true")
     subparsers = parser.add_subparsers(help="Sub-command help")
     initialize_preprocessor_parser(subparsers)
     initialize_node_plot_parser(subparsers)
     initialize_mesh_plot_parser(subparsers)
     args = parser.parse_args()
+
+    if args.verbose:
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format="[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s",
+        )
+
+        # In debug, numba and rasterio are a bit much
+        logging.getLogger("numba.core").setLevel(logging.INFO)
+        logging.getLogger("rasterio").setLevel(logging.INFO)
+
+    else:
+        logging.basicConfig(
+            level=logging.INFO,
+            format="[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s",
+        )
+
     args.func(args)
