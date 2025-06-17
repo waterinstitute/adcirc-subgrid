@@ -570,7 +570,7 @@ class SubgridPreprocessor:
             "c_f": cf_avg,
             "c_adv": c_adv,
             "c_bf": c_bf,
-            "man_avg": man_avg
+            "man_avg": man_avg,
         }
 
     @staticmethod
@@ -679,7 +679,7 @@ class SubgridPreprocessor:
             The default friction coefficient
         """
         return g_constant * np.nanmean(manning**2) / dry_pixel_depth ** (1.0 / 3.0)
-    
+
     @staticmethod
     @njit
     def __compute_man_avg(manning: np.ndarray) -> float:
@@ -688,11 +688,10 @@ class SubgridPreprocessor:
 
         Args:
             manning: The Manning's n values
-        
+
         Returns:
             The grid averaged Manning's n for a vertex area
         """
-
         return np.nanmean(manning)
 
     @staticmethod

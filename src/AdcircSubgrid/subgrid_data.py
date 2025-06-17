@@ -154,7 +154,7 @@ class SubgridData:
             The vertex flag values
         """
         return self.__vertex_flag
-    
+
     def man_avg(self) -> np.ndarray:
         """
         Return grid averaged Manning's n
