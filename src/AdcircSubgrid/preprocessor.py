@@ -16,7 +16,9 @@ import warnings
 from typing import Optional
 
 import numpy as np
+import rasterio as rio
 from numba import njit
+from rasterio import features
 from scipy.constants import g as g_constant
 
 from .calculation_levels import CalculationLevels
@@ -51,6 +53,21 @@ class SubgridPreprocessor:
 
     # Minimum quadratic friction coefficient
     MIN_CF = 0.0025
+
+    # Valid pixel counts
+    # These are the number of valid pixels required to proceed with the calc
+    N_VALID_PIXELS_DEM = (
+        10  # Minimum number of valid pixels in a sub area for the DEM raster
+    )
+    N_VALID_PIXELS_LULC = (
+        10  # Minimum number of valid pixels in a sub area for the LULC raster
+    )
+    N_UNIQUE_VALUES_DEM = (
+        5  # Minimum number of unique pixels in a sub area for the DEM raster
+    )
+    N_UNIQUE_VALUES_LULC = (
+        1  # Minimum number of unique pixels in a sub area for the LULC raster
+    )
 
     def __init__(self, config: InputFile, max_memory: int) -> None:
         """
@@ -356,9 +373,31 @@ class SubgridPreprocessor:
 
         # If there isn't enough data to compute the subgrid variables, then we
         # duck out here and continue to the next node
-        if valid_pixels_dem < 10 or valid_pixels_manning < 10:
-            logger.warning(
-                f"Node {node_index} has too few valid pixels to compute subgrid variables"
+        if valid_pixels_dem < SubgridPreprocessor.N_VALID_PIXELS_DEM:
+            logger.debug(
+                f"Node {node_index} has too few valid dem pixels ({valid_pixels_dem}) to compute subgrid variables"
+            )
+            return None
+        elif valid_pixels_manning < SubgridPreprocessor.N_VALID_PIXELS_LULC:
+            logger.debug(
+                f"Node {node_index} has too few valid lulc pixels ({valid_pixels_manning}) to compute subgrid variables"
+            )
+            return None
+
+        unique_values_dem = len(
+            np.unique(subset["dem"][~np.isnan(subset["dem"])].flatten())
+        )
+        unique_values_manning = len(
+            np.unique(subset["manning_n"][~np.isnan(subset["manning_n"])].flatten())
+        )
+        if unique_values_dem < SubgridPreprocessor.N_UNIQUE_VALUES_DEM:
+            logger.debug(
+                f"Node {node_index} has too few unique dem values ({unique_values_dem}) to compute subgrid variables"
+            )
+            return None
+        elif unique_values_manning < SubgridPreprocessor.N_UNIQUE_VALUES_LULC:
+            logger.debug(
+                f"Node {node_index} has too few unique lulc values ({unique_values_manning}) to compute subgrid variables"
             )
             return None
 
@@ -418,8 +457,6 @@ class SubgridPreprocessor:
         Returns:
             A mask for the sub-window
         """
-        from rasterio import features
-
         return features.geometry_mask(
             geometries=[self.__adcirc_mesh.subarea_polygons().polygons()[node_index]],
             out_shape=(sub_window["j_size"], sub_window["i_size"]),
@@ -440,8 +477,6 @@ class SubgridPreprocessor:
         Returns:
             A dictionary with the sub-window information
         """
-        import rasterio as rio
-
         node_bounds = (
             self.__adcirc_mesh.subarea_polygons().polygons()[node_index].bounds
         )
