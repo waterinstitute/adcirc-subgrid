@@ -54,6 +54,7 @@ class SubgridData:
         self.__c_bf = np.zeros((self.__node_count, self.__phi_count))
         self.__c_adv = np.zeros((self.__node_count, self.__phi_count))
         self.__vertex_flag = np.zeros(self.__node_count, dtype=int)
+        self.__man_avg = np.zeros(self.__node_count)
 
     def node_count(self) -> int:
         """
@@ -153,6 +154,15 @@ class SubgridData:
             The vertex flag values
         """
         return self.__vertex_flag
+    
+    def man_avg(self) -> np.ndarray:
+        """
+        Return grid averaged Manning's n
+
+        Returns:
+            The grid averaged Manning's n value
+        """
+        return self.__man_avg
 
     def get_vertex(self, vertex: int) -> dict:
         """
@@ -177,6 +187,7 @@ class SubgridData:
             "c_f": self.__c_f[vertex],
             "c_bf": self.__c_bf[vertex],
             "c_adv": self.__c_adv[vertex],
+            "man_avg": self.__man_avg[vertex],
         }
 
     def set_data(
@@ -189,6 +200,7 @@ class SubgridData:
         c_f: np.ndarray,
         c_bf: np.ndarray,
         c_adv: np.ndarray,
+        man_avg: np.ndarray,
     ) -> None:
         """
         Set the output data for all vertices
@@ -202,6 +214,7 @@ class SubgridData:
             c_f: The quadratic friction values
             c_bf: The friction correction values
             c_adv: The advection correction values
+            man_avg: The average Manning's n values
         """
         if (
             vertex_flag.shape != (self.__node_count,)
@@ -212,6 +225,7 @@ class SubgridData:
             or c_f.shape != (self.__node_count, self.__phi_count)
             or c_bf.shape != (self.__node_count, self.__phi_count)
             or c_adv.shape != (self.__node_count, self.__phi_count)
+            or man_avg.shape != (self.__node_count)
         ):
             msg = "Invalid shape for input arrays"
             raise ValueError(msg)
@@ -224,6 +238,7 @@ class SubgridData:
         self.__c_f = c_f
         self.__c_bf = c_bf
         self.__c_adv = c_adv
+        self.__man_avg = man_avg
 
     def add_vertex(
         self,
@@ -235,6 +250,7 @@ class SubgridData:
         c_f: np.ndarray,
         c_bf: np.ndarray,
         c_adv: np.ndarray,
+        man_avg: float,
     ) -> None:
         """
         Add a vertex to the output data
@@ -248,6 +264,7 @@ class SubgridData:
             c_f: The quadratic friction values
             c_bf: The friction correction values
             c_adv: The advection correction values
+            man_avg: The average Manning's n values
         """
         # Check if the shape of the input arrays is correct
         if (
@@ -263,6 +280,7 @@ class SubgridData:
             raise ValueError(msg)
 
         self.__vertex_flag[vertex] = 1
+        self.__man_avg[vertex] = man_avg
         if self.__interpolation_method == "linear":
             self.__interp_linear(
                 vertex,

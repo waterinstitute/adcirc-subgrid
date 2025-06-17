@@ -55,6 +55,14 @@ class SubgridOutputFile:
             )
             phi.description = "Percent wet for the subgrid element"
 
+            manning = dataset.createVariable(
+                "man_avg", "f4", ("numNode",), zlib = True, complevel=2
+            )
+
+            manning.description = (
+                "Grid averaged manning for the vertex area"
+            )
+
             wet_fraction_elevation = dataset.createVariable(
                 "wetFractionVertex",
                 "f4",
@@ -125,6 +133,8 @@ class SubgridOutputFile:
             mask2d = mask2d == 0
 
             phi[:] = sg_data.phi()
+
+            manning[:] = sg_data.man_avg()
 
             wet_fraction_elevation_out = sg_data.water_level()
             wet_fraction_elevation_out[mask2d] = netCDF4.default_fillvals["f4"]
@@ -221,6 +231,7 @@ class SubgridOutputFile:
             c_f = dataset.variables["cfVertex"][:].data
             c_bf = dataset.variables["cmfVertex"][:].data
             c_adv = dataset.variables["cadvVertex"][:].data
+            man_avg = dataset.variables["man_avg"][:].data
 
             # Set the data in the SubgridData object
             sg_data.set_data(
@@ -232,6 +243,7 @@ class SubgridOutputFile:
                 c_f,
                 c_bf,
                 c_adv,
+                man_avg,
             )
 
         return sg_data
