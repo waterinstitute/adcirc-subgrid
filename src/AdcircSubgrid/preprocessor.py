@@ -274,6 +274,7 @@ class SubgridPreprocessor:
                     result["c_f"],
                     result["c_bf"],
                     result["c_adv"],
+                    result["man_avg"],
                 )
 
             progress.increment()
@@ -496,6 +497,10 @@ class SubgridPreprocessor:
             subset_data["data"]["manning_n"], SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
         )
 
+        man_avg = SubgridPreprocessor.__compute_man_avg(
+            subset_data["data"]["manning_n"]
+        )
+
         cf, cf_avg = self.__compute_cf_at_levels(
             depth_info["depth"],
             subset_data["data"]["manning_n"],
@@ -530,6 +535,7 @@ class SubgridPreprocessor:
             "c_f": cf_avg,
             "c_adv": c_adv,
             "c_bf": c_bf,
+            "man_avg": man_avg
         }
 
     @staticmethod
@@ -638,6 +644,21 @@ class SubgridPreprocessor:
             The default friction coefficient
         """
         return g_constant * np.nanmean(manning**2) / dry_pixel_depth ** (1.0 / 3.0)
+    
+    @staticmethod
+    @njit
+    def __compute_man_avg(manning: np.ndarray) -> float:
+        """
+        Compute the grid averaged Manning's n values
+
+        Args:
+            manning: The Manning's n values
+        
+        Returns:
+            The grid averaged Manning's n for a vertex area
+        """
+
+        return np.nanmean(manning)
 
     @staticmethod
     @njit
