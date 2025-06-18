@@ -43,11 +43,13 @@ def test_input_file() -> None:
 
     # Touch the dem and land_cover files so that they exist. Set them
     # so that they are deleted when the context manager exits.
+    mesh_filename = input_file_data["input"]["adcirc_mesh"]
     dem_filename = input_file_data["input"]["dem"]
     land_cover_filename = input_file_data["input"]["land_cover"]
 
     with (
         open(dem_filename, "w"),
+        open(mesh_filename, "w"),
         open(land_cover_filename, "w"),
         open("input_file.yaml", "w") as file,
     ):
@@ -71,5 +73,6 @@ def test_input_file() -> None:
             )
         finally:
             os.remove(dem_filename)
+            os.remove(mesh_filename)
             os.remove(land_cover_filename)
             os.remove("input_file.yaml")

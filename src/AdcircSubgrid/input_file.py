@@ -18,7 +18,8 @@ from schema import And, Optional, Schema, Use
 SUBGRID_SCHEMA = Schema(
     {
         "input": {
-            "adcirc_mesh": Use(str),
+            "adcirc_mesh": And(Use(str), os.path.exists),
+            Optional("nodal_attributes", default=None): Use(str),
             "manning_lookup": Use(str),
             "dem": And(Use(str), os.path.exists),
             "land_cover": And(Use(str), os.path.exists),
@@ -37,6 +38,9 @@ SUBGRID_SCHEMA = Schema(
                 Use(float), lambda x: x > 0.0
             ),
             Optional("existing_subgrid", default=None): And(Use(str), os.path.exists),
+            Optional("nodal_attribute_manning_override", default=False): Use(bool),
+            Optional("nodal_attribute_depth_min", default=2.0): Use(float),
+            Optional("nodal_attribute_manning_max", default=0.025): Use(float),
         },
     }
 )

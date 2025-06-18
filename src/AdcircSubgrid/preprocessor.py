@@ -26,6 +26,7 @@ from .input_file import InputFile
 from .jit_helpers import nan_mean_jit, nan_sum_jit, reciprocal_jit
 from .lookup_table import LookupTable
 from .mesh import Mesh
+from .nodal_attributes import NodalAttributes
 from .progress_bar import ProgressBar
 from .raster import Raster
 from .raster_region import RasterRegion
@@ -76,7 +77,6 @@ class SubgridPreprocessor:
         Args:
             config: Configuration dictionary (parsed from YAML)
             max_memory: Approximate maximum memory in MB to use for a single raster window
-            subgrid_table: Existing subgrid table to be added to
         """
         self.__config = config
         self.__max_memory = max_memory
@@ -88,18 +88,15 @@ class SubgridPreprocessor:
         )
         self.__check_raster_projection()
 
-        # Read the existing subgrid table if specified
-        if config.data()["options"]["existing_subgrid"] is None:
-            self.__output = SubgridData(
-                self.__adcirc_mesh.num_nodes(),
-                self.__config.data()["options"]["n_subgrid_levels"],
-                self.__config.data()["options"]["n_phi_levels"],
+        if config.data()["options"]["nodal_attribute_manning_override"]:
+            logger.info("Reading nodal attributes for Manning's n override")
+            self.__nodal_attributes = NodalAttributes(
+                config.data()["input"]["nodal_attributes"]
             )
         else:
-            subgrid_table = SubgridOutputFile.read(
-                config.data()["options"]["existing_subgrid"]
-            )
-            self.__output = subgrid_table
+            self.__nodal_attributes = None
+
+        self.__output = self.__initialize_subgrid_output(config)
 
         self.__calculation_levels = CalculationLevels(
             self.__config.data()["options"]["subgrid_level_distribution"],
@@ -122,6 +119,59 @@ class SubgridPreprocessor:
                 self.__config.data()["options"]["n_phi_levels"]
             )
         )
+
+    def __initialize_subgrid_output(self, config: InputFile) -> SubgridData:
+        """
+        Initialize the SubgridData object to store the output
+
+        If an existing subgrid file is provided, read it in and use it as the starting point
+
+        Args:
+            config: The input configuration
+
+        Returns:
+            The initialized SubgridData object
+        """
+        if config.data()["options"]["existing_subgrid"] is None:
+            return SubgridData(
+                self.__adcirc_mesh.num_nodes(),
+                self.__config.data()["options"]["n_subgrid_levels"],
+                self.__config.data()["options"]["n_phi_levels"],
+            )
+        else:
+            subgrid_table = SubgridOutputFile.read(
+                config.data()["options"]["existing_subgrid"]
+            )
+
+            # Check if the subgrid table matches the mesh and levels
+            if subgrid_table.node_count() != self.__adcirc_mesh.num_nodes():
+                msg = (
+                    "The existing subgrid file has a different number of nodes "
+                    "than the provided ADCIRC mesh"
+                )
+                raise RuntimeError(msg)
+
+            if (
+                subgrid_table.phi_count()
+                != self.__config.data()["options"]["n_phi_levels"]
+            ):
+                msg = (
+                    "The existing subgrid file has a different number of phi levels "
+                    "than the provided configuration"
+                )
+                raise RuntimeError(msg)
+
+            if (
+                subgrid_table.sg_count()
+                != self.__config.data()["options"]["n_subgrid_levels"]
+            ):
+                msg = (
+                    "The existing subgrid file has a different number of subgrid levels "
+                    "than the provided configuration"
+                )
+                raise RuntimeError(msg)
+
+            return subgrid_table
 
     def __check_raster_projection(self) -> None:
         """
@@ -247,12 +297,20 @@ class SubgridPreprocessor:
             node_count, self.__config.data()["output"]["progress_bar_increment"], logger
         )
 
+        n_manning_overrides = 0
         for window_idx, window in enumerate(self.__processing_windows):
             logger.debug(
                 f"Processing raster window {window_idx + 1} of {len(self.__processing_windows)}"
             )
 
-            self.__process_raster_window(window_idx, window, node_index, progress)
+            n_manning_overrides += self.__process_raster_window(
+                window_idx, window, node_index, progress
+            )
+
+        if self.__config.data()["options"]["nodal_attribute_manning_override"]:
+            logger.info(
+                f"Overrode Manning's n for {n_manning_overrides} nodes of {node_count} processed nodes"
+            )
 
     def __process_raster_window(
         self,
@@ -260,7 +318,7 @@ class SubgridPreprocessor:
         window: RasterRegion,
         node_index: np.ndarray,
         progress: ProgressBar,
-    ) -> None:
+    ) -> int:
         """
         Process the nodes within the given raster window
 
@@ -269,13 +327,18 @@ class SubgridPreprocessor:
             window: The raster window
             node_index: The index for the window that each node falls into
             progress: The progress bar
+
+        Returns:
+            Number of nodes that were overridden due to nodal attributes
         """
         # If there is at least one node in the window, read the data from the raster
         # otherwise, we can skip
         if not np.any(node_index == window_index):
-            return
+            return 0
 
         window_data = self.__read_window_data(window)
+
+        n_overridden_nodes = 0
 
         # Create a list of the indices of the nodes that fall into the window
         for node in np.where(node_index == window_index)[0]:
@@ -294,7 +357,12 @@ class SubgridPreprocessor:
                     result["man_avg"],
                 )
 
+                if result["overridden_manning"]:
+                    n_overridden_nodes += 1
+
             progress.increment()
+
+        return n_overridden_nodes
 
     def __read_window_data(self, window: RasterRegion) -> dict:
         """
@@ -532,9 +600,7 @@ class SubgridPreprocessor:
             subset_data["data"]["manning_n"], SubgridPreprocessor.DRY_PIXEL_WATER_DEPTH
         )
 
-        man_avg = SubgridPreprocessor.__compute_man_avg(
-            subset_data["data"]["manning_n"]
-        )
+        has_manning_override, man_avg = self.__compute_averaged_manning(subset_data)
 
         cf, cf_avg = self.__compute_cf_at_levels(
             depth_info["depth"],
@@ -571,7 +637,45 @@ class SubgridPreprocessor:
             "c_adv": c_adv,
             "c_bf": c_bf,
             "man_avg": man_avg,
+            "overridden_manning": has_manning_override,
         }
+
+    def __compute_averaged_manning(self, subset_data: dict) -> tuple[bool, float]:
+        """
+        Compute the averaged Manning's n value for the node
+
+        Args:
+            subset_data: The subset data for the node
+
+        Returns:
+            A tuple with a boolean indicating if the Manning's n value was overridden
+            and the averaged Manning's n value
+        """
+        has_manning_override = False
+        if self.__config.data()["options"]["nodal_attribute_manning_override"]:
+            node_z = self.__adcirc_mesh.nodes()[subset_data["node"]][2]
+            manning = self.__nodal_attributes.attribute(
+                "mannings_n_at_sea_floor"
+            ).values()[subset_data["node"]][0]
+            if (
+                node_z > self.__config.data()["options"]["nodal_attribute_depth_min"]
+                and manning
+                < self.__config.data()["options"]["nodal_attribute_manning_max"]
+            ):
+                logger.debug(
+                    f"Overriding Manning's n for node {subset_data['node']}. Depth = {node_z}, Manning's n = {manning}"
+                )
+                man_avg = manning
+                has_manning_override = True
+            else:
+                man_avg = SubgridPreprocessor.__compute_man_avg(
+                    subset_data["data"]["manning_n"]
+                )
+        else:
+            man_avg = SubgridPreprocessor.__compute_man_avg(
+                subset_data["data"]["manning_n"]
+            )
+        return has_manning_override, man_avg
 
     @staticmethod
     def __compute_water_depth_at_levels(
