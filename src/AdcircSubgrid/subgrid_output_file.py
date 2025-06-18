@@ -55,8 +55,11 @@ class SubgridOutputFile:
             )
             phi.description = "Percent wet for the subgrid element"
 
+            # manning = dataset.createVariable(
+            #     "manning_avg", "f4", ("numNode",), zlib=True, complevel=2
+            # )
             manning = dataset.createVariable(
-                "manning_avg", "f4", ("numNode",), zlib=True, complevel=2
+                "manningAvg", "f4", ("numNode",), zlib=True, complevel=2
             )
 
             manning.description = "Grid averaged manning for the vertex area"
@@ -229,7 +232,8 @@ class SubgridOutputFile:
             c_f = dataset.variables["cfVertex"][:].data
             c_bf = dataset.variables["cmfVertex"][:].data
             c_adv = dataset.variables["cadvVertex"][:].data
-            man_avg = dataset.variables["manning_avg"][:].data
+            # man_avg = dataset.variables["manning_avg"][:].data
+            man_avg = dataset.variables["manningAvg"][:].data
 
             # Set the data in the SubgridData object
             sg_data.set_data(
