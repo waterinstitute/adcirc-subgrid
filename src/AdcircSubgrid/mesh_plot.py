@@ -123,6 +123,8 @@ def get_plot_params(subgrid_variable: str, plot_range: Optional[list] = None) ->
             plot_range = [0.0025, 0.25]
         elif subgrid_variable == "c_adv":
             plot_range = [0.0, 1.5]
+        elif subgrid_variable == "n_avg":
+            plot_range = [0.012, 0.04]
         else:
             plot_range = [0.0, 1.0]
 
@@ -146,6 +148,9 @@ def get_plot_params(subgrid_variable: str, plot_range: Optional[list] = None) ->
         plot_units = ""
     elif subgrid_variable == "c_adv":
         plot_title = "Advection Correction"
+        plot_units = ""
+    elif subgrid_variable == "n_avg":
+        plot_title = "Manning's n Averaged"
         plot_units = ""
     else:
         plot_title = ""
@@ -171,33 +176,33 @@ def interpolate_data(data: dict, water_level: float, subgrid_variable: str) -> d
         The interpolated data dictionary with 2D arrays for each variable
     """
     node_count = data["water_levels"].shape[0]
-
     out_data = {
-        # "water_levels": np.zeros(node_count),
-        # "pct_wet": np.zeros(node_count),
         "data": np.zeros(node_count),
     }
 
-    for i in range(node_count):
-        wl = data["water_levels"][i, :]
+    if subgrid_variable == "n_avg":
+        out_data["data"][:] = data["data"][:]
+    else:
+        for i in range(node_count):
+            wl = data["water_levels"][i, :]
 
-        if water_level < wl[0]:
-            out_data["data"][i] = np.nan
-        elif water_level > wl[-1]:
-            if subgrid_variable in ("total_depth", "wet_depth"):
-                out_data["data"][i] = (
-                    data[subgrid_variable][i, -1] + water_level - wl[-1]
-                )
-            elif subgrid_variable in ("cf", "c_mf"):
-                out_data["data"][i] = 0.0025
-            elif subgrid_variable in ("c_adv", "percent_wet"):
-                out_data["data"][i] = 1.0
-        else:
-            if subgrid_variable == "percent_wet":
-                data_interp = np.interp(water_level, wl, data["data"][:])
+            if water_level < wl[0]:
+                out_data["data"][i] = np.nan
+            elif water_level > wl[-1]:
+                if subgrid_variable in ("total_depth", "wet_depth"):
+                    out_data["data"][i] = (
+                        data[subgrid_variable][i, -1] + water_level - wl[-1]
+                    )
+                elif subgrid_variable in ("cf", "c_mf"):
+                    out_data["data"][i] = 0.0025
+                elif subgrid_variable in ("c_adv", "percent_wet"):
+                    out_data["data"][i] = 1.0
             else:
-                data_interp = np.interp(water_level, wl, data["data"][i, :])
-            out_data["data"][i] = data_interp
+                if subgrid_variable == "percent_wet":
+                    data_interp = np.interp(water_level, wl, data["data"][:])
+                else:
+                    data_interp = np.interp(water_level, wl, data["data"][i, :])
+                out_data["data"][i] = data_interp
 
     return out_data
 
@@ -300,6 +305,7 @@ def get_plotting_data(filename: str, subgrid_variable: str) -> dict:
         "cf": "cfVertex",
         "c_mf": "cmfVertex",
         "c_adv": "cadvVertex",
+        "n_avg": "manningAvg",
     }
 
     with Dataset(filename, "r") as dataset:
@@ -312,5 +318,6 @@ def get_plotting_data(filename: str, subgrid_variable: str) -> dict:
             "cf": dataset.variables["cfVertex"][:],
             "c_mf": dataset.variables["cmfVertex"][:],
             "c_adv": dataset.variables["cadvVertex"][:],
+            "n_avg": dataset.variables["manningAvg"][:],
             "data": dataset.variables[variable_name_map[subgrid_variable]][:],
         }

@@ -146,10 +146,18 @@ def initialize_mesh_plot_parser(subparsers) -> None:  # noqa: ANN001
     )
     mesh_plot_parser.add_argument(
         "--variable",
-        help="Variable to plot (percent_wet, wet_depth, total_depth, cf, c_mf, c_adv)",
+        help="Variable to plot",
         type=str,
         default="percent_wet",
-        choices=["percent_wet", "wet_depth", "total_depth", "cf", "c_mf", "c_adv"],
+        choices=[
+            "percent_wet",
+            "wet_depth",
+            "total_depth",
+            "cf",
+            "c_mf",
+            "c_adv",
+            "n_avg",
+        ],
     )
     mesh_plot_parser.add_argument(
         "--bbox",
