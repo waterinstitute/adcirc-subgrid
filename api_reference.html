@@ -1,0 +1,819 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; adcirc-subgrid 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Troubleshooting Guide" href="troubleshooting.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adcirc-subgrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_formats.html">Input File Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples and Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific_background.html">Scientific Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization and Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#core-classes">Core Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subgridpreprocessor">SubgridPreprocessor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SubgridPreprocessor"><code class="docutils literal notranslate"><span class="pre">SubgridPreprocessor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#inputfile">InputFile</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#InputFile"><code class="docutils literal notranslate"><span class="pre">InputFile</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mesh">Mesh</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Mesh"><code class="docutils literal notranslate"><span class="pre">Mesh</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#raster">Raster</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Raster"><code class="docutils literal notranslate"><span class="pre">Raster</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lookuptable">LookupTable</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#LookupTable"><code class="docutils literal notranslate"><span class="pre">LookupTable</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#subgriddata">SubgridData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SubgridData"><code class="docutils literal notranslate"><span class="pre">SubgridData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#subgridoutputfile">SubgridOutputFile</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SubgridOutputFile"><code class="docutils literal notranslate"><span class="pre">SubgridOutputFile</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#utility-functions">Utility Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#calculation-levels">Calculation Levels</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#calculate_levels_linear"><code class="docutils literal notranslate"><span class="pre">calculate_levels_linear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calculate_levels_histogram"><code class="docutils literal notranslate"><span class="pre">calculate_levels_histogram()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#jit-compiled-helpers">JIT-Compiled Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nan_mean_jit"><code class="docutils literal notranslate"><span class="pre">nan_mean_jit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nan_sum_jit"><code class="docutils literal notranslate"><span class="pre">nan_sum_jit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization-functions">Visualization Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plot_mesh"><code class="docutils literal notranslate"><span class="pre">plot_mesh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node_plot"><code class="docutils literal notranslate"><span class="pre">node_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#example-custom-workflow">Example Custom Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-handling">Error Handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#SubgridError"><code class="docutils literal notranslate"><span class="pre">SubgridError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ConfigurationError"><code class="docutils literal notranslate"><span class="pre">ConfigurationError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#MeshError"><code class="docutils literal notranslate"><span class="pre">MeshError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#RasterError"><code class="docutils literal notranslate"><span class="pre">RasterError</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adcirc-subgrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api_reference.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<p>This section provides reference documentation for the Python API of the ADCIRC Subgrid Preprocessor. While the package is primarily designed for command-line use, the underlying Python classes can be used for custom workflows and advanced applications.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This API is designed for internal use and may change in future versions. For stable interfaces, use the command-line tools described in other sections.</p>
+</div>
+<section id="core-classes">
+<h2>Core Classes<a class="headerlink" href="#core-classes" title="Link to this heading"></a></h2>
+<section id="subgridpreprocessor">
+<h3>SubgridPreprocessor<a class="headerlink" href="#subgridpreprocessor" title="Link to this heading"></a></h3>
+<p>The main processing class that orchestrates subgrid calculation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="SubgridPreprocessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SubgridPreprocessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#InputFile" title="InputFile"><span class="pre">InputFile</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SubgridPreprocessor" title="Link to this definition"></a></dt>
+<dd><p>Main class for processing subgrid data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_file</strong> (<a class="reference internal" href="#InputFile" title="InputFile"><em>InputFile</em></a>) – Configuration object containing processing parameters</p></li>
+<li><p><strong>window_memory</strong> (<em>int</em><em>, </em><em>optional</em>) – Memory limit for raster processing windows (MB)</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Methods:</strong></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SubgridPreprocessor.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#SubgridPreprocessor.process" title="Link to this definition"></a></dt>
+<dd><p>Execute the main subgrid processing workflow.</p>
+<p>This method:
+- Loads input datasets (mesh, DEM, land cover)
+- Processes each mesh node to compute φ relationships
+- Calculates Manning’s roughness corrections
+- Stores results in internal data structures</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SubgridPreprocessor.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#SubgridPreprocessor.write" title="Link to this definition"></a></dt>
+<dd><p>Write processed subgrid data to NetCDF output file.</p>
+<p>The output file contains:
+- φ factors as functions of water level
+- Average Manning’s coefficients
+- Various correction coefficients
+- Mesh coordinate information</p>
+</dd></dl>
+
+<p><strong>Example Usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">AdcircSubgrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubgridPreprocessor</span><span class="p">,</span> <span class="n">InputFile</span>
+
+<span class="c1"># Create configuration</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">InputFile</span><span class="p">(</span><span class="s1">&#39;config.yaml&#39;</span><span class="p">)</span>
+
+<span class="c1"># Initialize processor</span>
+<span class="n">processor</span> <span class="o">=</span> <span class="n">SubgridPreprocessor</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">window_memory</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+
+<span class="c1"># Process and write results</span>
+<span class="n">processor</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+<span class="n">processor</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="inputfile">
+<h3>InputFile<a class="headerlink" href="#inputfile" title="Link to this heading"></a></h3>
+<p>Configuration file parser and validator.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="InputFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">InputFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#InputFile" title="Link to this definition"></a></dt>
+<dd><p>Parser for YAML configuration files with schema validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_file</strong> (<em>str</em>) – Path to YAML configuration file</p>
+</dd>
+</dl>
+<p><strong>Methods:</strong></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="InputFile.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#InputFile.data" title="Link to this definition"></a></dt>
+<dd><p>Get validated configuration data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing configuration parameters</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><strong>Example Usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">AdcircSubgrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputFile</span>
+
+<span class="c1"># Load and validate configuration</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">InputFile</span><span class="p">(</span><span class="s1">&#39;my_config.yaml&#39;</span><span class="p">)</span>
+
+<span class="c1"># Access configuration data</span>
+<span class="n">config_data</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+<span class="n">mesh_file</span> <span class="o">=</span> <span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;adcirc_mesh&#39;</span><span class="p">]</span>
+<span class="n">output_file</span> <span class="o">=</span> <span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="mesh">
+<h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading"></a></h3>
+<p>ADCIRC mesh file reader and processor.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="Mesh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Mesh" title="Link to this definition"></a></dt>
+<dd><p>Class for reading and processing ADCIRC mesh files (fort.14).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mesh_file</strong> (<em>str</em>) – Path to ADCIRC mesh file</p>
+</dd>
+</dl>
+<p><strong>Attributes:</strong></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mesh.nodes">
+<span class="sig-name descname"><span class="pre">nodes</span></span><a class="headerlink" href="#Mesh.nodes" title="Link to this definition"></a></dt>
+<dd><p>Number of nodes in the mesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mesh.elements">
+<span class="sig-name descname"><span class="pre">elements</span></span><a class="headerlink" href="#Mesh.elements" title="Link to this definition"></a></dt>
+<dd><p>Number of elements in the mesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mesh.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#Mesh.x" title="Link to this definition"></a></dt>
+<dd><p>Node x-coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mesh.y">
+<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#Mesh.y" title="Link to this definition"></a></dt>
+<dd><p>Node y-coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mesh.depth">
+<span class="sig-name descname"><span class="pre">depth</span></span><a class="headerlink" href="#Mesh.depth" title="Link to this definition"></a></dt>
+<dd><p>Node bathymetric depths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><strong>Example Usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">AdcircSubgrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mesh</span>
+
+<span class="c1"># Load mesh</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="s1">&#39;fort.14&#39;</span><span class="p">)</span>
+
+<span class="c1"># Access mesh properties</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh has </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="si">}</span><span class="s2"> nodes and </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">elements</span><span class="si">}</span><span class="s2"> elements&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access coordinates and bathymetry</span>
+<span class="n">coordinates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+<span class="n">depths</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">depth</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="raster">
+<h3>Raster<a class="headerlink" href="#raster" title="Link to this heading"></a></h3>
+<p>Raster data reader and processor for DEM and land cover data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="Raster">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Raster" title="Link to this definition"></a></dt>
+<dd><p>Generic raster data handler using GDAL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Path to raster file</p>
+</dd>
+</dl>
+<p><strong>Methods:</strong></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Raster.get_values_at_points">
+<span class="sig-name descname"><span class="pre">get_values_at_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.ndarray</span></span></span><a class="headerlink" href="#Raster.get_values_at_points" title="Link to this definition"></a></dt>
+<dd><p>Extract raster values at specified coordinate points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.ndarray</em>) – X-coordinates of query points</p></li>
+<li><p><strong>y</strong> (<em>numpy.ndarray</em>) – Y-coordinates of query points</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Raster values at query points</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Raster.get_bbox">
+<span class="sig-name descname"><span class="pre">get_bbox</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#Raster.get_bbox" title="Link to this definition"></a></dt>
+<dd><p>Get raster bounding box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bounding box as (minx, miny, maxx, maxy)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><strong>Example Usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">AdcircSubgrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Raster</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Load DEM</span>
+<span class="n">dem</span> <span class="o">=</span> <span class="n">Raster</span><span class="p">(</span><span class="s1">&#39;elevation.tif&#39;</span><span class="p">)</span>
+
+<span class="c1"># Sample elevations at specific points</span>
+<span class="n">x_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">95.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">94.5</span><span class="p">])</span>
+<span class="n">y_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">29.5</span><span class="p">])</span>
+<span class="n">elevations</span> <span class="o">=</span> <span class="n">dem</span><span class="o">.</span><span class="n">get_values_at_points</span><span class="p">(</span><span class="n">x_points</span><span class="p">,</span> <span class="n">y_points</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="lookuptable">
+<h3>LookupTable<a class="headerlink" href="#lookuptable" title="Link to this heading"></a></h3>
+<p>Manning’s roughness coefficient lookup table handler.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="LookupTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LookupTable</span></span><a class="headerlink" href="#LookupTable" title="Link to this definition"></a></dt>
+<dd><p>Class for managing land cover to Manning’s roughness mappings.</p>
+<p><strong>Static Methods:</strong></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="LookupTable.ccap_lookup">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ccap_lookup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.ndarray</span></span></span><a class="headerlink" href="#LookupTable.ccap_lookup" title="Link to this definition"></a></dt>
+<dd><p>Generate default CCAP lookup table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array mapping CCAP class codes to Manning’s coefficients</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LookupTable.from_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.ndarray</span></span></span><a class="headerlink" href="#LookupTable.from_file" title="Link to this definition"></a></dt>
+<dd><p>Load custom lookup table from CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Path to CSV lookup file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array mapping class codes to Manning’s coefficients</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><strong>Example Usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">AdcircSubgrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupTable</span>
+
+<span class="c1"># Use default CCAP lookup</span>
+<span class="n">ccap_table</span> <span class="o">=</span> <span class="n">LookupTable</span><span class="o">.</span><span class="n">ccap_lookup</span><span class="p">()</span>
+
+<span class="c1"># Or load custom lookup</span>
+<span class="n">custom_table</span> <span class="o">=</span> <span class="n">LookupTable</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;custom_manning.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get Manning&#39;s coefficient for land cover class</span>
+<span class="n">manning_n</span> <span class="o">=</span> <span class="n">ccap_table</span><span class="p">[</span><span class="n">class_code</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="subgriddata">
+<h3>SubgridData<a class="headerlink" href="#subgriddata" title="Link to this heading"></a></h3>
+<p>Container class for computed subgrid correction data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="SubgridData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SubgridData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SubgridData" title="Link to this definition"></a></dt>
+<dd><p>Storage container for subgrid calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_nodes</strong> (<em>int</em>) – Number of mesh nodes</p></li>
+<li><p><strong>n_levels</strong> (<em>int</em>) – Number of phi levels</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Attributes:</strong></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SubgridData.phi">
+<span class="sig-name descname"><span class="pre">phi</span></span><a class="headerlink" href="#SubgridData.phi" title="Link to this definition"></a></dt>
+<dd><p>Phi factors for each node and water level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Shape<span class="colon">:</span></dt>
+<dd class="field-even"><p>(n_nodes, n_levels)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SubgridData.manning_avg">
+<span class="sig-name descname"><span class="pre">manning_avg</span></span><a class="headerlink" href="#SubgridData.manning_avg" title="Link to this definition"></a></dt>
+<dd><p>Average Manning’s coefficients for each node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Shape<span class="colon">:</span></dt>
+<dd class="field-even"><p>(n_nodes,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SubgridData.phi_levels">
+<span class="sig-name descname"><span class="pre">phi_levels</span></span><a class="headerlink" href="#SubgridData.phi_levels" title="Link to this definition"></a></dt>
+<dd><p>Water surface elevation levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Shape<span class="colon">:</span></dt>
+<dd class="field-even"><p>(n_levels,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="subgridoutputfile">
+<h3>SubgridOutputFile<a class="headerlink" href="#subgridoutputfile" title="Link to this heading"></a></h3>
+<p>NetCDF output file writer for subgrid data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="SubgridOutputFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SubgridOutputFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#Mesh" title="Mesh"><span class="pre">Mesh</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">subgrid_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SubgridData" title="SubgridData"><span class="pre">SubgridData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SubgridOutputFile" title="Link to this definition"></a></dt>
+<dd><p>Writer for subgrid NetCDF output files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Output filename</p></li>
+<li><p><strong>mesh</strong> (<a class="reference internal" href="#Mesh" title="Mesh"><em>Mesh</em></a>) – Mesh object with coordinate information</p></li>
+<li><p><strong>subgrid_data</strong> (<a class="reference internal" href="#SubgridData" title="SubgridData"><em>SubgridData</em></a>) – Computed subgrid corrections</p></li>
+<li><p><strong>input_config</strong> (<em>dict</em>) – Configuration dictionary</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Methods:</strong></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SubgridOutputFile.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#SubgridOutputFile.write" title="Link to this definition"></a></dt>
+<dd><p>Write subgrid data to NetCDF file.</p>
+<p>Creates a CF-compliant NetCDF file with:
+- Node coordinates and connectivity
+- Phi factors and water levels
+- Manning’s coefficients
+- Metadata and provenance information</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="utility-functions">
+<h2>Utility Functions<a class="headerlink" href="#utility-functions" title="Link to this heading"></a></h2>
+<section id="calculation-levels">
+<h3>Calculation Levels<a class="headerlink" href="#calculation-levels" title="Link to this heading"></a></h3>
+<p>Functions for determining water level distributions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="calculate_levels_linear">
+<span class="sig-name descname"><span class="pre">calculate_levels_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.ndarray</span></span></span><a class="headerlink" href="#calculate_levels_linear" title="Link to this definition"></a></dt>
+<dd><p>Generate linearly spaced water levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_min</strong> (<em>float</em>) – Minimum water level</p></li>
+<li><p><strong>z_max</strong> (<em>float</em>) – Maximum water level</p></li>
+<li><p><strong>n_levels</strong> (<em>int</em>) – Number of levels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of water levels</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="calculate_levels_histogram">
+<span class="sig-name descname"><span class="pre">calculate_levels_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elevations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.ndarray</span></span></span><a class="headerlink" href="#calculate_levels_histogram" title="Link to this definition"></a></dt>
+<dd><p>Generate water levels based on elevation histogram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elevations</strong> (<em>numpy.ndarray</em>) – Array of elevation values</p></li>
+<li><p><strong>n_levels</strong> (<em>int</em>) – Number of levels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of water levels based on elevation quantiles</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="jit-compiled-helpers">
+<h3>JIT-Compiled Helpers<a class="headerlink" href="#jit-compiled-helpers" title="Link to this heading"></a></h3>
+<p>Numba-accelerated functions for performance-critical calculations.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="nan_mean_jit">
+<span class="sig-name descname"><span class="pre">nan_mean_jit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#nan_mean_jit" title="Link to this definition"></a></dt>
+<dd><p>Compute mean of array ignoring NaN values (JIT-compiled).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>array</strong> (<em>numpy.ndarray</em>) – Input array</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean value excluding NaN</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nan_sum_jit">
+<span class="sig-name descname"><span class="pre">nan_sum_jit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#nan_sum_jit" title="Link to this definition"></a></dt>
+<dd><p>Compute sum of array ignoring NaN values (JIT-compiled).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>array</strong> (<em>numpy.ndarray</em>) – Input array</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sum excluding NaN</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="visualization-functions">
+<h2>Visualization Functions<a class="headerlink" href="#visualization-functions" title="Link to this heading"></a></h2>
+<p>The visualization functionality is primarily accessed through command-line tools, but some functions are available for programmatic use:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="plot_mesh">
+<span class="sig-name descname"><span class="pre">plot_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">water_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#plot_mesh" title="Link to this definition"></a></dt>
+<dd><p>Create mesh-level visualization of subgrid data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Subgrid NetCDF filename</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – Variable name to plot</p></li>
+<li><p><strong>water_level</strong> (<em>float</em>) – Water level for visualization</p></li>
+<li><p><strong>show</strong> (<em>bool</em><em>, </em><em>optional</em>) – Display plot interactively</p></li>
+<li><p><strong>output_filename</strong> (<em>str</em><em>, </em><em>optional</em>) – Save plot to file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="node_plot">
+<span class="sig-name descname"><span class="pre">node_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'phi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#node_plot" title="Link to this definition"></a></dt>
+<dd><p>Create node-specific visualization of phi relationships.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Subgrid NetCDF filename</p></li>
+<li><p><strong>node</strong> (<em>int</em>) – Node number to analyze</p></li>
+<li><p><strong>basis</strong> (<em>str</em><em>, </em><em>optional</em>) – Plot basis (‘phi’ or ‘wse’)</p></li>
+<li><p><strong>show</strong> (<em>bool</em><em>, </em><em>optional</em>) – Display plot interactively</p></li>
+<li><p><strong>save</strong> (<em>str</em><em>, </em><em>optional</em>) – Save plot to filename</p></li>
+<li><p><strong>index_base</strong> (<em>int</em><em>, </em><em>optional</em>) – Node numbering base (0 or 1)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="example-custom-workflow">
+<h2>Example Custom Workflow<a class="headerlink" href="#example-custom-workflow" title="Link to this heading"></a></h2>
+<p>Here’s an example of using the API for a custom processing workflow:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">AdcircSubgrid</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InputFile</span><span class="p">,</span> <span class="n">SubgridPreprocessor</span><span class="p">,</span> <span class="n">Mesh</span><span class="p">,</span> <span class="n">Raster</span><span class="p">,</span>
+    <span class="n">LookupTable</span><span class="p">,</span> <span class="n">SubgridData</span><span class="p">,</span> <span class="n">SubgridOutputFile</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_subgrid_workflow</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">custom_processing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example custom workflow using the Python API.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load configuration</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">InputFile</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+    <span class="n">config_data</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">custom_processing</span><span class="p">:</span>
+        <span class="c1"># Custom processing example</span>
+
+        <span class="c1"># Load mesh manually</span>
+        <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;adcirc_mesh&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Load DEM</span>
+        <span class="n">dem</span> <span class="o">=</span> <span class="n">Raster</span><span class="p">(</span><span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;dem&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Load land cover</span>
+        <span class="n">landcover</span> <span class="o">=</span> <span class="n">Raster</span><span class="p">(</span><span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;land_cover&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Get lookup table</span>
+        <span class="k">if</span> <span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;manning_lookup&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ccap&#39;</span><span class="p">:</span>
+            <span class="n">lookup</span> <span class="o">=</span> <span class="n">LookupTable</span><span class="o">.</span><span class="n">ccap_lookup</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lookup</span> <span class="o">=</span> <span class="n">LookupTable</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;manning_lookup&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Initialize data container</span>
+        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">][</span><span class="s1">&#39;n_phi_levels&#39;</span><span class="p">]</span>
+        <span class="n">subgrid_data</span> <span class="o">=</span> <span class="n">SubgridData</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">n_levels</span><span class="p">)</span>
+
+        <span class="c1"># Custom processing loop (simplified example)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+            <span class="c1"># Extract elevations around node</span>
+            <span class="c1"># (This is a simplified example - actual implementation is more complex)</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="c1"># Sample DEM in neighborhood of node</span>
+            <span class="c1"># ... custom sampling logic ...</span>
+
+            <span class="c1"># Compute phi relationships</span>
+            <span class="c1"># ... custom phi calculation ...</span>
+
+            <span class="c1"># Store results</span>
+            <span class="c1"># subgrid_data.phi[i, :] = computed_phi</span>
+            <span class="c1"># subgrid_data.manning_avg[i] = computed_manning</span>
+
+        <span class="c1"># Write results</span>
+        <span class="n">output_writer</span> <span class="o">=</span> <span class="n">SubgridOutputFile</span><span class="p">(</span>
+            <span class="n">config_data</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span>
+            <span class="n">mesh</span><span class="p">,</span>
+            <span class="n">subgrid_data</span><span class="p">,</span>
+            <span class="n">config_data</span>
+        <span class="p">)</span>
+        <span class="n">output_writer</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Standard processing</span>
+        <span class="n">processor</span> <span class="o">=</span> <span class="n">SubgridPreprocessor</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">processor</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+        <span class="n">processor</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+
+<span class="c1"># Usage</span>
+<span class="n">custom_subgrid_workflow</span><span class="p">(</span><span class="s1">&#39;config.yaml&#39;</span><span class="p">,</span> <span class="n">custom_processing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h2>
+<p>The API includes several custom exceptions:</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="SubgridError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SubgridError</span></span><a class="headerlink" href="#SubgridError" title="Link to this definition"></a></dt>
+<dd><p>Base exception class for subgrid processing errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ConfigurationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ConfigurationError</span></span><a class="headerlink" href="#ConfigurationError" title="Link to this definition"></a></dt>
+<dd><p>Raised when configuration file validation fails.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="MeshError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MeshError</span></span><a class="headerlink" href="#MeshError" title="Link to this definition"></a></dt>
+<dd><p>Raised when mesh file reading or processing fails.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="RasterError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RasterError</span></span><a class="headerlink" href="#RasterError" title="Link to this definition"></a></dt>
+<dd><p>Raised when raster data processing fails.</p>
+</dd></dl>
+
+<p>Example error handling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">AdcircSubgrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubgridPreprocessor</span><span class="p">,</span> <span class="n">InputFile</span><span class="p">,</span> <span class="n">ConfigurationError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">InputFile</span><span class="p">(</span><span class="s1">&#39;config.yaml&#39;</span><span class="p">)</span>
+    <span class="n">processor</span> <span class="o">=</span> <span class="n">SubgridPreprocessor</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">processor</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+    <span class="n">processor</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+<span class="k">except</span> <span class="n">ConfigurationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configuration error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This API reference provides the foundation for advanced users who need to customize or extend the subgrid preprocessing functionality beyond what’s available through the command-line interface.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="troubleshooting.html" class="btn btn-neutral float-left" title="Troubleshooting Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Water Institute of the Gulf.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

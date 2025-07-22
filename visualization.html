@@ -1,0 +1,696 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visualization and Analysis &mdash; adcirc-subgrid 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Troubleshooting Guide" href="troubleshooting.html" />
+    <link rel="prev" title="Scientific Background" href="scientific_background.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adcirc-subgrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_formats.html">Input File Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples and Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific_background.html">Scientific Background</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization and Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview-of-visualization-tools">Overview of Visualization Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-level-visualization">Mesh-Level Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-mesh-plotting">Basic Mesh Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#available-variables">Available Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-plotting-options">Advanced Plotting Options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#node-level-visualization">Node-Level Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-node-plotting">Basic Node Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-basis-options">Plot Basis Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-selection-strategies">Node Selection Strategies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#batch-visualization-workflows">Batch Visualization Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#python-based-automation">Python-Based Automation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shell-script-automation">Shell Script Automation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#quality-control-visualization">Quality Control Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#identifying-common-issues">Identifying Common Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-analysis-techniques">Advanced Analysis Techniques</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#statistical-analysis">Statistical Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparative-analysis">Comparative Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#publication-quality-figures">Publication-Quality Figures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-high-quality-output">Creating High-Quality Output</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adcirc-subgrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Visualization and Analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/visualization.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="visualization-and-analysis">
+<h1>Visualization and Analysis<a class="headerlink" href="#visualization-and-analysis" title="Link to this heading"></a></h1>
+<p>The ADCIRC Subgrid Preprocessor provides comprehensive visualization capabilities for quality control, result analysis, and scientific understanding of subgrid corrections.</p>
+<section id="overview-of-visualization-tools">
+<h2>Overview of Visualization Tools<a class="headerlink" href="#overview-of-visualization-tools" title="Link to this heading"></a></h2>
+<p>The package includes two primary visualization commands:</p>
+<ol class="arabic simple">
+<li><p><strong>plot-mesh</strong>: Creates spatial visualizations of subgrid data across the computational mesh</p></li>
+<li><p><strong>plot-node</strong>: Generates detailed analyses of subgrid relationships for individual mesh nodes</p></li>
+</ol>
+<p>These tools serve different purposes in the subgrid analysis workflow:</p>
+<ul class="simple">
+<li><p><strong>Quality Control</strong>: Identifying data issues, processing errors, or unrealistic results</p></li>
+<li><p><strong>Scientific Analysis</strong>: Understanding the relationship between topography and subgrid corrections</p></li>
+<li><p><strong>Results Communication</strong>: Creating publication-quality figures for reports and presentations</p></li>
+</ul>
+</section>
+<section id="mesh-level-visualization">
+<h2>Mesh-Level Visualization<a class="headerlink" href="#mesh-level-visualization" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">plot-mesh</span></code> command creates spatial maps showing how subgrid variables vary across the computational domain.</p>
+<section id="basic-mesh-plotting">
+<h3>Basic Mesh Plotting<a class="headerlink" href="#basic-mesh-plotting" title="Link to this heading"></a></h3>
+<p><strong>Command Syntax:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>subgrid_file.nc
+</pre></div>
+</div>
+<p><strong>Essential Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--water-level</span> <span class="pre">LEVEL</span></code>: Water surface elevation for visualization (default: 0.0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--variable</span> <span class="pre">VAR</span></code>: Variable to plot (required)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--show</span></code>: Display plot interactively</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output-filename</span> <span class="pre">FILE</span></code>: Save plot to file</p></li>
+</ul>
+<p><strong>Basic Example:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Display phi factor at mean sea level</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span>--show
+</pre></div>
+</div>
+</section>
+<section id="available-variables">
+<h3>Available Variables<a class="headerlink" href="#available-variables" title="Link to this heading"></a></h3>
+<p><strong>Primary Variables:</strong></p>
+<ul class="simple">
+<li><p><strong>percent_wet</strong>: φ factor (fraction of element that is wet)</p></li>
+<li><p><strong>wet_depth</strong>: Average depth in wet portions of element</p></li>
+<li><p><strong>total_depth</strong>: Total water depth (including corrections)</p></li>
+<li><p><strong>cf</strong>: Friction coefficient</p></li>
+<li><p><strong>c_mf</strong>: Manning friction coefficient</p></li>
+<li><p><strong>c_adv</strong>: Advection coefficient</p></li>
+</ul>
+<p><strong>Variable Descriptions:</strong></p>
+<dl class="simple">
+<dt><strong>percent_wet (φ factor)</strong></dt><dd><ul class="simple">
+<li><p><strong>Range</strong>: 0.0 to 1.0</p></li>
+<li><p><strong>Interpretation</strong>: Fraction of mesh element that is submerged</p></li>
+<li><p><strong>Use Cases</strong>: Understanding wetting patterns, identifying problematic areas</p></li>
+<li><p><strong>Visualization Tips</strong>: Use diverging colormaps to highlight transition zones</p></li>
+</ul>
+</dd>
+<dt><strong>wet_depth</strong></dt><dd><ul class="simple">
+<li><p><strong>Units</strong>: Meters</p></li>
+<li><p><strong>Interpretation</strong>: Average depth within wet portions of element</p></li>
+<li><p><strong>Use Cases</strong>: Assessing effective water depth for flow calculations</p></li>
+<li><p><strong>Visualization Tips</strong>: Use sequential colormaps with appropriate depth ranges</p></li>
+</ul>
+</dd>
+<dt><strong>total_depth</strong></dt><dd><ul class="simple">
+<li><p><strong>Units</strong>: Meters</p></li>
+<li><p><strong>Interpretation</strong>: Total water column including subgrid corrections</p></li>
+<li><p><strong>Use Cases</strong>: Comparing with original mesh bathymetry</p></li>
+<li><p><strong>Visualization Tips</strong>: Similar to wet_depth but may show larger values</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="advanced-plotting-options">
+<h3>Advanced Plotting Options<a class="headerlink" href="#advanced-plotting-options" title="Link to this heading"></a></h3>
+<p><strong>Spatial Extent Control:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Focus on specific geographic region</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bbox<span class="w"> </span>-95.5<span class="w"> </span><span class="m">29</span>.0<span class="w"> </span>-94.5<span class="w"> </span><span class="m">29</span>.5<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span>--show
+</pre></div>
+</div>
+<p><strong>Colormap and Range Control:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Customize visualization appearance</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--water-level<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span>--range<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span>--colorbar<span class="w"> </span>viridis<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-filename<span class="w"> </span>phi_1m_elevation.png
+</pre></div>
+</div>
+<p><strong>Multiple Water Levels:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create series of plots for different water levels</span>
+<span class="k">for</span><span class="w"> </span>level<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="m">1</span>.5<span class="w"> </span><span class="m">2</span>.0<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--water-level<span class="w"> </span><span class="nv">$level</span><span class="w"> </span>--range<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span>--colorbar<span class="w"> </span>plasma<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--output-filename<span class="w"> </span><span class="s2">&quot;phi_</span><span class="si">${</span><span class="nv">level</span><span class="si">}</span><span class="s2">m.png&quot;</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="node-level-visualization">
+<h2>Node-Level Visualization<a class="headerlink" href="#node-level-visualization" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">plot-node</span></code> command provides detailed analysis of subgrid relationships at individual mesh nodes.</p>
+<section id="basic-node-plotting">
+<h3>Basic Node Plotting<a class="headerlink" href="#basic-node-plotting" title="Link to this heading"></a></h3>
+<p><strong>Command Syntax:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span>NODE_ID<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Essential Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--filename</span> <span class="pre">FILE</span></code>: Subgrid NetCDF file (required)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--node</span> <span class="pre">NODE_ID</span></code>: Node number to analyze (required)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--basis</span> <span class="pre">BASIS</span></code>: Plot basis (phi or wse)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--show</span></code>: Display plot interactively</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--save</span> <span class="pre">FILE</span></code>: Save plot to file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--index-base</span> <span class="pre">BASE</span></code>: Node numbering convention (0 or 1)</p></li>
+</ul>
+<p><strong>Basic Example:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Analyze phi vs water level for node 5000</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">5000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--basis<span class="w"> </span>phi<span class="w"> </span>--show
+</pre></div>
+</div>
+</section>
+<section id="plot-basis-options">
+<h3>Plot Basis Options<a class="headerlink" href="#plot-basis-options" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt><strong>phi basis</strong></dt><dd><ul class="simple">
+<li><p><strong>X-axis</strong>: Water surface elevation (m)</p></li>
+<li><p><strong>Y-axis</strong>: φ factor (0-1)</p></li>
+<li><p><strong>Purpose</strong>: Understanding wetting behavior as function of water level</p></li>
+<li><p><strong>Interpretation</strong>: Shows how element wetted area changes with water level</p></li>
+</ul>
+</dd>
+<dt><strong>wse basis (Water Surface Elevation)</strong></dt><dd><ul class="simple">
+<li><p><strong>X-axis</strong>: φ factor (0-1)</p></li>
+<li><p><strong>Y-axis</strong>: Water surface elevation (m)</p></li>
+<li><p><strong>Purpose</strong>: Understanding inverse relationship</p></li>
+<li><p><strong>Interpretation</strong>: Shows water level required for given wetted fraction</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="node-selection-strategies">
+<h3>Node Selection Strategies<a class="headerlink" href="#node-selection-strategies" title="Link to this heading"></a></h3>
+<p><strong>Representative Sampling:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Analyze nodes in different topographic settings</span>
+<span class="c1"># Deep water node</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--basis<span class="w"> </span>phi<span class="w"> </span>--save<span class="w"> </span>deep_water.png
+
+<span class="c1"># Shallow water node</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">5000</span><span class="w"> </span>--basis<span class="w"> </span>phi<span class="w"> </span>--save<span class="w"> </span>shallow_water.png
+
+<span class="c1"># Intertidal node</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">8000</span><span class="w"> </span>--basis<span class="w"> </span>phi<span class="w"> </span>--save<span class="w"> </span>intertidal.png
+</pre></div>
+</div>
+<p><strong>Problem Diagnosis:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Investigate nodes with unusual behavior</span>
+<span class="c1"># (identified from mesh plots)</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">12500</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--basis<span class="w"> </span>phi<span class="w"> </span>--save<span class="w"> </span>problematic_node.png
+</pre></div>
+</div>
+</section>
+</section>
+<section id="batch-visualization-workflows">
+<h2>Batch Visualization Workflows<a class="headerlink" href="#batch-visualization-workflows" title="Link to this heading"></a></h2>
+<section id="python-based-automation">
+<h3>Python-Based Automation<a class="headerlink" href="#python-based-automation" title="Link to this heading"></a></h3>
+<p>Create comprehensive visualization sets using Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_water_level_series</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;percent_wet&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create visualization series for multiple water levels.&quot;&quot;&quot;</span>
+
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Define water levels to visualize</span>
+    <span class="n">water_levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">water_levels</span><span class="p">:</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_level_</span><span class="si">{</span><span class="n">level</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">m.png&quot;</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;adcirc-subgrid&#39;</span><span class="p">,</span> <span class="s1">&#39;plot-mesh&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">),</span>
+            <span class="s1">&#39;--variable&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span>
+            <span class="s1">&#39;--water-level&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">level</span><span class="p">),</span>
+            <span class="s1">&#39;--colorbar&#39;</span><span class="p">,</span> <span class="s1">&#39;viridis&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--output-filename&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating plot for water level </span><span class="si">{</span><span class="n">level</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Usage</span>
+<span class="n">create_water_level_series</span><span class="p">(</span><span class="s1">&#39;subgrid.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;visualization_series&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Multi-Variable Analysis:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_variable_comparison</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">,</span> <span class="n">water_level</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create comparison plots for different variables at fixed water level.&quot;&quot;&quot;</span>
+
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;percent_wet&#39;</span><span class="p">,</span> <span class="s1">&#39;wet_depth&#39;</span><span class="p">,</span> <span class="s1">&#39;total_depth&#39;</span><span class="p">,</span> <span class="s1">&#39;cf&#39;</span><span class="p">]</span>
+    <span class="n">colormaps</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="s1">&#39;plasma&#39;</span><span class="p">,</span> <span class="s1">&#39;cividis&#39;</span><span class="p">,</span> <span class="s1">&#39;inferno&#39;</span><span class="p">]</span>
+
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">cmap</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">colormaps</span><span class="p">):</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_wl_</span><span class="si">{</span><span class="n">water_level</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">m.png&quot;</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;adcirc-subgrid&#39;</span><span class="p">,</span> <span class="s1">&#39;plot-mesh&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">),</span>
+            <span class="s1">&#39;--variable&#39;</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span>
+            <span class="s1">&#39;--water-level&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">water_level</span><span class="p">),</span>
+            <span class="s1">&#39;--colorbar&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span>
+            <span class="s1">&#39;--output-filename&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="shell-script-automation">
+<h3>Shell Script Automation<a class="headerlink" href="#shell-script-automation" title="Link to this heading"></a></h3>
+<p><strong>Comprehensive Analysis Script:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># Comprehensive subgrid visualization script</span>
+<span class="nv">SUBGRID_FILE</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<span class="nv">OUTPUT_DIR</span><span class="o">=</span><span class="s2">&quot;analysis_</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d_%H%M%S<span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SUBGRID_FILE</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Usage: </span><span class="nv">$0</span><span class="s2"> &lt;subgrid_file.nc&gt;&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$OUTPUT_DIR</span><span class="s2">&quot;</span>
+<span class="nb">cd</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$OUTPUT_DIR</span><span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Creating mesh visualizations...&quot;</span>
+
+<span class="c1"># Water level series for phi</span>
+<span class="k">for</span><span class="w"> </span>level<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="m">1</span>.5<span class="w"> </span><span class="m">2</span>.0<span class="w"> </span><span class="m">2</span>.5<span class="w"> </span><span class="m">3</span>.0<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  Water level: </span><span class="si">${</span><span class="nv">level</span><span class="si">}</span><span class="s2">m&quot;</span>
+<span class="w">    </span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span><span class="s2">&quot;../</span><span class="nv">$SUBGRID_FILE</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span>--water-level<span class="w"> </span><span class="nv">$level</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--colorbar<span class="w"> </span>viridis<span class="w"> </span>--range<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--output-filename<span class="w"> </span><span class="s2">&quot;phi_</span><span class="si">${</span><span class="nv">level</span><span class="si">}</span><span class="s2">m.png&quot;</span>
+<span class="k">done</span>
+
+<span class="c1"># Variable comparison at MSL</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Creating variable comparisons at MSL...&quot;</span>
+<span class="k">for</span><span class="w"> </span>var<span class="w"> </span><span class="k">in</span><span class="w"> </span>percent_wet<span class="w"> </span>wet_depth<span class="w"> </span>total_depth<span class="w"> </span>cf<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  Variable: </span><span class="nv">$var</span><span class="s2">&quot;</span>
+<span class="w">    </span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span><span class="s2">&quot;../</span><span class="nv">$SUBGRID_FILE</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--variable<span class="w"> </span><span class="nv">$var</span><span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--colorbar<span class="w"> </span>plasma<span class="w"> </span>--output-filename<span class="w"> </span><span class="s2">&quot;msl_</span><span class="si">${</span><span class="nv">var</span><span class="si">}</span><span class="s2">.png&quot;</span>
+<span class="k">done</span>
+
+<span class="c1"># Representative node analysis</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Creating node analyses...&quot;</span>
+<span class="nv">nodes</span><span class="o">=(</span><span class="m">1000</span><span class="w"> </span><span class="m">5000</span><span class="w"> </span><span class="m">10000</span><span class="w"> </span><span class="m">15000</span><span class="o">)</span>
+<span class="k">for</span><span class="w"> </span>node<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">nodes</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  Node: </span><span class="nv">$node</span><span class="s2">&quot;</span>
+<span class="w">    </span>adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span><span class="s2">&quot;../</span><span class="nv">$SUBGRID_FILE</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--node<span class="w"> </span><span class="nv">$node</span><span class="w"> </span>--basis<span class="w"> </span>phi<span class="w"> </span>--save<span class="w"> </span><span class="s2">&quot;node_</span><span class="si">${</span><span class="nv">node</span><span class="si">}</span><span class="s2">_phi.png&quot;</span>
+<span class="k">done</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Analysis complete in directory: </span><span class="nv">$OUTPUT_DIR</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="quality-control-visualization">
+<h2>Quality Control Visualization<a class="headerlink" href="#quality-control-visualization" title="Link to this heading"></a></h2>
+<section id="identifying-common-issues">
+<h3>Identifying Common Issues<a class="headerlink" href="#identifying-common-issues" title="Link to this heading"></a></h3>
+<p><strong>Non-Physical φ Values:</strong></p>
+<p>Create diagnostic plots to identify nodes with φ values outside [0,1]:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Load subgrid data</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;subgrid.nc&#39;</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span>
+
+<span class="c1"># Check for values outside valid range</span>
+<span class="n">invalid_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;phi_level&#39;</span><span class="p">)</span>
+<span class="n">invalid_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;phi_level&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create diagnostic plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Plot nodes with phi &lt; 0</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">invalid_low</span><span class="p">),</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">invalid_low</span><span class="p">),</span>
+            <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Nodes with φ &lt; 0&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Longitude&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Latitude&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot nodes with phi &gt; 1</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">invalid_high</span><span class="p">),</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">invalid_high</span><span class="p">),</span>
+            <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Nodes with φ &gt; 1&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Longitude&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Latitude&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;phi_validation.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Monotonicity Checking:</strong></p>
+<p>Verify that φ increases monotonically with water level:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">check_monotonicity</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check for non-monotonic phi relationships.&quot;&quot;&quot;</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">)</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Compute differences between consecutive phi levels</span>
+    <span class="n">phi_diff</span> <span class="o">=</span> <span class="n">phi</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;phi_level&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Find nodes with decreasing phi</span>
+    <span class="n">non_monotonic</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi_diff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;phi_level&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Count and locate problematic nodes</span>
+    <span class="n">n_problems</span> <span class="o">=</span> <span class="n">non_monotonic</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">n_problems</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">n_problems</span><span class="si">}</span><span class="s2"> nodes with non-monotonic phi&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get coordinates of problematic nodes</span>
+        <span class="n">problem_coords</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">non_monotonic</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Create diagnostic plot</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">problem_coords</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">problem_coords</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+                   <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Nodes with Non-Monotonic φ Relationships&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Longitude&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Latitude&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;monotonicity_problems.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All nodes have monotonic phi relationships&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-analysis-techniques">
+<h2>Advanced Analysis Techniques<a class="headerlink" href="#advanced-analysis-techniques" title="Link to this heading"></a></h2>
+<section id="statistical-analysis">
+<h3>Statistical Analysis<a class="headerlink" href="#statistical-analysis" title="Link to this heading"></a></h3>
+<p><strong>φ Distribution Analysis:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_phi_distribution</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">,</span> <span class="n">water_level</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze statistical distribution of phi values.&quot;&quot;&quot;</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">)</span>
+
+    <span class="c1"># Interpolate phi to specific water level</span>
+    <span class="n">phi_wl</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">phi_level</span><span class="o">=</span><span class="n">water_level</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create histogram</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+    <span class="c1"># Histogram</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">phi_wl</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;φ Factor&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Density&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;φ Distribution at </span><span class="si">{</span><span class="n">water_level</span><span class="si">}</span><span class="s1">m&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Cumulative distribution</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">sorted_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">phi_wl</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_phi</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_phi</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sorted_phi</span><span class="p">,</span> <span class="n">cdf</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;φ Factor&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Cumulative Probability&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Cumulative Distribution&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Statistics</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">phi_wl</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">)),</span> <span class="n">stats</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">)),</span> <span class="p">[</span><span class="s1">&#39;10%&#39;</span><span class="p">,</span> <span class="s1">&#39;25%&#39;</span><span class="p">,</span> <span class="s1">&#39;50%&#39;</span><span class="p">,</span> <span class="s1">&#39;75%&#39;</span><span class="p">,</span> <span class="s1">&#39;90%&#39;</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;φ Factor&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Quantile Statistics&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;phi_analysis_</span><span class="si">{</span><span class="n">water_level</span><span class="si">}</span><span class="s1">m.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="comparative-analysis">
+<h3>Comparative Analysis<a class="headerlink" href="#comparative-analysis" title="Link to this heading"></a></h3>
+<p><strong>Before/After Comparison:</strong></p>
+<p>Compare subgrid results from different processing runs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compare_subgrid_results</span><span class="p">(</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">,</span> <span class="n">water_level</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare phi values between two subgrid files.&quot;&quot;&quot;</span>
+
+    <span class="n">ds1</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">file1</span><span class="p">)</span>
+    <span class="n">ds2</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">file2</span><span class="p">)</span>
+
+    <span class="c1"># Interpolate to same water level</span>
+    <span class="n">phi1</span> <span class="o">=</span> <span class="n">ds1</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">phi_level</span><span class="o">=</span><span class="n">water_level</span><span class="p">)</span>
+    <span class="n">phi2</span> <span class="o">=</span> <span class="n">ds2</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">phi_level</span><span class="o">=</span><span class="n">water_level</span><span class="p">)</span>
+
+    <span class="c1"># Compute difference</span>
+    <span class="n">phi_diff</span> <span class="o">=</span> <span class="n">phi2</span> <span class="o">-</span> <span class="n">phi1</span>
+
+    <span class="c1"># Create comparison plots</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+    <span class="c1"># Original phi</span>
+    <span class="n">im1</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ds1</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">ds1</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">phi1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Original φ&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Updated phi</span>
+    <span class="n">im2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ds2</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">ds2</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">phi2</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Updated φ&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Difference</span>
+    <span class="n">im3</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ds1</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">ds1</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">phi_diff</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                            <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Difference (Updated - Original)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Histogram of differences</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">phi_diff</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;φ Difference&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Difference Distribution&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;subgrid_comparison.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="publication-quality-figures">
+<h2>Publication-Quality Figures<a class="headerlink" href="#publication-quality-figures" title="Link to this heading"></a></h2>
+<section id="creating-high-quality-output">
+<h3>Creating High-Quality Output<a class="headerlink" href="#creating-high-quality-output" title="Link to this heading"></a></h3>
+<p><strong>Matplotlib Styling:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.style</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mplstyle</span>
+
+<span class="c1"># Use publication-ready style</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">([</span><span class="s1">&#39;seaborn-v0_8-paper&#39;</span><span class="p">,</span> <span class="s1">&#39;seaborn-v0_8-colorblind&#39;</span><span class="p">])</span>
+
+<span class="c1"># Custom parameters for publications</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s1">&#39;axes.titlesize&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s1">&#39;axes.labelsize&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s1">&#39;xtick.labelsize&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;ytick.labelsize&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;legend.fontsize&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;figure.dpi&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="s1">&#39;savefig.dpi&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="s1">&#39;savefig.bbox&#39;</span><span class="p">:</span> <span class="s1">&#39;tight&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;savefig.pad_inches&#39;</span><span class="p">:</span> <span class="mf">0.1</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p><strong>Multi-Panel Figures:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_multipanel_figure</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create comprehensive multi-panel figure.&quot;&quot;&quot;</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">subgrid_file</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+
+    <span class="c1"># Panel A: phi at MSL</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">phi_msl</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">phi_level</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">scatter1</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">phi_msl</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                          <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;(a) φ Factor at MSL&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Longitude (°)&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Latitude (°)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">scatter1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+    <span class="c1"># Panel B: phi at +1m</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">phi_1m</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">phi_level</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">scatter2</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">phi_1m</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                          <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;(b) φ Factor at +1m&#39;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Longitude (°)&#39;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Latitude (°)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">scatter2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+    <span class="c1"># Panel C: Manning&#39;s coefficients</span>
+    <span class="n">ax3</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">manning</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;manning_avg&#39;</span><span class="p">]</span>
+    <span class="n">scatter3</span> <span class="o">=</span> <span class="n">ax3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">manning</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                          <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;(c) Average Manning</span><span class="se">\&#39;</span><span class="s1">s n&#39;</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Longitude (°)&#39;</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Latitude (°)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">scatter3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+    <span class="c1"># Panel D: Node analysis examples</span>
+    <span class="n">ax4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">nodes_to_plot</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">]</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">nodes_to_plot</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="n">phi_node</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi_level&#39;</span><span class="p">]</span>
+        <span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">phi_node</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Node </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">ax4</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Water Level (m)&#39;</span><span class="p">)</span>
+    <span class="n">ax4</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;φ Factor&#39;</span><span class="p">)</span>
+    <span class="n">ax4</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;(d) Representative φ vs Water Level&#39;</span><span class="p">)</span>
+    <span class="n">ax4</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax4</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ax4</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">levels</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">levels</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">ax4</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;comprehensive_subgrid_analysis.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This comprehensive visualization guide enables effective analysis and presentation of subgrid results for both technical validation and scientific communication.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scientific_background.html" class="btn btn-neutral float-left" title="Scientific Background" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="troubleshooting.html" class="btn btn-neutral float-right" title="Troubleshooting Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Water Institute of the Gulf.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

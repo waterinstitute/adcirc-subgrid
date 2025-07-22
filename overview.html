@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview &mdash; adcirc-subgrid 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]]}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="ADCIRC Subgrid Preprocessor Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adcirc-subgrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-adcirc-subgrid">What is ADCIRC Subgrid?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#background-and-motivation">Background and Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-concepts">Key Concepts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subgrid-correction-terms">Subgrid Correction Terms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mathematical-framework">Mathematical Framework</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-factor">The φ Factor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-requirements">Data Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workflow-overview">Workflow Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advantages-and-limitations">Advantages and Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_formats.html">Input File Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples and Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific_background.html">Scientific Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization and Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adcirc-subgrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/overview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h1>
+<section id="what-is-adcirc-subgrid">
+<h2>What is ADCIRC Subgrid?<a class="headerlink" href="#what-is-adcirc-subgrid" title="Link to this heading"></a></h2>
+<p>The ADCIRC Subgrid Preprocessor is a Python package designed to enhance the accuracy of ADCIRC hydrodynamic models by generating subgrid correction terms. These corrections account for sub-mesh scale features that cannot be explicitly resolved in the computational mesh but significantly affect the flow dynamics.</p>
+</section>
+<section id="background-and-motivation">
+<h2>Background and Motivation<a class="headerlink" href="#background-and-motivation" title="Link to this heading"></a></h2>
+<p>Traditional hydrodynamic modeling faces a fundamental trade-off between computational efficiency and spatial resolution. Higher resolution meshes can capture more detailed topographic features but come at significantly increased computational cost. Subgrid methods provide an elegant solution by:</p>
+<ol class="arabic simple">
+<li><p><strong>Maintaining computational efficiency</strong> with coarser mesh resolutions</p></li>
+<li><p><strong>Incorporating fine-scale topographic effects</strong> through correction terms</p></li>
+<li><p><strong>Improving model accuracy</strong> without proportional increases in computational cost</p></li>
+</ol>
+<p>The subgrid approach is particularly valuable for:</p>
+<ul class="simple">
+<li><p><strong>Storm surge modeling</strong> where small-scale topographic features affect flooding patterns</p></li>
+<li><p><strong>Coastal applications</strong> with complex bathymetry and varying land cover</p></li>
+<li><p><strong>Large-domain simulations</strong> where uniform high resolution is computationally prohibitive</p></li>
+</ul>
+</section>
+<section id="key-concepts">
+<h2>Key Concepts<a class="headerlink" href="#key-concepts" title="Link to this heading"></a></h2>
+<section id="subgrid-correction-terms">
+<h3>Subgrid Correction Terms<a class="headerlink" href="#subgrid-correction-terms" title="Link to this heading"></a></h3>
+<p>The subgrid method modifies the standard shallow water equations by introducing correction terms that account for:</p>
+<ul class="simple">
+<li><p><strong>Sub-grid scale bathymetry variations</strong>: Capturing the effect of topographic features smaller than the mesh resolution</p></li>
+<li><p><strong>Manning’s roughness heterogeneity</strong>: Accounting for sub-mesh scale variations in bottom friction</p></li>
+<li><p><strong>Wetting and drying dynamics</strong>: Improving the representation of complex shoreline interactions</p></li>
+</ul>
+</section>
+<section id="mathematical-framework">
+<h3>Mathematical Framework<a class="headerlink" href="#mathematical-framework" title="Link to this heading"></a></h3>
+<p>The subgrid corrections are implemented through modification of the continuity and momentum equations:</p>
+<p><strong>Averaged Continuity Equation:</strong></p>
+<div class="math notranslate nohighlight">
+\[\phi \frac{\partial \langle \zeta \rangle_W}{\partial t} + \frac{\partial \langle UH \rangle_G}{\partial x} + \frac{\partial \langle VH \rangle_G}{\partial y} = 0\]</div>
+<p><strong>Averaged Momentum Equations (simplified form):</strong></p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \langle UH \rangle_G}{\partial t} + \frac{\partial C_{UU} \langle U \rangle \langle UH \rangle_G}{\partial x} + \frac{\partial C_{VU} \langle V \rangle \langle UH \rangle_G}{\partial y} = -\frac{C_{M,f} \langle U \rangle \langle UH \rangle_G}{\langle H \rangle_W} + \text{other terms}\]</div>
+<p>Where:
+- <span class="math notranslate nohighlight">\(\langle \cdot \rangle_G\)</span> indicates grid-averaged quantities
+- <span class="math notranslate nohighlight">\(\langle \cdot \rangle_W\)</span> indicates wet-averaged quantities
+- <span class="math notranslate nohighlight">\(C_{UU}, C_{VU}\)</span> are advection correction coefficients
+- <span class="math notranslate nohighlight">\(C_{M,f}\)</span> is the bottom friction correction coefficient
+- <span class="math notranslate nohighlight">\(\phi\)</span> is the wet area fraction (0 ≤ φ ≤ 1)</p>
+</section>
+<section id="the-factor">
+<h3>The φ Factor<a class="headerlink" href="#the-factor" title="Link to this heading"></a></h3>
+<p>The central concept in subgrid modeling is the φ (phi) factor, which represents the fraction of a mesh element that is wet at a given water level. This factor:</p>
+<ul class="simple">
+<li><p>Varies from 0 (completely dry) to 1 (completely wet)</p></li>
+<li><p>Is computed based on high-resolution topographic data within each mesh element</p></li>
+<li><p>Accounts for complex sub-mesh topography and wetting patterns</p></li>
+</ul>
+</section>
+</section>
+<section id="data-requirements">
+<h2>Data Requirements<a class="headerlink" href="#data-requirements" title="Link to this heading"></a></h2>
+<p>The subgrid preprocessor requires several input datasets:</p>
+<p><strong>Essential Inputs:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>ADCIRC Mesh File</strong> (<code class="docutils literal notranslate"><span class="pre">fort.14</span></code>): Defines the computational grid and bathymetry</p></li>
+<li><p><strong>Digital Elevation Model (DEM)</strong>: High-resolution topographic/bathymetric data</p></li>
+<li><p><strong>Land Cover Data</strong>: Classification data for Manning’s roughness assignment</p></li>
+<li><p><strong>Manning’s Roughness Lookup</strong>: Mapping from land cover classes to roughness values</p></li>
+</ol>
+<p><strong>Data Quality Considerations:</strong></p>
+<ul class="simple">
+<li><p><strong>Coordinate System Consistency</strong>: All datasets should use consistent coordinate reference systems (WGS84 recommended)</p></li>
+<li><p><strong>Resolution Requirements</strong>: DEM resolution should be significantly higher than mesh resolution for effective subgrid corrections</p></li>
+<li><p><strong>Coverage</strong>: Input datasets should completely cover the computational domain</p></li>
+</ul>
+</section>
+<section id="workflow-overview">
+<h2>Workflow Overview<a class="headerlink" href="#workflow-overview" title="Link to this heading"></a></h2>
+<p>The typical subgrid generation workflow consists of:</p>
+<ol class="arabic simple">
+<li><p><strong>Data Preparation</strong>: Ensuring all input datasets are properly formatted and georeferenced</p></li>
+<li><p><strong>Configuration</strong>: Creating YAML configuration files specifying inputs and processing options</p></li>
+<li><p><strong>Processing</strong>: Running the preprocessor to compute subgrid corrections</p></li>
+<li><p><strong>Quality Control</strong>: Using visualization tools to verify results</p></li>
+<li><p><strong>Model Integration</strong>: Incorporating the subgrid file into ADCIRC simulations</p></li>
+</ol>
+</section>
+<section id="advantages-and-limitations">
+<h2>Advantages and Limitations<a class="headerlink" href="#advantages-and-limitations" title="Link to this heading"></a></h2>
+<p><strong>Advantages:</strong></p>
+<ul class="simple">
+<li><p>Improved accuracy for flow over complex topography</p></li>
+<li><p>Computational efficiency compared to high-resolution meshes</p></li>
+<li><p>Flexible configuration options for various applications</p></li>
+<li><p>Integration with existing ADCIRC workflows</p></li>
+</ul>
+<p><strong>Limitations:</strong></p>
+<ul class="simple">
+<li><p>Requires high-quality input data (DEM and land cover)</p></li>
+<li><p>Additional preprocessing step in the modeling workflow</p></li>
+<li><p>May not capture all physical processes affected by small-scale features</p></li>
+<li><p>Effectiveness depends on the quality of underlying assumptions about sub-grid processes</p></li>
+</ul>
+</section>
+<section id="applications">
+<h2>Applications<a class="headerlink" href="#applications" title="Link to this heading"></a></h2>
+<p>The ADCIRC Subgrid Preprocessor is particularly well-suited for:</p>
+<ul class="simple">
+<li><p><strong>Hurricane storm surge modeling</strong> in areas with complex coastal topography</p></li>
+<li><p><strong>Flood inundation studies</strong> requiring accurate representation of urban infrastructure</p></li>
+<li><p><strong>Coastal restoration project assessment</strong> where small-scale features affect flow patterns</p></li>
+<li><p><strong>Climate change impact studies</strong> requiring efficient large-domain simulations</p></li>
+</ul>
+<p>This overview provides the foundation for understanding how the subgrid preprocessor works and when to apply it effectively. The following sections provide detailed guidance on installation, configuration, and usage.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="ADCIRC Subgrid Preprocessor Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Water Institute of the Gulf.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

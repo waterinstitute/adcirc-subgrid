@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Input File Formats &mdash; adcirc-subgrid 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage Guide" href="usage.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adcirc-subgrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Input File Formats</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-file-format">Configuration File Format</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-configuration-structure">Basic Configuration Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input-section">Input Section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-section">Output Section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#options-section">Options Section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-configuration-example">Advanced Configuration Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adcirc-mesh-file-fort-14">ADCIRC Mesh File (fort.14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#format-specification">Format Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#digital-elevation-model-dem">Digital Elevation Model (DEM)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data-requirements">Data Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#format-examples">Format Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#land-cover-data">Land Cover Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#classification-systems">Classification Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-manning-s-lookup">Custom Manning’s Lookup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-quality-considerations">Data Quality Considerations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coordinate-system-consistency">Coordinate System Consistency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resolution-compatibility">Resolution Compatibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-coverage-verification">Data Coverage Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#file-naming-conventions">File Naming Conventions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples and Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific_background.html">Scientific Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization and Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adcirc-subgrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Input File Formats</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/input_formats.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="input-file-formats">
+<h1>Input File Formats<a class="headerlink" href="#input-file-formats" title="Link to this heading"></a></h1>
+<p>The ADCIRC Subgrid Preprocessor requires several input files to generate subgrid corrections. This section provides detailed specifications for each required input format and configuration options.</p>
+<section id="configuration-file-format">
+<h2>Configuration File Format<a class="headerlink" href="#configuration-file-format" title="Link to this heading"></a></h2>
+<p>The primary configuration is specified using YAML format. The configuration file has three main sections: <code class="docutils literal notranslate"><span class="pre">input</span></code>, <code class="docutils literal notranslate"><span class="pre">output</span></code>, and <code class="docutils literal notranslate"><span class="pre">options</span></code>.</p>
+<section id="basic-configuration-structure">
+<h3>Basic Configuration Structure<a class="headerlink" href="#basic-configuration-structure" title="Link to this heading"></a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fort.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ccap</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elevation_data.tif</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">landcover_data.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subgrid.nc</span>
+<span class="w">  </span><span class="nt">progress_bar_increment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+</pre></div>
+</div>
+</section>
+<section id="input-section">
+<h3>Input Section<a class="headerlink" href="#input-section" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt><strong>adcirc_mesh</strong> (required)</dt><dd><p>Path to the ADCIRC mesh file (typically <code class="docutils literal notranslate"><span class="pre">fort.14</span></code>). This file defines the computational grid and initial bathymetry.</p>
+<ul class="simple">
+<li><p><strong>Format</strong>: ADCIRC ASCII mesh format</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">./fort.14</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>manning_lookup</strong> (required)</dt><dd><p>Manning’s roughness coefficient lookup specification. Can be either a path to a custom lookup file or <code class="docutils literal notranslate"><span class="pre">ccap</span></code> for the built-in CCAP lookup table.</p>
+<ul class="simple">
+<li><p><strong>Options</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ccap</span></code>: Use built-in C-CAP (Coastal Change Analysis Program) lookup table</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/lookup.csv</span></code>: Path to custom CSV lookup file</p></li>
+</ul>
+</li>
+<li><p><strong>Custom Format</strong>: CSV file with columns: <code class="docutils literal notranslate"><span class="pre">Class</span></code>, <code class="docutils literal notranslate"><span class="pre">Manning's</span> <span class="pre">n</span></code></p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">ccap</span></code> or <code class="docutils literal notranslate"><span class="pre">./custom_manning.csv</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>dem</strong> (required)</dt><dd><p>Path to the Digital Elevation Model file. Must be in a GDAL-compatible raster format.</p>
+<ul class="simple">
+<li><p><strong>Supported Formats</strong>: GeoTIFF (<code class="docutils literal notranslate"><span class="pre">.tif</span></code>, <code class="docutils literal notranslate"><span class="pre">.tiff</span></code>), NetCDF (<code class="docutils literal notranslate"><span class="pre">.nc</span></code>), HDF (<code class="docutils literal notranslate"><span class="pre">.hdf</span></code>)</p></li>
+<li><p><strong>Coordinate System</strong>: Should match other datasets (WGS84 recommended)</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">./bathymetry_dem.tif</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>land_cover</strong> (required)</dt><dd><p>Path to the land cover classification raster. Used with Manning’s lookup table to assign friction coefficients.</p>
+<ul class="simple">
+<li><p><strong>Supported Formats</strong>: Same as DEM</p></li>
+<li><p><strong>Values</strong>: Integer class codes corresponding to lookup table entries</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">./landcover_ccap.tif</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="output-section">
+<h3>Output Section<a class="headerlink" href="#output-section" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt><strong>filename</strong> (required)</dt><dd><p>Output filename for the generated subgrid NetCDF file.</p>
+<ul class="simple">
+<li><p><strong>Format</strong>: NetCDF4 format (<code class="docutils literal notranslate"><span class="pre">.nc</span></code> extension recommended)</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">subgrid_corrections.nc</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>progress_bar_increment</strong> (optional, default: 10)</dt><dd><p>Frequency of progress updates during processing (in percentage points).</p>
+<ul class="simple">
+<li><p><strong>Range</strong>: 1-100</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">5</span></code> (update every 5% completion)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="options-section">
+<h3>Options Section<a class="headerlink" href="#options-section" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt><strong>n_subgrid_levels</strong> (optional, default: 11)</dt><dd><p>Number of water level increments used for subgrid calculations. More levels provide higher accuracy but increase computation time.</p>
+<ul class="simple">
+<li><p><strong>Recommended Range</strong>: 25-100</p></li>
+<li><p><strong>Performance Impact</strong>: Linear increase in computation time</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">50</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>n_phi_levels</strong> (optional, default: 11)</dt><dd><p>Number of phi (φ) levels between 0 and 1 written to the output file. This controls the resolution of the φ vs. water level relationship.</p>
+<ul class="simple">
+<li><p><strong>Recommended Range</strong>: 25-100</p></li>
+<li><p><strong>Storage Impact</strong>: Affects output file size</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">50</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>subgrid_level_distribution</strong> (optional, default: “linear”)</dt><dd><p>Method for distributing water levels used in subgrid calculations.</p>
+<ul class="simple">
+<li><p><strong>Options</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">linear</span></code>: Evenly spaced levels</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">histogram</span></code>: Distribution based on elevation histogram (recommended)</p></li>
+</ul>
+</li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">histogram</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>distribution_factor</strong> (optional, default: 1.0)</dt><dd><p>Scaling factor for water level distribution range.</p>
+<ul class="simple">
+<li><p><strong>Range</strong>: &gt; 0.0</p></li>
+<li><p><strong>Typical Values</strong>: 0.5 - 2.0</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">1.5</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>existing_subgrid</strong> (optional, default: None)</dt><dd><p>Path to existing subgrid file for incremental updates. Allows building composite subgrid tables from multiple datasets.</p>
+<ul class="simple">
+<li><p><strong>Format</strong>: NetCDF4 subgrid file from previous run</p></li>
+<li><p><strong>Behavior</strong>: New data supplements existing; no overwriting of existing areas</p></li>
+<li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">./previous_subgrid.nc</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="advanced-configuration-example">
+<h3>Advanced Configuration Example<a class="headerlink" href="#advanced-configuration-example" title="Link to this heading"></a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/meshes/gulf_coast.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/lookups/custom_roughness.csv</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/elevation/lidar_2023_6m.tif</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/landcover/ccap_2021_30m.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gulf_coast_subgrid_v2.nc</span>
+<span class="w">  </span><span class="nt">progress_bar_increment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+<span class="w">  </span><span class="nt">distribution_factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.25</span>
+<span class="w">  </span><span class="nt">existing_subgrid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gulf_coast_subgrid_v1.nc</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="adcirc-mesh-file-fort-14">
+<h2>ADCIRC Mesh File (fort.14)<a class="headerlink" href="#adcirc-mesh-file-fort-14" title="Link to this heading"></a></h2>
+<p>The ADCIRC mesh file defines the computational grid and provides initial bathymetry values.</p>
+<section id="format-specification">
+<h3>Format Specification<a class="headerlink" href="#format-specification" title="Link to this heading"></a></h3>
+<p>The fort.14 file uses ADCIRC’s standard ASCII format:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ADCIRC Mesh Title
+NE NN        ! Number of elements, number of nodes
+1  x1  y1  z1    ! Node ID, x-coordinate, y-coordinate, depth
+2  x2  y2  z2
+...
+NN  xNN yNN zNN
+1  3  n1  n2  n3  ! Element ID, nodes per element, node connectivity
+2  3  n4  n5  n6
+...
+</pre></div>
+</div>
+<p><strong>Key Requirements:</strong></p>
+<ul class="simple">
+<li><p><strong>Coordinate System</strong>: Should match DEM and land cover data</p></li>
+<li><p><strong>Bathymetry Values</strong>: Positive depths below datum</p></li>
+<li><p><strong>Node Numbering</strong>: Must be consecutive starting from 1</p></li>
+<li><p><strong>Element Connectivity</strong>: Counter-clockwise node ordering</p></li>
+</ul>
+</section>
+</section>
+<section id="digital-elevation-model-dem">
+<h2>Digital Elevation Model (DEM)<a class="headerlink" href="#digital-elevation-model-dem" title="Link to this heading"></a></h2>
+<p>High-resolution elevation data is critical for effective subgrid corrections.</p>
+<section id="data-requirements">
+<h3>Data Requirements<a class="headerlink" href="#data-requirements" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt><strong>Resolution</strong>:</dt><dd><p>DEM resolution should be significantly finer than mesh resolution. Typical ratios:</p>
+<ul class="simple">
+<li><p><strong>Coastal applications</strong>: DEM 5-10x finer than average mesh spacing</p></li>
+<li><p><strong>Urban flooding</strong>: DEM 10-20x finer than mesh spacing</p></li>
+<li><p><strong>Large domains</strong>: DEM 3-5x finer than mesh spacing</p></li>
+</ul>
+</dd>
+<dt><strong>Coordinate System</strong>:</dt><dd><ul class="simple">
+<li><p>WGS84 (EPSG:4326) recommended for consistency</p></li>
+<li><p>Must match ADCIRC mesh coordinate system</p></li>
+<li><p>Ensure proper datum alignment between datasets</p></li>
+</ul>
+</dd>
+<dt><strong>Coverage</strong>:</dt><dd><ul class="simple">
+<li><p>Must completely cover the computational domain</p></li>
+<li><p>Extended coverage beyond mesh boundaries recommended</p></li>
+<li><p>No-data values should be properly defined</p></li>
+</ul>
+</dd>
+<dt><strong>Elevation Convention</strong>:</dt><dd><ul class="simple">
+<li><p>Positive values above datum</p></li>
+<li><p>Negative values below datum</p></li>
+<li><p>Consistent with ADCIRC bathymetry convention</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="format-examples">
+<h3>Format Examples<a class="headerlink" href="#format-examples" title="Link to this heading"></a></h3>
+<p><strong>GeoTIFF (recommended)</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check DEM properties</span>
+gdalinfo<span class="w"> </span>elevation_data.tif
+
+<span class="c1"># Verify coordinate system</span>
+gdalsrsinfo<span class="w"> </span>elevation_data.tif
+</pre></div>
+</div>
+<p><strong>NetCDF</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check NetCDF structure</span>
+ncdump<span class="w"> </span>-h<span class="w"> </span>elevation_data.nc
+</pre></div>
+</div>
+</section>
+</section>
+<section id="land-cover-data">
+<h2>Land Cover Data<a class="headerlink" href="#land-cover-data" title="Link to this heading"></a></h2>
+<p>Land cover classification provides the basis for Manning’s roughness assignment.</p>
+<section id="classification-systems">
+<h3>Classification Systems<a class="headerlink" href="#classification-systems" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt><strong>CCAP (Coastal Change Analysis Program)</strong>:</dt><dd><p>Standard classification with built-in lookup table based on research validation:</p>
+<ul class="simple">
+<li><p><strong>Class 2</strong>: High Intensity Developed (n=0.120)</p></li>
+<li><p><strong>Class 3</strong>: Medium Intensity Developed (n=0.100)</p></li>
+<li><p><strong>Class 4</strong>: Low Intensity Developed (n=0.070)</p></li>
+<li><p><strong>Class 5</strong>: Developed Open Space (n=0.035)</p></li>
+<li><p><strong>Class 6</strong>: Cultivated Land (n=0.100)</p></li>
+<li><p><strong>Class 7</strong>: Pasture/Hay (n=0.055)</p></li>
+<li><p><strong>Class 8</strong>: Grassland (n=0.035)</p></li>
+<li><p><strong>Class 9</strong>: Deciduous Forest (n=0.160)</p></li>
+<li><p><strong>Class 10</strong>: Evergreen Forest (n=0.180)</p></li>
+<li><p><strong>Class 11</strong>: Mixed Forest (n=0.170)</p></li>
+<li><p><strong>Class 12</strong>: Scrub/Shrub (n=0.080)</p></li>
+<li><p><strong>Class 13</strong>: Palustrine Forested Wetland (n=0.150)</p></li>
+<li><p><strong>Class 14</strong>: Palustrine Scrub/Shrub Wetland (n=0.075)</p></li>
+<li><p><strong>Class 15</strong>: Palustrine Emergent Wetland (n=0.070)</p></li>
+<li><p><strong>Class 16</strong>: Estuarine Forested Wetland (n=0.150)</p></li>
+<li><p><strong>Class 17</strong>: Estuarine Scrub/Shrub Wetland (n=0.075)</p></li>
+<li><p><strong>Class 18</strong>: Estuarine Emergent Wetland (n=0.070)</p></li>
+<li><p><strong>Class 19</strong>: Unconsolidated Shore (n=0.030)</p></li>
+<li><p><strong>Class 20</strong>: Bare Land (n=0.035)</p></li>
+<li><p><strong>Class 21</strong>: Open Water (n=0.025)</p></li>
+<li><p><strong>Class 22</strong>: Palustrine Aquatic Bed (n=0.025)</p></li>
+<li><p><strong>Class 23</strong>: Estuarine Aquatic Bed (n=0.025)</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Research-Validated Manning’s Coefficients:</strong></p>
+<p>Based on recent research (Woodruff et al., 2025), the following values have been validated for coastal applications:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Open Water</strong>: n=0.025</p></li>
+<li><p><strong>Palustrine Emergent Wetland</strong>: n=0.07</p></li>
+<li><p><strong>Estuarine Emergent Wetland</strong>: n=0.05</p></li>
+<li><p><strong>Cultivated Land</strong>: n=0.1</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="custom-manning-s-lookup">
+<h3>Custom Manning’s Lookup<a class="headerlink" href="#custom-manning-s-lookup" title="Link to this heading"></a></h3>
+<p>Create a CSV file with custom roughness values:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Class,Manning&#39;s n
+1,0.025
+2,0.040
+3,0.080
+4,0.120
+5,0.030
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Requirements</strong>:</dt><dd><ul class="simple">
+<li><p>CSV format with header row</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Class</span></code> column: Integer class codes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Manning's</span> <span class="pre">n</span></code> column: Roughness coefficients</p></li>
+<li><p>All classes present in land cover data must be included</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</section>
+<section id="data-quality-considerations">
+<h2>Data Quality Considerations<a class="headerlink" href="#data-quality-considerations" title="Link to this heading"></a></h2>
+<section id="coordinate-system-consistency">
+<h3>Coordinate System Consistency<a class="headerlink" href="#coordinate-system-consistency" title="Link to this heading"></a></h3>
+<p>Ensure all datasets use the same coordinate reference system:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check coordinate systems</span>
+gdalsrsinfo<span class="w"> </span>-e<span class="w"> </span>adcirc_mesh.14<span class="w">  </span><span class="c1"># For mesh files, check documentation</span>
+gdalsrsinfo<span class="w"> </span>elevation.tif
+gdalsrsinfo<span class="w"> </span>landcover.tif
+
+<span class="c1"># Reproject if needed</span>
+gdalwarp<span class="w"> </span>-t_srs<span class="w"> </span>EPSG:4326<span class="w"> </span>input.tif<span class="w"> </span>output_reprojected.tif
+</pre></div>
+</div>
+</section>
+<section id="resolution-compatibility">
+<h3>Resolution Compatibility<a class="headerlink" href="#resolution-compatibility" title="Link to this heading"></a></h3>
+<p>Verify appropriate resolution relationships:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+
+<span class="c1"># Check DEM resolution</span>
+<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;dem.tif&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DEM resolution: </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">res</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Compare with typical mesh spacing</span>
+<span class="c1"># Mesh spacing should be 3-20x larger than DEM pixel size</span>
+</pre></div>
+</div>
+</section>
+<section id="data-coverage-verification">
+<h3>Data Coverage Verification<a class="headerlink" href="#data-coverage-verification" title="Link to this heading"></a></h3>
+<p>Ensure complete domain coverage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.mask</span><span class="w"> </span><span class="kn">import</span> <span class="n">mask</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+
+<span class="c1"># Check if DEM covers mesh domain</span>
+<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;dem.tif&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dem</span><span class="p">:</span>
+    <span class="n">dem_bounds</span> <span class="o">=</span> <span class="n">dem</span><span class="o">.</span><span class="n">bounds</span>
+
+<span class="c1"># Compare with mesh bounds</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DEM bounds: </span><span class="si">{</span><span class="n">dem_bounds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Verify mesh extent falls within DEM coverage</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="file-naming-conventions">
+<h2>File Naming Conventions<a class="headerlink" href="#file-naming-conventions" title="Link to this heading"></a></h2>
+<p>Recommended naming patterns for organization:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># Configuration files
+config_[region]_[resolution]_[version].yaml
+
+# Output files
+subgrid_[region]_[resolution]_[date].nc
+
+# Input data
+dem_[region]_[source]_[resolution]_[date].tif
+landcover_[region]_[source]_[year].tif
+
+# Examples
+config_galveston_6m_v1.yaml
+subgrid_galveston_6m_20240315.nc
+dem_galveston_lidar_6m_20240101.tif
+landcover_galveston_ccap_2021.tif
+</pre></div>
+</div>
+<p>This comprehensive input format guide ensures proper data preparation for successful subgrid generation.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Water Institute of the Gulf.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

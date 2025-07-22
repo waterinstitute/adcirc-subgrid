@@ -1,0 +1,649 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usage Guide &mdash; adcirc-subgrid 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples and Tutorials" href="examples.html" />
+    <link rel="prev" title="Input File Formats" href="input_formats.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adcirc-subgrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_formats.html">Input File Formats</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command Line Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-command-structure">Basic Command Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#global-options">Global Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subcommands">Subcommands</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-workflows">Basic Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#single-dataset-processing">Single Dataset Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-dataset-processing">Multi-Dataset Processing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-configuration">Advanced Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#memory-management">Memory Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-optimization">Performance Optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#quality-control-procedures">Quality Control Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#visual-inspection">Visual Inspection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-validation">Data Validation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-common-issues">Troubleshooting Common Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#processing-errors">Processing Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-quality-issues">Data Quality Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-with-adcirc">Integration with ADCIRC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file-preparation">File Preparation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-considerations">Performance Considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#workflow-automation">Workflow Automation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#batch-processing-scripts">Batch Processing Scripts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices-and-guidelines">Best Practices and Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#resolution-design-guidelines">Resolution Design Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-and-performance-optimization">Memory and Performance Optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#validation-and-quality-control">Validation and Quality Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-with-adcirc-operations">Integration with ADCIRC Operations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples and Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific_background.html">Scientific Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization and Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adcirc-subgrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Usage Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="usage-guide">
+<h1>Usage Guide<a class="headerlink" href="#usage-guide" title="Link to this heading"></a></h1>
+<p>This guide covers the practical aspects of using the ADCIRC Subgrid Preprocessor, from basic workflows to advanced techniques.</p>
+<section id="command-line-interface">
+<h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h2>
+<p>The subgrid preprocessor provides a command-line interface with several subcommands:</p>
+<section id="basic-command-structure">
+<h3>Basic Command Structure<a class="headerlink" href="#basic-command-structure" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span><span class="o">[</span>global-options<span class="o">]</span><span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>subcommand-options<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="global-options">
+<h3>Global Options<a class="headerlink" href="#global-options" title="Link to this heading"></a></h3>
+<dl>
+<dt><strong>–verbose</strong></dt><dd><p>Enable verbose logging output for debugging and detailed progress information.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>--verbose<span class="w"> </span>prep<span class="w"> </span>config.yaml
+</pre></div>
+</div>
+</dd>
+</dl>
+</section>
+<section id="subcommands">
+<h3>Subcommands<a class="headerlink" href="#subcommands" title="Link to this heading"></a></h3>
+<dl>
+<dt><strong>prep</strong> - Preprocessing Command</dt><dd><p>Generate subgrid corrections from input data.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>config.yaml
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>: Path to YAML configuration file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--window-memory</span></code>: Raster processing memory limit in MB (default: 64)</p></li>
+</ul>
+</dd>
+<dt><strong>plot-mesh</strong> - Mesh Visualization</dt><dd><p>Create visualizations of subgrid data on the computational mesh.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>subgrid.nc
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--water-level</span></code>: Water level for visualization (default: 0.0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--variable</span></code>: Variable to plot (percent_wet, wet_depth, total_depth, cf, c_mf, c_adv)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--show</span></code>: Display plot interactively</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output-filename</span></code>: Save plot to file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bbox</span></code>: Bounding box (minx, miny, maxx, maxy)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--range</span></code>: Value range for colorbar (min, max)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--colorbar</span></code>: Matplotlib colormap name</p></li>
+</ul>
+</dd>
+<dt><strong>plot-node</strong> - Node-Specific Visualization</dt><dd><p>Create detailed plots of subgrid relationships for individual nodes.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">1234</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--filename</span></code>: Subgrid NetCDF file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--node</span></code>: Node number to plot</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--basis</span></code>: Plot basis (wse or phi, default: phi)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--show</span></code>: Display plot interactively</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--save</span></code>: Save plot to file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--index-base</span></code>: Node numbering base (0 or 1, default: 0)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</section>
+<section id="basic-workflows">
+<h2>Basic Workflows<a class="headerlink" href="#basic-workflows" title="Link to this heading"></a></h2>
+<section id="single-dataset-processing">
+<h3>Single Dataset Processing<a class="headerlink" href="#single-dataset-processing" title="Link to this heading"></a></h3>
+<p>The simplest workflow processes a single set of input data:</p>
+<p><strong>Step 1: Prepare configuration file</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./fort.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ccap</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./elevation_6m.tif</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ccap_2021.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./subgrid_single.nc</span>
+<span class="w">  </span><span class="nt">progress_bar_increment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+</pre></div>
+</div>
+<p><strong>Step 2: Run preprocessing</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span>single_dataset.yaml
+</pre></div>
+</div>
+<p><strong>Step 3: Verify results</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick visualization</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid_single.nc<span class="w"> </span>--show<span class="w"> </span>--variable<span class="w"> </span>percent_wet
+</pre></div>
+</div>
+</section>
+<section id="multi-dataset-processing">
+<h3>Multi-Dataset Processing<a class="headerlink" href="#multi-dataset-processing" title="Link to this heading"></a></h3>
+<p>For comprehensive coverage using multiple datasets with different priorities:</p>
+<p><strong>Step 1: Process highest priority dataset</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config_priority1.yaml</span>
+<span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./fort.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ccap</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./lidar_high_res.tif</span><span class="w">        </span><span class="c1"># Best quality data</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ccap_2021.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./subgrid_step1.nc</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span>config_priority1.yaml
+</pre></div>
+</div>
+<p><strong>Step 2: Add second dataset</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config_priority2.yaml</span>
+<span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./fort.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ccap</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./satellite_moderate_res.tif</span><span class="w">  </span><span class="c1"># Lower quality, broader coverage</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ccap_2021.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./subgrid_step2.nc</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+<span class="w">  </span><span class="nt">existing_subgrid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./subgrid_step1.nc</span><span class="w">  </span><span class="c1"># Build on previous results</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span>config_priority2.yaml
+</pre></div>
+</div>
+<p><strong>Step 3: Continue for additional datasets</strong></p>
+<p>Repeat the process with progressively lower priority datasets, always referencing the most recent output as <code class="docutils literal notranslate"><span class="pre">existing_subgrid</span></code>.</p>
+</section>
+</section>
+<section id="advanced-configuration">
+<h2>Advanced Configuration<a class="headerlink" href="#advanced-configuration" title="Link to this heading"></a></h2>
+<section id="memory-management">
+<h3>Memory Management<a class="headerlink" href="#memory-management" title="Link to this heading"></a></h3>
+<p>For large datasets, control memory usage:</p>
+<p><strong>Configuration Options:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Limit raster processing memory</span>
+adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span>config.yaml<span class="w"> </span>--window-memory<span class="w"> </span><span class="m">128</span>
+</pre></div>
+</div>
+<p><strong>Environment Variables:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># GDAL cache settings</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GDAL_CACHEMAX</span><span class="o">=</span><span class="m">512</span><span class="w">    </span><span class="c1"># MB</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GDAL_MAX_DATASET_POOL_SIZE</span><span class="o">=</span><span class="m">100</span>
+
+<span class="c1"># Disable multithreading if memory constrained</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+<section id="performance-optimization">
+<h3>Performance Optimization<a class="headerlink" href="#performance-optimization" title="Link to this heading"></a></h3>
+<p><strong>Configuration for Performance:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Balance accuracy vs. speed</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w">        </span><span class="c1"># Fewer levels = faster</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+
+<span class="w">  </span><span class="c1"># Histogram distribution is more efficient</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+</pre></div>
+</div>
+<p><strong>System-Level Optimizations:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Increase available memory</span>
+<span class="nb">ulimit</span><span class="w"> </span>-v<span class="w"> </span>unlimited
+
+<span class="c1"># Use local storage for temporary files</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">TMPDIR</span><span class="o">=</span>/local/tmp
+
+<span class="c1"># Optimize thread usage</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">4</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="quality-control-procedures">
+<h2>Quality Control Procedures<a class="headerlink" href="#quality-control-procedures" title="Link to this heading"></a></h2>
+<section id="visual-inspection">
+<h3>Visual Inspection<a class="headerlink" href="#visual-inspection" title="Link to this heading"></a></h3>
+<p><strong>Mesh-Level Visualization:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Overview of φ values at mean sea level</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span>--show
+
+<span class="c1"># Examine specific regions</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span>--bbox<span class="w"> </span>-95.0<span class="w"> </span><span class="m">29</span>.0<span class="w"> </span>-94.0<span class="w"> </span><span class="m">30</span>.0<span class="w"> </span>--show
+
+<span class="c1"># Check different variables</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--variable<span class="w"> </span>wet_depth<span class="w"> </span>--water-level<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span>--show
+</pre></div>
+</div>
+<p><strong>Node-Level Analysis:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Examine φ vs. water level relationships</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">1500</span><span class="w"> </span>--basis<span class="w"> </span>phi<span class="w"> </span>--show
+
+<span class="c1"># Check specific problematic nodes</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">2847</span><span class="w"> </span>--basis<span class="w"> </span>wse<span class="w"> </span>--save<span class="w"> </span>node_2847.png
+</pre></div>
+</div>
+</section>
+<section id="data-validation">
+<h3>Data Validation<a class="headerlink" href="#data-validation" title="Link to this heading"></a></h3>
+<p><strong>NetCDF File Inspection:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check file structure and metadata</span>
+ncdump<span class="w"> </span>-h<span class="w"> </span>subgrid.nc
+
+<span class="c1"># Examine variable ranges</span>
+ncks<span class="w"> </span>-H<span class="w"> </span>-v<span class="w"> </span>phi<span class="w"> </span>subgrid.nc<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;min\|max&quot;</span>
+</pre></div>
+</div>
+<p><strong>Python-Based Validation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Load subgrid data</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;subgrid.nc&#39;</span><span class="p">)</span>
+
+<span class="c1"># Check for valid phi ranges (0 &lt;= φ &lt;= 1)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span>
+<span class="n">invalid</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid phi values: </span><span class="si">{</span><span class="n">invalid</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check for monotonic relationships</span>
+<span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>  <span class="c1"># Check first 100 nodes</span>
+    <span class="n">node_phi</span> <span class="o">=</span> <span class="n">phi</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">node_phi</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Non-monotonic phi at node </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting-common-issues">
+<h2>Troubleshooting Common Issues<a class="headerlink" href="#troubleshooting-common-issues" title="Link to this heading"></a></h2>
+<section id="processing-errors">
+<h3>Processing Errors<a class="headerlink" href="#processing-errors" title="Link to this heading"></a></h3>
+<p><strong>Memory Errors:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: MemoryError during raster processing
+
+Solutions:
+- Reduce --window-memory parameter
+- Process smaller geographic regions
+- Use histogram distribution (more memory efficient)
+- Increase system RAM or virtual memory
+</pre></div>
+</div>
+<p><strong>Coordinate System Mismatches:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: Inconsistent coordinate systems
+
+Solutions:
+- Verify all input files use same CRS
+- Reproject data using gdalwarp
+- Check ADCIRC mesh coordinate system documentation
+</pre></div>
+</div>
+<p><strong>Missing Data Coverage:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Warning: Incomplete DEM coverage
+
+Solutions:
+- Extend DEM boundaries beyond mesh extent
+- Fill no-data areas with appropriate values
+- Use multiple DEM sources to ensure complete coverage
+</pre></div>
+</div>
+</section>
+<section id="data-quality-issues">
+<h3>Data Quality Issues<a class="headerlink" href="#data-quality-issues" title="Link to this heading"></a></h3>
+<p><strong>Unrealistic φ Values:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Issue: φ values outside [0,1] range or non-monotonic behavior
+
+Diagnosis:
+- Check DEM quality and artifacts
+- Verify proper datum alignment
+- Examine land cover classification accuracy
+
+Solutions:
+- Clean input DEM data
+- Adjust distribution_factor parameter
+- Use higher quality input datasets
+</pre></div>
+</div>
+<p><strong>Inconsistent Results:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Issue: Unexpected subgrid corrections
+
+Diagnosis:
+- Compare with known high-resolution results
+- Check Manning&#39;s roughness values
+- Verify mesh bathymetry consistency
+
+Solutions:
+- Validate input data independently
+- Adjust configuration parameters
+- Use subset processing for testing
+</pre></div>
+</div>
+</section>
+</section>
+<section id="integration-with-adcirc">
+<h2>Integration with ADCIRC<a class="headerlink" href="#integration-with-adcirc" title="Link to this heading"></a></h2>
+<section id="file-preparation">
+<h3>File Preparation<a class="headerlink" href="#file-preparation" title="Link to this heading"></a></h3>
+<p><strong>Subgrid File Usage:</strong></p>
+<p>The generated subgrid NetCDF file is used directly by ADCIRC:</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="c">! In ADCIRC fort.15 (control file)</span>
+<span class="n">NWP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">                    </span><span class="c">! Enable subgrid corrections</span>
+<span class="n">NCFILE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;subgrid.nc&#39;</span><span class="w">     </span><span class="c">! Path to subgrid file</span>
+</pre></div>
+</div>
+<p><strong>Parameter Settings:</strong></p>
+<p>Recommended ADCIRC configuration for subgrid runs:</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="c">! Timestep considerations</span>
+<span class="n">DTDP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="w">                </span><span class="c">! May need smaller timestep</span>
+
+<span class="c">! Solver settings</span>
+<span class="n">NCOR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w">                  </span><span class="c">! Increased iterations may help convergence</span>
+
+<span class="c">! Output options</span>
+<span class="n">NSCREEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="w">           </span><span class="c">! Monitor for stability</span>
+</pre></div>
+</div>
+</section>
+<section id="performance-considerations">
+<h3>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading"></a></h3>
+<p><strong>Computational Impact:</strong></p>
+<p>Subgrid corrections add computational cost:</p>
+<ul class="simple">
+<li><p><strong>Memory</strong>: ~20-30% increase for subgrid arrays</p></li>
+<li><p><strong>Runtime</strong>: ~10-20% increase for correction calculations</p></li>
+<li><p><strong>I/O</strong>: Additional file reading during initialization</p></li>
+</ul>
+<p><strong>Optimization Strategies:</strong></p>
+<ul class="simple">
+<li><p>Use moderate numbers of φ levels (25-75)</p></li>
+<li><p>Ensure subgrid file is on fast storage</p></li>
+<li><p>Consider domain decomposition impacts</p></li>
+</ul>
+</section>
+</section>
+<section id="workflow-automation">
+<h2>Workflow Automation<a class="headerlink" href="#workflow-automation" title="Link to this heading"></a></h2>
+<section id="batch-processing-scripts">
+<h3>Batch Processing Scripts<a class="headerlink" href="#batch-processing-scripts" title="Link to this heading"></a></h3>
+<p><strong>Shell Script Example:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># Batch subgrid processing</span>
+<span class="nv">CONFIG_DIR</span><span class="o">=</span><span class="s2">&quot;configs&quot;</span>
+<span class="nv">OUTPUT_DIR</span><span class="o">=</span><span class="s2">&quot;subgrid_outputs&quot;</span>
+
+<span class="c1"># Create output directory</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$OUTPUT_DIR</span>
+
+<span class="c1"># Process each configuration</span>
+<span class="k">for</span><span class="w"> </span>config<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$CONFIG_DIR</span>/*.yaml<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Processing </span><span class="nv">$config</span><span class="s2">&quot;</span>
+<span class="w">    </span>adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$config</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="c1"># Move output to organized directory</span>
+<span class="w">    </span><span class="nv">output_file</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span><span class="s2">&quot;filename:&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$config</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d:<span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39; &#39;</span><span class="k">)</span>
+<span class="w">    </span>mv<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$output_file</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$OUTPUT_DIR</span><span class="s2">/&quot;</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+<p><strong>Python Workflow Manager:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">process_subgrid</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process a single subgrid configuration.&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;adcirc-subgrid&quot;</span><span class="p">,</span> <span class="s2">&quot;prep&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">config_file</span><span class="p">)]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing </span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+<span class="c1"># Main workflow</span>
+<span class="n">config_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;configs&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">config_file</span> <span class="ow">in</span> <span class="n">config_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.yaml&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">config_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="n">process_subgrid</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✓ Completed successfully&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✗ Failed&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices-and-guidelines">
+<h2>Best Practices and Guidelines<a class="headerlink" href="#best-practices-and-guidelines" title="Link to this heading"></a></h2>
+<section id="resolution-design-guidelines">
+<h3>Resolution Design Guidelines<a class="headerlink" href="#resolution-design-guidelines" title="Link to this heading"></a></h3>
+<p>Based on extensive validation studies, follow these guidelines for optimal subgrid performance:</p>
+<p><strong>Mesh Resolution Selection:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Identify critical features</strong>: Barrier islands, major channels, flow-blocking structures</p></li>
+<li><p><strong>Minimum resolution rule</strong>: Ensure mesh resolves primary flow-blocking features in the underlying DEM</p></li>
+<li><p><strong>Coarsening limits</strong>: Avoid nearshore resolutions coarser than 400-1000m unless critical features are preserved</p></li>
+<li><p><strong>Balance principle</strong>: Optimize for specific application (forecasting vs. design studies)</p></li>
+</ol>
+<p><strong>Data Quality Requirements:</strong></p>
+<ul class="simple">
+<li><p><strong>DEM resolution</strong>: At least 3-20× finer than mesh resolution</p></li>
+<li><p><strong>Coverage completeness</strong>: Full domain coverage with no gaps</p></li>
+<li><p><strong>Coordinate consistency</strong>: All datasets in same coordinate reference system</p></li>
+<li><p><strong>Temporal consistency</strong>: Recent, high-quality datasets for dynamic coastal areas</p></li>
+</ul>
+</section>
+<section id="memory-and-performance-optimization">
+<h3>Memory and Performance Optimization<a class="headerlink" href="#memory-and-performance-optimization" title="Link to this heading"></a></h3>
+<p><strong>Lookup Table Management:</strong></p>
+<ul class="simple">
+<li><p>Use φ-based tables (N_φ = 11) instead of elevation-based tables (N_ζ = 401)</p></li>
+<li><p>Monitor memory usage for ocean-scale domains</p></li>
+<li><p>Consider preprocessing on high-memory systems if needed</p></li>
+</ul>
+<p><strong>Processing Strategies:</strong></p>
+<ul class="simple">
+<li><p>Process in geographic regions if memory limited</p></li>
+<li><p>Use highest-priority datasets first in multi-dataset workflows</p></li>
+<li><p>Validate results with subset domains before full-scale processing</p></li>
+</ul>
+<p><strong>Computational Considerations:</strong></p>
+<ul class="simple">
+<li><p>Typical overhead: 14-80% at same resolution</p></li>
+<li><p>Speedup potential: 10-50× on appropriately coarsened meshes</p></li>
+<li><p>Memory scaling: Approximately linear with domain size and mesh resolution</p></li>
+</ul>
+</section>
+<section id="validation-and-quality-control">
+<h3>Validation and Quality Control<a class="headerlink" href="#validation-and-quality-control" title="Link to this heading"></a></h3>
+<p><strong>Recommended Validation Workflow:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Visual inspection</strong>: Use mesh and node plotting tools extensively</p></li>
+<li><p><strong>Physical consistency</strong>: Check φ monotonicity and boundary conditions</p></li>
+<li><p><strong>Comparative analysis</strong>: Validate against high-resolution simulations when possible</p></li>
+<li><p><strong>Statistical metrics</strong>: Use ERMS, R², and bias measures for quantitative assessment</p></li>
+<li><p><strong>Operational testing</strong>: Test with representative storm events before production use</p></li>
+</ol>
+<p><strong>Common Issues and Solutions:</strong></p>
+<ul class="simple">
+<li><p><strong>Non-monotonic φ</strong>: Usually indicates DEM quality issues or processing errors</p></li>
+<li><p><strong>Over-connectivity</strong>: May result from inadequate mesh resolution for barrier features</p></li>
+<li><p><strong>Memory issues</strong>: Consider domain subdivision or φ-level reduction</p></li>
+<li><p><strong>Performance problems</strong>: Check data coverage and coordinate system consistency</p></li>
+</ul>
+</section>
+<section id="integration-with-adcirc-operations">
+<h3>Integration with ADCIRC Operations<a class="headerlink" href="#integration-with-adcirc-operations" title="Link to this heading"></a></h3>
+<p><strong>File Management:</strong></p>
+<ul class="simple">
+<li><p>Store subgrid files on fast storage systems</p></li>
+<li><p>Verify node count consistency between mesh and subgrid files</p></li>
+<li><p>Use descriptive naming conventions for version control</p></li>
+</ul>
+<p><strong>Parameter Recommendations:</strong></p>
+<ul class="simple">
+<li><p><strong>Minimum wet depth</strong>: 0.1m (⟨H⟩_{G,min}) for stability</p></li>
+<li><p><strong>φ levels</strong>: 11 discrete levels provide good balance of accuracy and efficiency</p></li>
+<li><p><strong>Closure level</strong>: Level 0 adequate for most applications; Level 1 for complex shallow regions</p></li>
+</ul>
+<p><strong>Operational Considerations:</strong></p>
+<ul class="simple">
+<li><p>Pre-validate subgrid files before real-time forecasting</p></li>
+<li><p>Monitor model stability during initial runs with subgrid corrections</p></li>
+<li><p>Document specific parameter choices for reproducibility</p></li>
+</ul>
+<p>This comprehensive usage guide provides the foundation for effective subgrid preprocessing workflows based on extensive research validation and operational experience.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="input_formats.html" class="btn btn-neutral float-left" title="Input File Formats" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples and Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Water Institute of the Gulf.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

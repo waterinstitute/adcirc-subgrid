@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples and Tutorials &mdash; adcirc-subgrid 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Scientific Background" href="scientific_background.html" />
+    <link rel="prev" title="Usage Guide" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adcirc-subgrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_formats.html">Input File Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples and Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#galveston-bay-example">Galveston Bay Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dataset-overview">Dataset Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-1-single-dataset-processing">Tutorial 1: Single Dataset Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-examine-the-configuration">Step 1: Examine the Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-run-the-preprocessing">Step 2: Run the Preprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-examine-the-results">Step 3: Examine the Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-quality-control-visualization">Step 4: Quality Control Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-2-multi-dataset-processing">Tutorial 2: Multi-Dataset Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-complete-tutorial-1">Step 1: Complete Tutorial 1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-examine-the-update-configuration">Step 2: Examine the Update Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-run-incremental-processing">Step 3: Run Incremental Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-compare-results">Step 4: Compare Results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-3-advanced-configuration">Tutorial 3: Advanced Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#custom-manning-s-lookup">Custom Manning’s Lookup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#high-resolution-processing">High-Resolution Processing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-4-visualization-and-analysis">Tutorial 4: Visualization and Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mesh-level-analysis">Mesh-Level Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-level-analysis">Node-Level Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-5-integration-with-adcirc">Tutorial 5: Integration with ADCIRC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adcirc-configuration">ADCIRC Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-management">File Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-testing">Performance Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices-summary">Best Practices Summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data-quality">Data Quality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#processing-strategy">Processing Strategy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quality-control">Quality Control</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="scientific_background.html">Scientific Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization and Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adcirc-subgrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples and Tutorials</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="examples-and-tutorials">
+<h1>Examples and Tutorials<a class="headerlink" href="#examples-and-tutorials" title="Link to this heading"></a></h1>
+<p>This section provides step-by-step tutorials using the Galveston Bay (GBAY) example dataset to demonstrate typical subgrid preprocessing workflows.</p>
+<section id="galveston-bay-example">
+<h2>Galveston Bay Example<a class="headerlink" href="#galveston-bay-example" title="Link to this heading"></a></h2>
+<p>The GBAY example demonstrates multi-dataset subgrid processing using realistic coastal data from Galveston Bay, Texas. This tutorial covers both single-pass and incremental processing workflows.</p>
+<section id="dataset-overview">
+<h3>Dataset Overview<a class="headerlink" href="#dataset-overview" title="Link to this heading"></a></h3>
+<p>The example includes:</p>
+<ul class="simple">
+<li><p><strong>ADCIRC Mesh</strong>: <code class="docutils literal notranslate"><span class="pre">fort.14</span></code> - Computational grid for Galveston Bay</p></li>
+<li><p><strong>DEM Files</strong>: Two overlapping elevation datasets with different coverage</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">galveston_13_mhw_20072.TIF</span></code> - High-priority elevation data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">galveston_13_mhw_20073.TIF</span></code> - Secondary elevation data</p></li>
+</ul>
+</li>
+<li><p><strong>Land Cover</strong>: <code class="docutils literal notranslate"><span class="pre">2021_CCAP_J1139301_4326.tif</span></code> - CCAP classification data</p></li>
+<li><p><strong>Configuration Files</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">input.yaml</span></code> - Initial processing configuration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_update_existing.yaml</span></code> - Incremental update configuration</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h3>
+<p>Before starting, ensure you have:</p>
+<ol class="arabic">
+<li><p><strong>Completed installation</strong> following the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> guide</p></li>
+<li><p><strong>Downloaded example data</strong> (if using Git LFS):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>examples/GBAY
+git<span class="w"> </span>lfs<span class="w"> </span>fetch
+git<span class="w"> </span>lfs<span class="w"> </span>pull
+git<span class="w"> </span>lfs<span class="w"> </span>checkout
+gunzip<span class="w"> </span>fort.14.gz
+</pre></div>
+</div>
+</li>
+<li><p><strong>Activated environment</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>adcirc-subgrid
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="tutorial-1-single-dataset-processing">
+<h2>Tutorial 1: Single Dataset Processing<a class="headerlink" href="#tutorial-1-single-dataset-processing" title="Link to this heading"></a></h2>
+<p>This tutorial demonstrates basic subgrid generation using a single elevation dataset.</p>
+<section id="step-1-examine-the-configuration">
+<h3>Step 1: Examine the Configuration<a class="headerlink" href="#step-1-examine-the-configuration" title="Link to this heading"></a></h3>
+<p>Review the basic configuration file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>examples/GBAY
+cat<span class="w"> </span>input.yaml
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./fort.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ccap</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./galveston_13_mhw_20072.TIF</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./2021_CCAP_J1139301_4326.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subgrid.nc</span>
+<span class="w">  </span><span class="nt">progress_bar_increment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+</pre></div>
+</div>
+<p><strong>Configuration Analysis:</strong></p>
+<ul class="simple">
+<li><p><strong>Input Data</strong>: Uses the first elevation dataset and CCAP land cover</p></li>
+<li><p><strong>Manning’s Lookup</strong>: Built-in CCAP lookup table for friction coefficients</p></li>
+<li><p><strong>Processing Levels</strong>: 50 levels for both computation and output</p></li>
+<li><p><strong>Distribution</strong>: Histogram-based level distribution for efficiency</p></li>
+</ul>
+</section>
+<section id="step-2-run-the-preprocessing">
+<h3>Step 2: Run the Preprocessing<a class="headerlink" href="#step-2-run-the-preprocessing" title="Link to this heading"></a></h3>
+<p>Execute the subgrid generation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>--verbose<span class="w"> </span>prep<span class="w"> </span>input.yaml
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[2024-03-15 10:30:00] :: INFO :: Processing subgrid data
+[2024-03-15 10:30:01] :: INFO :: Reading ADCIRC mesh: ./fort.14
+[2024-03-15 10:30:02] :: INFO :: Loading DEM: ./galveston_13_mhw_20072.TIF
+[2024-03-15 10:30:05] :: INFO :: Loading land cover: ./2021_CCAP_J1139301_4326.tif
+[2024-03-15 10:30:06] :: INFO :: Processing node 1 of 15234 (0%)
+...
+[2024-03-15 10:45:30] :: INFO :: Writing output file: subgrid.nc
+[2024-03-15 10:45:35] :: INFO :: Processing complete
+</pre></div>
+</div>
+<p><strong>Performance Notes:</strong></p>
+<ul class="simple">
+<li><p>Processing time depends on mesh size and system performance</p></li>
+<li><p>Memory usage scales with DEM resolution and processing options</p></li>
+<li><p>Progress updates appear every 5% (configurable via <code class="docutils literal notranslate"><span class="pre">progress_bar_increment</span></code>)</p></li>
+</ul>
+</section>
+<section id="step-3-examine-the-results">
+<h3>Step 3: Examine the Results<a class="headerlink" href="#step-3-examine-the-results" title="Link to this heading"></a></h3>
+<p><strong>Check output file structure:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ncdump<span class="w"> </span>-h<span class="w"> </span>subgrid.nc
+</pre></div>
+</div>
+<p><strong>Key variables in the output:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">phi</span></code>: Subgrid correction factors (dimensions: node × phi_level)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phi_level</span></code>: Water surface elevation levels</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">manning_avg</span></code>: Average Manning’s coefficients</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cf</span></code>, <code class="docutils literal notranslate"><span class="pre">c_mf</span></code>, <code class="docutils literal notranslate"><span class="pre">c_adv</span></code>: Various correction coefficients</p></li>
+</ul>
+</section>
+<section id="step-4-quality-control-visualization">
+<h3>Step 4: Quality Control Visualization<a class="headerlink" href="#step-4-quality-control-visualization" title="Link to this heading"></a></h3>
+<p>Create visualizations to verify results:</p>
+<p><strong>Mesh-level visualization:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize φ at mean sea level</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span>--show
+
+<span class="c1"># Save plot for documentation</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-filename<span class="w"> </span>gbay_phi_msl.png<span class="w"> </span>--colorbar<span class="w"> </span>plasma
+</pre></div>
+</div>
+<p><strong>Node-specific analysis:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Examine φ vs water level for a specific node</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">5000</span><span class="w"> </span>--basis<span class="w"> </span>phi<span class="w"> </span>--show
+
+<span class="c1"># Save node analysis</span>
+adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="m">5000</span><span class="w"> </span>--basis<span class="w"> </span>phi<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--save<span class="w"> </span>node_5000_analysis.png
+</pre></div>
+</div>
+</section>
+</section>
+<section id="tutorial-2-multi-dataset-processing">
+<h2>Tutorial 2: Multi-Dataset Processing<a class="headerlink" href="#tutorial-2-multi-dataset-processing" title="Link to this heading"></a></h2>
+<p>This tutorial demonstrates incremental subgrid building using multiple datasets with different priorities.</p>
+<section id="step-1-complete-tutorial-1">
+<h3>Step 1: Complete Tutorial 1<a class="headerlink" href="#step-1-complete-tutorial-1" title="Link to this heading"></a></h3>
+<p>Ensure you have completed Tutorial 1 and have <code class="docutils literal notranslate"><span class="pre">subgrid.nc</span></code> available.</p>
+</section>
+<section id="step-2-examine-the-update-configuration">
+<h3>Step 2: Examine the Update Configuration<a class="headerlink" href="#step-2-examine-the-update-configuration" title="Link to this heading"></a></h3>
+<p>Review the incremental configuration:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>input_update_existing.yaml
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./fort.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ccap</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./galveston_13_mhw_20073.TIF</span><span class="w">  </span><span class="c1"># Different elevation dataset</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./2021_CCAP_J1139301_4326.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subgrid_updated.nc</span><span class="w">  </span><span class="c1"># Different output filename</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+<span class="w">  </span><span class="nt">existing_subgrid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./subgrid.nc</span><span class="w">  </span><span class="c1"># Reference to existing data</span>
+</pre></div>
+</div>
+<p><strong>Key Differences:</strong></p>
+<ul class="simple">
+<li><p><strong>DEM Source</strong>: Uses second elevation dataset</p></li>
+<li><p><strong>Output File</strong>: Different filename to preserve original</p></li>
+<li><p><strong>Existing Subgrid</strong>: References previous results for incremental updates</p></li>
+</ul>
+</section>
+<section id="step-3-run-incremental-processing">
+<h3>Step 3: Run Incremental Processing<a class="headerlink" href="#step-3-run-incremental-processing" title="Link to this heading"></a></h3>
+<p>Execute the update processing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>--verbose<span class="w"> </span>prep<span class="w"> </span>input_update_existing.yaml
+</pre></div>
+</div>
+<p><strong>Processing Behavior:</strong></p>
+<ul class="simple">
+<li><p>New elevation data supplements existing subgrid data</p></li>
+<li><p>Existing areas with data are <strong>not overwritten</strong></p></li>
+<li><p>Only areas with missing data are populated from new dataset</p></li>
+<li><p>Final result combines both elevation datasets appropriately</p></li>
+</ul>
+</section>
+<section id="step-4-compare-results">
+<h3>Step 4: Compare Results<a class="headerlink" href="#step-4-compare-results" title="Link to this heading"></a></h3>
+<p><strong>Visualize differences between single and multi-dataset results:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Original results</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-filename<span class="w"> </span>single_dataset.png<span class="w"> </span>--colorbar<span class="w"> </span>plasma
+
+<span class="c1"># Updated results</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid_updated.nc<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-filename<span class="w"> </span>multi_dataset.png<span class="w"> </span>--colorbar<span class="w"> </span>plasma
+</pre></div>
+</div>
+<p><strong>Quantitative Comparison:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Load both datasets</span>
+<span class="n">ds1</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;subgrid.nc&#39;</span><span class="p">)</span>
+<span class="n">ds2</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;subgrid_updated.nc&#39;</span><span class="p">)</span>
+
+<span class="c1"># Compare φ values at mean sea level</span>
+<span class="n">phi1</span> <span class="o">=</span> <span class="n">ds1</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">phi_level</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+<span class="n">phi2</span> <span class="o">=</span> <span class="n">ds2</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">phi_level</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+
+<span class="c1"># Calculate differences</span>
+<span class="n">diff</span> <span class="o">=</span> <span class="n">phi2</span> <span class="o">-</span> <span class="n">phi1</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max difference: </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean absolute difference: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of changed nodes: </span><span class="si">{</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.001</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="tutorial-3-advanced-configuration">
+<h2>Tutorial 3: Advanced Configuration<a class="headerlink" href="#tutorial-3-advanced-configuration" title="Link to this heading"></a></h2>
+<p>This tutorial explores advanced configuration options for specialized applications.</p>
+<section id="custom-manning-s-lookup">
+<h3>Custom Manning’s Lookup<a class="headerlink" href="#custom-manning-s-lookup" title="Link to this heading"></a></h3>
+<p>Create a custom roughness lookup table:</p>
+<p><strong>Step 1: Create custom lookup file</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>&gt;<span class="w"> </span>custom_manning.csv<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">Class,Manning&#39;s n</span>
+<span class="s">1,0.025</span>
+<span class="s">2,0.045</span>
+<span class="s">3,0.080</span>
+<span class="s">4,0.120</span>
+<span class="s">5,0.030</span>
+<span class="s">6,0.100</span>
+<span class="s">7,0.055</span>
+<span class="s">8,0.035</span>
+<span class="s">9,0.180</span>
+<span class="s">10,0.200</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p><strong>Step 2: Create configuration with custom lookup</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./fort.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./custom_manning.csv</span><span class="w">  </span><span class="c1"># Use custom lookup</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./galveston_13_mhw_20072.TIF</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./2021_CCAP_J1139301_4326.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subgrid_custom_manning.nc</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span><span class="w">  </span><span class="c1"># Higher resolution</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+<span class="w">  </span><span class="nt">distribution_factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.5</span><span class="w">  </span><span class="c1"># Extended range</span>
+</pre></div>
+</div>
+</section>
+<section id="high-resolution-processing">
+<h3>High-Resolution Processing<a class="headerlink" href="#high-resolution-processing" title="Link to this heading"></a></h3>
+<p>Configuration for maximum accuracy:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./fort.14</span>
+<span class="w">  </span><span class="nt">manning_lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ccap</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./galveston_13_mhw_20072.TIF</span>
+<span class="w">  </span><span class="nt">land_cover</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./2021_CCAP_J1139301_4326.tif</span>
+
+<span class="nt">output</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subgrid_high_res.nc</span>
+<span class="w">  </span><span class="nt">progress_bar_increment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">  </span><span class="c1"># More frequent updates</span>
+
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w">  </span><span class="c1"># Maximum resolution</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span>
+<span class="w">  </span><span class="nt">distribution_factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span><span class="w">  </span><span class="c1"># Extended vertical range</span>
+</pre></div>
+</div>
+<p><strong>Processing with increased memory allocation:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span>high_res_config.yaml<span class="w"> </span>--window-memory<span class="w"> </span><span class="m">256</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="tutorial-4-visualization-and-analysis">
+<h2>Tutorial 4: Visualization and Analysis<a class="headerlink" href="#tutorial-4-visualization-and-analysis" title="Link to this heading"></a></h2>
+<p>Comprehensive visualization workflow for quality assurance.</p>
+<section id="mesh-level-analysis">
+<h3>Mesh-Level Analysis<a class="headerlink" href="#mesh-level-analysis" title="Link to this heading"></a></h3>
+<p><strong>Create comprehensive visualization set:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Different water levels</span>
+<span class="k">for</span><span class="w"> </span>level<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="m">1</span>.5<span class="w"> </span><span class="m">2</span>.0<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--water-level<span class="w"> </span><span class="nv">$level</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span>--output-filename<span class="w"> </span><span class="s2">&quot;phi_level_</span><span class="si">${</span><span class="nv">level</span><span class="si">}</span><span class="s2">m.png&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--colorbar<span class="w"> </span>viridis<span class="w"> </span>--range<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="m">1</span>.0
+<span class="k">done</span>
+
+<span class="c1"># Different variables at MSL</span>
+<span class="k">for</span><span class="w"> </span>var<span class="w"> </span><span class="k">in</span><span class="w"> </span>percent_wet<span class="w"> </span>wet_depth<span class="w"> </span>total_depth<span class="w"> </span>cf<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--variable<span class="w"> </span><span class="nv">$var</span><span class="w"> </span>--output-filename<span class="w"> </span><span class="s2">&quot;msl_</span><span class="si">${</span><span class="nv">var</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--colorbar<span class="w"> </span>plasma
+<span class="k">done</span>
+</pre></div>
+</div>
+<p><strong>Regional Focus:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Focus on specific geographic region</span>
+adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--water-level<span class="w"> </span><span class="m">0</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span>--bbox<span class="w"> </span>-95.5<span class="w"> </span><span class="m">29</span>.0<span class="w"> </span>-94.5<span class="w"> </span><span class="m">29</span>.5<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-filename<span class="w"> </span>region_detail.png<span class="w"> </span>--colorbar<span class="w"> </span>viridis
+</pre></div>
+</div>
+</section>
+<section id="node-level-analysis">
+<h3>Node-Level Analysis<a class="headerlink" href="#node-level-analysis" title="Link to this heading"></a></h3>
+<p><strong>Systematic node analysis:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Analyze representative nodes</span>
+<span class="nv">nodes</span><span class="o">=(</span><span class="m">1000</span><span class="w"> </span><span class="m">5000</span><span class="w"> </span><span class="m">10000</span><span class="w"> </span><span class="m">12000</span><span class="o">)</span>
+
+<span class="k">for</span><span class="w"> </span>node<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">nodes</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Analyzing node </span><span class="nv">$node</span><span class="s2">&quot;</span>
+<span class="w">    </span>adcirc-subgrid<span class="w"> </span>plot-node<span class="w"> </span>--filename<span class="w"> </span>subgrid.nc<span class="w"> </span>--node<span class="w"> </span><span class="nv">$node</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--basis<span class="w"> </span>phi<span class="w"> </span>--save<span class="w"> </span><span class="s2">&quot;analysis_node_</span><span class="si">${</span><span class="nv">node</span><span class="si">}</span><span class="s2">.png&quot;</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+<p><strong>Python-based batch analysis:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Load subgrid data</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;subgrid.nc&#39;</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span>
+<span class="n">levels</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi_level&#39;</span><span class="p">]</span>
+
+<span class="c1"># Analyze multiple nodes</span>
+<span class="n">nodes_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">12000</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nodes_to_check</span><span class="p">):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">node_phi</span> <span class="o">=</span> <span class="n">phi</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">node_phi</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Water Level (m)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;φ Factor&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Node </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">levels</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">levels</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;multi_node_analysis.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="tutorial-5-integration-with-adcirc">
+<h2>Tutorial 5: Integration with ADCIRC<a class="headerlink" href="#tutorial-5-integration-with-adcirc" title="Link to this heading"></a></h2>
+<p>Preparing subgrid data for use in ADCIRC simulations.</p>
+<section id="adcirc-configuration">
+<h3>ADCIRC Configuration<a class="headerlink" href="#adcirc-configuration" title="Link to this heading"></a></h3>
+<p><strong>Configure ADCIRC to use subgrid corrections:</strong></p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="c">! In fort.15 (ADCIRC control file)</span>
+
+<span class="c">! Enable subgrid physics</span>
+<span class="n">NWP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="c">! Specify subgrid file</span>
+<span class="c">! Add this line after the main parameter section</span>
+<span class="n">NCFILE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;subgrid.nc&#39;</span>
+</pre></div>
+</div>
+<p><strong>Recommended parameter adjustments:</strong></p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="c">! Time stepping (may need adjustment for stability)</span>
+<span class="n">DTDP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="w">                    </span><span class="c">! Potentially smaller timestep</span>
+
+<span class="c">! Nonlinear iterations</span>
+<span class="n">NCOR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w">                      </span><span class="c">! May need more iterations</span>
+
+<span class="c">! Solver parameters</span>
+<span class="n">NOLIBF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w">                    </span><span class="c">! Finite element solver</span>
+<span class="n">NOLIFA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w">                    </span><span class="c">! Advection solver</span>
+<span class="n">NOLICAT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">                   </span><span class="c">! Category solver</span>
+</pre></div>
+</div>
+</section>
+<section id="file-management">
+<h3>File Management<a class="headerlink" href="#file-management" title="Link to this heading"></a></h3>
+<p><strong>Organize files for ADCIRC run:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create ADCIRC run directory</span>
+mkdir<span class="w"> </span>adcirc_run
+<span class="nb">cd</span><span class="w"> </span>adcirc_run
+
+<span class="c1"># Copy required files</span>
+cp<span class="w"> </span>../fort.14<span class="w"> </span>.<span class="w">                    </span><span class="c1"># Mesh file</span>
+cp<span class="w"> </span>../subgrid_updated.nc<span class="w"> </span>subgrid.nc<span class="w">  </span><span class="c1"># Subgrid corrections</span>
+<span class="c1"># Copy other ADCIRC input files (fort.15, fort.13, etc.)</span>
+</pre></div>
+</div>
+<p><strong>Verify subgrid file compatibility:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check that node count matches</span>
+<span class="nv">mesh_nodes</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span>-A1<span class="w"> </span><span class="s2">&quot;NE NN&quot;</span><span class="w"> </span>fort.14<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n1<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+<span class="nv">subgrid_nodes</span><span class="o">=</span><span class="k">$(</span>ncdump<span class="w"> </span>-h<span class="w"> </span>subgrid.nc<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;node =&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[0-9]*&#39;</span><span class="k">)</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Mesh nodes: </span><span class="nv">$mesh_nodes</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Subgrid nodes: </span><span class="nv">$subgrid_nodes</span><span class="s2">&quot;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$mesh_nodes</span><span class="s2">&quot;</span><span class="w"> </span>-eq<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$subgrid_nodes</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ Node counts match&quot;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ Node count mismatch!&quot;</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</section>
+<section id="performance-testing">
+<h3>Performance Testing<a class="headerlink" href="#performance-testing" title="Link to this heading"></a></h3>
+<p><strong>Quick validation run:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Short test run to verify functionality</span>
+<span class="c1"># Create minimal fort.15 for testing</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>fort.15<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">ADCIRC Test Run with Subgrid</span>
+<span class="s">1                    ! NFOVER</span>
+<span class="s">test_output          ! RUNID</span>
+<span class="s">1                    ! NFOVER</span>
+<span class="s">2                    ! NSCREEN</span>
+<span class="s">0.0 10.0 0.5 0       ! RNDAY, DRAMP, DT, STATIM</span>
+<span class="s">1 0.005 2 0.2        ! NOLIBF, TAU, CF, ESLM</span>
+<span class="s">0 0 0                ! NCOR, NTIP, NWS</span>
+<span class="s">1                    ! NWP (enable subgrid)</span>
+<span class="s">subgrid.nc           ! NCFILE</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Run ADCIRC (adjust for your installation)</span>
+adcirc<span class="w"> </span>&lt;<span class="w"> </span>fort.15
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices-summary">
+<h2>Best Practices Summary<a class="headerlink" href="#best-practices-summary" title="Link to this heading"></a></h2>
+<p>Based on the tutorials above, follow these best practices:</p>
+<section id="data-quality">
+<h3>Data Quality<a class="headerlink" href="#data-quality" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Verify coordinate system consistency</strong> across all input files</p></li>
+<li><p><strong>Ensure complete domain coverage</strong> by DEM and land cover data</p></li>
+<li><p><strong>Use highest quality data first</strong> in multi-dataset workflows</p></li>
+<li><p><strong>Validate input data independently</strong> before processing</p></li>
+</ol>
+</section>
+<section id="processing-strategy">
+<h3>Processing Strategy<a class="headerlink" href="#processing-strategy" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Start with moderate resolution</strong> (25-50 levels) for initial testing</p></li>
+<li><p><strong>Use histogram distribution</strong> for computational efficiency</p></li>
+<li><p><strong>Process incrementally</strong> with multiple datasets prioritized by quality</p></li>
+<li><p><strong>Monitor memory usage</strong> and adjust window memory as needed</p></li>
+</ol>
+</section>
+<section id="quality-control">
+<h3>Quality Control<a class="headerlink" href="#quality-control" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Always visualize results</strong> before using in production</p></li>
+<li><p><strong>Check φ ranges and monotonicity</strong> for physical validity</p></li>
+<li><p><strong>Compare with known results</strong> when available</p></li>
+<li><p><strong>Test integration with ADCIRC</strong> before large-scale runs</p></li>
+</ol>
+<p>This comprehensive set of examples provides the foundation for successful subgrid preprocessing across a wide range of applications.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-left" title="Usage Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scientific_background.html" class="btn btn-neutral float-right" title="Scientific Background" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Water Institute of the Gulf.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

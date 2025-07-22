@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Troubleshooting Guide &mdash; adcirc-subgrid 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api_reference.html" />
+    <link rel="prev" title="Visualization and Analysis" href="visualization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adcirc-subgrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_formats.html">Input File Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples and Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific_background.html">Scientific Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization and Analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Troubleshooting Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-issues">Installation Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gdal-installation-problems">GDAL Installation Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-errors-during-installation">Memory Errors During Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependency-conflicts">Dependency Conflicts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#runtime-errors">Runtime Errors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-file-errors">Configuration File Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-path-issues">File Path Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-and-performance-issues">Memory and Performance Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coordinate-system-issues">Coordinate System Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-quality-issues">Data Quality Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#invalid-values">Invalid φ Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#non-monotonic-relationships">Non-Monotonic φ Relationships</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization-problems">Visualization Problems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#matplotlib-display-issues">Matplotlib Display Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#large-dataset-visualization">Large Dataset Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-optimization">Performance Optimization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#slow-processing">Slow Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#large-file-handling">Large File Handling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-issues">Integration Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adcirc-compatibility">ADCIRC Compatibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adcirc-fort-15-configuration">ADCIRC fort.15 Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-help">Getting Help</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#log-information">Log Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#community-resources">Community Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adcirc-subgrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Troubleshooting Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/troubleshooting.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="troubleshooting-guide">
+<h1>Troubleshooting Guide<a class="headerlink" href="#troubleshooting-guide" title="Link to this heading"></a></h1>
+<p>This guide provides solutions to common issues encountered when using the ADCIRC Subgrid Preprocessor.</p>
+<section id="installation-issues">
+<h2>Installation Issues<a class="headerlink" href="#installation-issues" title="Link to this heading"></a></h2>
+<section id="gdal-installation-problems">
+<h3>GDAL Installation Problems<a class="headerlink" href="#gdal-installation-problems" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: GDAL fails to install or import with errors like:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ImportError: No module named &#39;osgeo&#39;
+ERROR: Could not install packages due to an OSError
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Use Conda for GDAL Installation</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Remove existing installation</span>
+pip<span class="w"> </span>uninstall<span class="w"> </span>gdal
+
+<span class="c1"># Install via conda</span>
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>gdal
+</pre></div>
+</div>
+</li>
+<li><p><strong>System-Level GDAL Installation</strong> (Linux):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ubuntu/Debian</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>gdal-bin<span class="w"> </span>libgdal-dev
+<span class="nb">export</span><span class="w"> </span><span class="nv">GDAL_CONFIG</span><span class="o">=</span>/usr/bin/gdal-config
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">gdal</span><span class="o">==</span><span class="k">$(</span>gdal-config<span class="w"> </span>--version<span class="k">)</span>
+
+<span class="c1"># CentOS/RHEL</span>
+sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>gdal<span class="w"> </span>gdal-devel
+pip<span class="w"> </span>install<span class="w"> </span>gdal
+</pre></div>
+</div>
+</li>
+<li><p><strong>macOS Specific</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using Homebrew (may conflict with conda)</span>
+brew<span class="w"> </span>install<span class="w"> </span>gdal
+
+<span class="c1"># Set environment variables</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GDAL_CONFIG</span><span class="o">=</span>/usr/local/bin/gdal-config
+pip<span class="w"> </span>install<span class="w"> </span>gdal
+</pre></div>
+</div>
+</li>
+</ol>
+<p><strong>Verification</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from osgeo import gdal; print(&#39;GDAL version:&#39;, gdal.__version__)&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="memory-errors-during-installation">
+<h3>Memory Errors During Installation<a class="headerlink" href="#memory-errors-during-installation" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: Installation fails with memory-related errors:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MemoryError: Unable to allocate array
+ERROR: Failed building wheel for package
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Increase Virtual Memory</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Linux</span>
+sudo<span class="w"> </span>fallocate<span class="w"> </span>-l<span class="w"> </span>4G<span class="w"> </span>/swapfile
+sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/swapfile
+sudo<span class="w"> </span>mkswap<span class="w"> </span>/swapfile
+sudo<span class="w"> </span>swapon<span class="w"> </span>/swapfile
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use No-Cache Installation</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>.
+</pre></div>
+</div>
+</li>
+<li><p><strong>Install Dependencies Individually</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>numpy
+pip<span class="w"> </span>install<span class="w"> </span>scipy
+pip<span class="w"> </span>install<span class="w"> </span>pandas
+<span class="c1"># Continue with other packages...</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="dependency-conflicts">
+<h3>Dependency Conflicts<a class="headerlink" href="#dependency-conflicts" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: Conflicting package versions:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ERROR: pip&#39;s dependency resolver does not currently take into account
+all the packages that are installed
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Create Fresh Environment</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>deactivate
+conda<span class="w"> </span>env<span class="w"> </span>remove<span class="w"> </span>-n<span class="w"> </span>adcirc-subgrid
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>adcirc-subgrid<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use Conda-Lock Files</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>--file<span class="w"> </span>requirements/adcirc-subgrid-conda-linux-64.yaml
+</pre></div>
+</div>
+</li>
+<li><p><strong>Pin Specific Versions</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;numpy&gt;=1.20,&lt;1.25&quot;</span><span class="w"> </span><span class="s2">&quot;pandas&gt;=1.3,&lt;2.0&quot;</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="runtime-errors">
+<h2>Runtime Errors<a class="headerlink" href="#runtime-errors" title="Link to this heading"></a></h2>
+<section id="configuration-file-errors">
+<h3>Configuration File Errors<a class="headerlink" href="#configuration-file-errors" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: YAML parsing errors:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>yaml.scanner.ScannerError: while scanning a simple key
+could not find expected &#39;:&#39;
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Check YAML Syntax</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use online YAML validator or</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import yaml; yaml.safe_load(open(&#39;config.yaml&#39;))&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Common YAML Issues</strong>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Incorrect (missing space after colon)</span>
+<span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">adcirc_mesh:./fort.14</span>
+
+<span class="c1"># Correct</span>
+<span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./fort.14</span>
+
+<span class="c1"># Incorrect (inconsistent indentation)</span>
+<span class="nt">options</span><span class="p">:</span>
+<span class="w"> </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">n_phi_levels</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+
+<span class="c1"># Correct</span>
+<span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">n_phi_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="file-path-issues">
+<h3>File Path Issues<a class="headerlink" href="#file-path-issues" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: File not found errors:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>FileNotFoundError: No such file or directory: &#39;./fort.14&#39;
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Use Absolute Paths</strong>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adcirc_mesh</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/fort.14</span>
+<span class="w">  </span><span class="nt">dem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/elevation.tif</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Verify File Existence</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ls<span class="w"> </span>-la<span class="w"> </span>fort.14
+file<span class="w"> </span>fort.14<span class="w">  </span><span class="c1"># Check file type</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Check Current Directory</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">pwd</span><span class="w">  </span><span class="c1"># Print working directory</span>
+ls<span class="w">   </span><span class="c1"># List files in current directory</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="memory-and-performance-issues">
+<h3>Memory and Performance Issues<a class="headerlink" href="#memory-and-performance-issues" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: Out of memory errors during processing:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MemoryError: Unable to allocate 2.3 GiB for an array with shape...
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Reduce Window Memory</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span>config.yaml<span class="w"> </span>--window-memory<span class="w"> </span><span class="m">32</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Process Smaller Regions</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use GDAL to clip input data</span>
+gdal_translate<span class="w"> </span>-projwin<span class="w"> </span>xmin<span class="w"> </span>ymin<span class="w"> </span>xmax<span class="w"> </span>ymax<span class="w"> </span>input.tif<span class="w"> </span>subset.tif
+</pre></div>
+</div>
+</li>
+<li><p><strong>System Memory Settings</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Linux: Check available memory</span>
+free<span class="w"> </span>-h
+
+<span class="c1"># Increase swap space if needed</span>
+sudo<span class="w"> </span>swapon<span class="w"> </span>--show
+</pre></div>
+</div>
+</li>
+<li><p><strong>Environment Variables</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">GDAL_CACHEMAX</span><span class="o">=</span><span class="m">256</span><span class="w">  </span><span class="c1"># MB</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">2</span><span class="w">  </span><span class="c1"># Reduce parallelism</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="coordinate-system-issues">
+<h3>Coordinate System Issues<a class="headerlink" href="#coordinate-system-issues" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: Coordinate system mismatches:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ValueError: Incompatible coordinate reference systems
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Check Coordinate Systems</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gdalsrsinfo<span class="w"> </span>elevation.tif
+gdalsrsinfo<span class="w"> </span>landcover.tif
+</pre></div>
+</div>
+</li>
+<li><p><strong>Reproject Data</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reproject to WGS84</span>
+gdalwarp<span class="w"> </span>-t_srs<span class="w"> </span>EPSG:4326<span class="w"> </span>input.tif<span class="w"> </span>output_wgs84.tif
+</pre></div>
+</div>
+</li>
+<li><p><strong>Verify ADCIRC Mesh CRS</strong>:</p>
+<p>Check ADCIRC documentation or mesh metadata for coordinate system information.</p>
+</li>
+</ol>
+</section>
+</section>
+<section id="data-quality-issues">
+<h2>Data Quality Issues<a class="headerlink" href="#data-quality-issues" title="Link to this heading"></a></h2>
+<section id="invalid-values">
+<h3>Invalid φ Values<a class="headerlink" href="#invalid-values" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: φ values outside the valid range [0,1]:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Warning: Found phi values &gt; 1.0 or &lt; 0.0
+</pre></div>
+</div>
+<p><strong>Diagnosis</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;subgrid.nc&#39;</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span>
+
+<span class="c1"># Check for invalid values</span>
+<span class="n">invalid_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+<span class="n">invalid_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values &gt; 1.0: </span><span class="si">{</span><span class="n">invalid_high</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values &lt; 0.0: </span><span class="si">{</span><span class="n">invalid_low</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Check DEM Quality</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gdalinfo<span class="w"> </span>-stats<span class="w"> </span>elevation.tif
+<span class="c1"># Look for unusual min/max values</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Verify Datum Consistency</strong>:</p>
+<p>Ensure DEM and mesh use consistent vertical datums.</p>
+</li>
+<li><p><strong>Adjust Processing Parameters</strong>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">distribution_factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span><span class="w">  </span><span class="c1"># Reduce range</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w">      </span><span class="c1"># Fewer levels</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="non-monotonic-relationships">
+<h3>Non-Monotonic φ Relationships<a class="headerlink" href="#non-monotonic-relationships" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: φ decreases with increasing water level:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Warning: Non-monotonic phi relationship detected
+</pre></div>
+</div>
+<p><strong>Diagnosis</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check monotonicity</span>
+<span class="n">phi_diff</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;phi_level&#39;</span><span class="p">)</span>
+<span class="n">non_monotonic</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi_diff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;phi_level&#39;</span><span class="p">)</span>
+<span class="n">problem_nodes</span> <span class="o">=</span> <span class="n">non_monotonic</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Increase Processing Levels</strong>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">75</span><span class="w">  </span><span class="c1"># More levels for smoother relationships</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use Histogram Distribution</strong>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span><span class="w">  </span><span class="c1"># More adaptive</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Clean Input DEM</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Remove spikes and fill holes</span>
+gdal_fillnodata.py<span class="w"> </span>elevation.tif<span class="w"> </span>elevation_cleaned.tif
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="visualization-problems">
+<h2>Visualization Problems<a class="headerlink" href="#visualization-problems" title="Link to this heading"></a></h2>
+<section id="matplotlib-display-issues">
+<h3>Matplotlib Display Issues<a class="headerlink" href="#matplotlib-display-issues" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: Plots don’t display or show blank windows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>UserWarning: Matplotlib is currently using agg, which is a non-GUI backend
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Set Backend</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;TkAgg&#39;</span><span class="p">)</span>  <span class="c1"># or &#39;Qt5Agg&#39;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Install GUI Backend</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># For Tkinter backend</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>python3-tk
+
+<span class="c1"># For Qt backend</span>
+pip<span class="w"> </span>install<span class="w"> </span>PyQt5
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use X11 Forwarding</strong> (SSH):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh<span class="w"> </span>-X<span class="w"> </span>username@hostname
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="large-dataset-visualization">
+<h3>Large Dataset Visualization<a class="headerlink" href="#large-dataset-visualization" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: Visualization crashes with large datasets:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MemoryError during plotting
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Plot Subsets</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--variable<span class="w"> </span>percent_wet<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bbox<span class="w"> </span>-95.0<span class="w"> </span><span class="m">29</span>.0<span class="w"> </span>-94.0<span class="w"> </span><span class="m">30</span>.0
+</pre></div>
+</div>
+</li>
+<li><p><strong>Reduce Point Density</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># In Python visualization scripts</span>
+<span class="n">stride</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Plot every 10th point</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[::</span><span class="n">stride</span><span class="p">],</span> <span class="n">y</span><span class="p">[::</span><span class="n">stride</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">phi</span><span class="p">[::</span><span class="n">stride</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use Vector Graphics</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>plot-mesh<span class="w"> </span>subgrid.nc<span class="w"> </span>--output-filename<span class="w"> </span>plot.svg
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="performance-optimization">
+<h2>Performance Optimization<a class="headerlink" href="#performance-optimization" title="Link to this heading"></a></h2>
+<section id="slow-processing">
+<h3>Slow Processing<a class="headerlink" href="#slow-processing" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: Preprocessing takes excessively long:</p>
+<p><strong>Diagnosis</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Profile Processing Steps</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>--verbose<span class="w"> </span>prep<span class="w"> </span>config.yaml<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>processing.log
+</pre></div>
+</div>
+</li>
+<li><p><strong>Check Resource Usage</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Monitor during processing</span>
+htop<span class="w">  </span><span class="c1"># or top</span>
+iostat<span class="w"> </span>-x<span class="w"> </span><span class="m">1</span><span class="w">  </span><span class="c1"># I/O monitoring</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Optimize Configuration</strong>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">n_subgrid_levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w">    </span><span class="c1"># Reduce from 50+</span>
+<span class="w">  </span><span class="nt">subgrid_level_distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">histogram</span><span class="w">  </span><span class="c1"># More efficient</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Increase Memory Allocation</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>prep<span class="w"> </span>config.yaml<span class="w"> </span>--window-memory<span class="w"> </span><span class="m">128</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use Faster Storage</strong>:</p>
+<p>Move input/output files to SSD storage for better I/O performance.</p>
+</li>
+<li><p><strong>Parallel Processing</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">4</span><span class="w">  </span><span class="c1"># Use available cores</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="large-file-handling">
+<h3>Large File Handling<a class="headerlink" href="#large-file-handling" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: Processing very large DEM files:</p>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Use Pyramids/Overviews</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gdaladdo<span class="w"> </span>-r<span class="w"> </span>average<span class="w"> </span>elevation.tif<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="m">16</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Tile Large Files</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gdal_retile.py<span class="w"> </span>-ps<span class="w"> </span><span class="m">2048</span><span class="w"> </span><span class="m">2048</span><span class="w"> </span>-targetDir<span class="w"> </span>tiles/<span class="w"> </span>elevation.tif
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use Cloud-Optimized GeoTIFF</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gdal_translate<span class="w"> </span>-of<span class="w"> </span>COG<span class="w"> </span>-co<span class="w"> </span><span class="nv">COMPRESS</span><span class="o">=</span>LZW<span class="w"> </span>input.tif<span class="w"> </span>output_cog.tif
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="integration-issues">
+<h2>Integration Issues<a class="headerlink" href="#integration-issues" title="Link to this heading"></a></h2>
+<section id="adcirc-compatibility">
+<h3>ADCIRC Compatibility<a class="headerlink" href="#adcirc-compatibility" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: ADCIRC doesn’t read subgrid file:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ERROR in READ_SFLUX_DATA: NetCDF file not found or corrupted
+</pre></div>
+</div>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Verify File Format</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ncdump<span class="w"> </span>-h<span class="w"> </span>subgrid.nc<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</pre></div>
+</div>
+</li>
+<li><p><strong>Check File Permissions</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ls<span class="w"> </span>-la<span class="w"> </span>subgrid.nc
+chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>subgrid.nc
+</pre></div>
+</div>
+</li>
+<li><p><strong>Verify Node Count Match</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compare mesh and subgrid node counts</span>
+<span class="nv">mesh_nodes</span><span class="o">=</span><span class="k">$(</span>head<span class="w"> </span>-2<span class="w"> </span>fort.14<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+<span class="nv">subgrid_nodes</span><span class="o">=</span><span class="k">$(</span>ncdump<span class="w"> </span>-h<span class="w"> </span>subgrid.nc<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;node =&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="o">=</span><span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39; &#39;</span><span class="w"> </span>-f2<span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Mesh: </span><span class="nv">$mesh_nodes</span><span class="s2">, Subgrid: </span><span class="nv">$subgrid_nodes</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="adcirc-fort-15-configuration">
+<h3>ADCIRC fort.15 Configuration<a class="headerlink" href="#adcirc-fort-15-configuration" title="Link to this heading"></a></h3>
+<p><strong>Problem</strong>: ADCIRC run fails with subgrid enabled:</p>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Check NWP Setting</strong>:</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="n">NWP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">  </span><span class="c">! Must be 1 to enable subgrid</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Verify File Path</strong>:</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="c">! Use relative or absolute path</span>
+<span class="n">NCFILE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;./subgrid.nc&#39;</span>
+<span class="c">! or</span>
+<span class="n">NCFILE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;/full/path/to/subgrid.nc&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Adjust Timestep</strong>:</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="n">DTDP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="w">  </span><span class="c">! May need smaller timestep for stability</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="getting-help">
+<h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading"></a></h2>
+<section id="log-information">
+<h3>Log Information<a class="headerlink" href="#log-information" title="Link to this heading"></a></h3>
+<p>When reporting issues, include:</p>
+<ol class="arabic">
+<li><p><strong>Verbose Log Output</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>adcirc-subgrid<span class="w"> </span>--verbose<span class="w"> </span>prep<span class="w"> </span>config.yaml<span class="w"> </span>&gt;<span class="w"> </span>processing.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>System Information</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>--version
+conda<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;(gdal|numpy|scipy|pandas|netcdf4)&quot;</span>
+uname<span class="w"> </span>-a<span class="w">  </span><span class="c1"># Linux/macOS</span>
+<span class="c1"># or</span>
+systeminfo<span class="w">  </span><span class="c1"># Windows</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Configuration File</strong>:</p>
+<p>Include your YAML configuration (remove sensitive paths if needed).</p>
+</li>
+<li><p><strong>Error Messages</strong>:</p>
+<p>Copy complete error messages, including stack traces.</p>
+</li>
+</ol>
+</section>
+<section id="community-resources">
+<h3>Community Resources<a class="headerlink" href="#community-resources" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>GitHub Issues</strong>: <a class="reference external" href="https://github.com/waterinstitute/adcirc-subgrid/issues">https://github.com/waterinstitute/adcirc-subgrid/issues</a></p></li>
+<li><p><strong>ADCIRC Forums</strong>: For ADCIRC-specific integration questions</p></li>
+<li><p><strong>Documentation</strong>: This documentation for reference</p></li>
+</ul>
+<p>When submitting issues, provide:
+- Minimal reproducible example
+- Complete error messages
+- System and environment information
+- Steps already attempted</p>
+<p>This troubleshooting guide should resolve most common issues encountered during subgrid preprocessing workflows.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="visualization.html" class="btn btn-neutral float-left" title="Visualization and Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_reference.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Water Institute of the Gulf.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

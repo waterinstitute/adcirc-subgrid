@@ -1,0 +1,626 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scientific Background &mdash; adcirc-subgrid 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]]}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Visualization and Analysis" href="visualization.html" />
+    <link rel="prev" title="Examples and Tutorials" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            adcirc-subgrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_formats.html">Input File Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples and Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Scientific Background</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#theoretical-foundation">Theoretical Foundation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#historical-development">Historical Development</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scale-separation-problem">Scale Separation Problem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subgrid-scale-modeling-principles">Subgrid-Scale Modeling Principles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-shallow-water-equations">The Shallow Water Equations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subgrid-modified-equations">Subgrid-Modified Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-phi-factor">The Phi (φ) Factor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#physical-interpretation">Physical Interpretation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mathematical-definition">Mathematical Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#computational-algorithm">Computational Algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#bottom-friction-modifications">Bottom Friction Modifications</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#manning-s-roughness-integration">Manning’s Roughness Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#friction-coefficient-calculation">Friction Coefficient Calculation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#water-level-distribution-methods">Water Level Distribution Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linear-distribution">Linear Distribution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#histogram-based-distribution">Histogram-Based Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lookup-table-optimization">Lookup Table Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation-details">Implementation Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#wetting-and-drying-criteria">Wetting and Drying Criteria</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#numerical-algorithms">Numerical Algorithms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#quality-control-and-validation">Quality Control and Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#physical-consistency-checks">Physical Consistency Checks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#conservation-properties">Conservation Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#error-analysis">Error Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sources-of-error">Sources of Error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error-quantification">Error Quantification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-characteristics">Performance Characteristics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#computational-complexity">Computational Complexity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scaling-properties">Scaling Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#applications-and-limitations">Applications and Limitations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#optimal-application-domains">Optimal Application Domains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resolution-guidelines-and-limitations">Resolution Guidelines and Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#future-research-directions">Future Research Directions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization and Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">adcirc-subgrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Scientific Background</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/scientific_background.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scientific-background">
+<h1>Scientific Background<a class="headerlink" href="#scientific-background" title="Link to this heading"></a></h1>
+<p>This section provides a comprehensive explanation of the scientific principles, mathematical foundations, and computational algorithms underlying the ADCIRC subgrid method.</p>
+<section id="theoretical-foundation">
+<h2>Theoretical Foundation<a class="headerlink" href="#theoretical-foundation" title="Link to this heading"></a></h2>
+<section id="historical-development">
+<h3>Historical Development<a class="headerlink" href="#historical-development" title="Link to this heading"></a></h3>
+<p>Subgrid corrections in hydrodynamic modeling evolved from the need to represent high-resolution topographic features on computationally efficient coarse meshes:</p>
+<ul class="simple">
+<li><p><strong>Early Development</strong>: Defina (2000) introduced subgrid corrections for partially wet computational cells and advection enhancements in tidal models</p></li>
+<li><p><strong>Finite Volume Extensions</strong>: Casulli (2009) improved mass balance and wetting/drying in unstructured finite volume models</p></li>
+<li><p><strong>Bottom Friction Improvements</strong>: Volp et al. (2013) incorporated spatial variability in bottom roughness and depth</p></li>
+<li><p><strong>Formalization</strong>: Kennedy et al. (2019) formalized closure approximations and added water surface gradient corrections</p></li>
+<li><p><strong>Storm Surge Integration</strong>: First comprehensive implementation in hurricane storm surge models (ADCIRC) achieved 10-50× computational speedup while improving accuracy</p></li>
+</ul>
+</section>
+<section id="scale-separation-problem">
+<h3>Scale Separation Problem<a class="headerlink" href="#scale-separation-problem" title="Link to this heading"></a></h3>
+<p>The fundamental challenge in coastal hydrodynamic modeling is the <strong>scale separation</strong> between:</p>
+<ul class="simple">
+<li><p><strong>Model scale</strong>: Tens to hundreds of meters (mesh resolution)</p></li>
+<li><p><strong>Subgrid scale</strong>: 1 meter or smaller (DEM resolution)</p></li>
+<li><p><strong>Feature scale</strong>: Critical topographic features (channels, barriers, dunes)</p></li>
+</ul>
+<p><strong>Computational Trade-offs:</strong></p>
+<ul class="simple">
+<li><p>High-resolution uniform meshes: Accurate but computationally prohibitive</p></li>
+<li><p>Coarse meshes: Fast but lose critical flow pathways and barriers</p></li>
+<li><p><strong>Subgrid solution</strong>: Use coarse computational mesh with fine-scale topographic corrections</p></li>
+</ul>
+</section>
+<section id="subgrid-scale-modeling-principles">
+<h3>Subgrid-Scale Modeling Principles<a class="headerlink" href="#subgrid-scale-modeling-principles" title="Link to this heading"></a></h3>
+<p>Subgrid modeling addresses scale separation by:</p>
+<ol class="arabic simple">
+<li><p><strong>Acknowledging sub-mesh heterogeneity</strong>: Each computational cell contains unresolved topographic complexity</p></li>
+<li><p><strong>Parameterizing sub-mesh effects</strong>: Correction terms capture aggregate impacts of unresolved features</p></li>
+<li><p><strong>Preserving computational efficiency</strong>: Avoids prohibitive computational costs of uniform high resolution</p></li>
+<li><p><strong>Improving accuracy-efficiency trade-offs</strong>: Achieves better accuracy on coarse meshes than conventional fine meshes</p></li>
+</ol>
+<p><strong>Performance Characteristics:</strong></p>
+<ul class="simple">
+<li><p><strong>Typical coarsening factor</strong>: 3-20× (up to 50× in some applications)</p></li>
+<li><p><strong>Computational savings</strong>: 1-2 orders of magnitude reduction in runtime</p></li>
+<li><p><strong>Accuracy improvement</strong>: Subgrid coarse models often outperform conventional fine models</p></li>
+</ul>
+</section>
+<section id="the-shallow-water-equations">
+<h3>The Shallow Water Equations<a class="headerlink" href="#the-shallow-water-equations" title="Link to this heading"></a></h3>
+<p>The standard 2D shallow water equations form the basis for ADCIRC:</p>
+<p><strong>Continuity Equation:</strong></p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \zeta}{\partial t} + \frac{\partial (uH)}{\partial x} + \frac{\partial (vH)}{\partial y} = 0\]</div>
+<p><strong>Momentum Equations:</strong></p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial u}{\partial t} + u\frac{\partial u}{\partial x} + v\frac{\partial u}{\partial y} - fv = -g\frac{\partial \zeta}{\partial x} - \frac{\tau_{bx}}{\rho H}\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{\partial v}{\partial t} + u\frac{\partial v}{\partial x} + v\frac{\partial v}{\partial y} + fu = -g\frac{\partial \zeta}{\partial y} - \frac{\tau_{by}}{\rho H}\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\zeta\)</span> = water surface elevation</p></li>
+<li><p><span class="math notranslate nohighlight">\(u, v\)</span> = depth-averaged velocities</p></li>
+<li><p><span class="math notranslate nohighlight">\(H = h + \zeta\)</span> = total water depth</p></li>
+<li><p><span class="math notranslate nohighlight">\(h\)</span> = bathymetric depth</p></li>
+<li><p><span class="math notranslate nohighlight">\(f\)</span> = Coriolis parameter</p></li>
+<li><p><span class="math notranslate nohighlight">\(g\)</span> = gravitational acceleration</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau_b\)</span> = bottom stress</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho\)</span> = water density</p></li>
+</ul>
+</section>
+<section id="subgrid-modified-equations">
+<h3>Subgrid-Modified Equations<a class="headerlink" href="#subgrid-modified-equations" title="Link to this heading"></a></h3>
+<p>The subgrid method uses averaged versions of the shallow water equations with closure terms.</p>
+<p><strong>Averaged Continuity Equation:</strong></p>
+<div class="math notranslate nohighlight">
+\[\phi \frac{\partial \langle \zeta \rangle_W}{\partial t} + \frac{\partial \langle UH \rangle_G}{\partial x} + \frac{\partial \langle VH \rangle_G}{\partial y} = 0\]</div>
+<p><strong>Averaged Conservative Momentum Equations:</strong></p>
+<p><strong>x-direction:</strong></p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \langle UH \rangle_G}{\partial t} + \frac{\partial C_{UU} \langle U \rangle \langle UH \rangle_G}{\partial x} + \frac{\partial C_{VU} \langle V \rangle \langle UH \rangle_G}{\partial y}\]</div>
+<div class="math notranslate nohighlight">
+\[+ gC_\zeta \langle H \rangle_G \frac{\partial \langle \zeta \rangle_W}{\partial x} = -\frac{C_{M,f} \langle U \rangle \langle UH \rangle_G}{\langle H \rangle_W} - f \langle VH \rangle_G\]</div>
+<div class="math notranslate nohighlight">
+\[- g \langle H \rangle_G \frac{\partial P_A}{\partial x} + \frac{\tau_{sx}}{\rho_0 \phi} + \frac{\partial}{\partial x}\left(E_h \frac{\partial \langle UH \rangle_G}{\partial x}\right) + \frac{\partial}{\partial y}\left(E_h \frac{\partial \langle UH \rangle_G}{\partial y}\right)\]</div>
+<p><strong>y-direction:</strong></p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \langle VH \rangle_G}{\partial t} + \frac{\partial C_{UV} \langle U \rangle \langle VH \rangle_G}{\partial x} + \frac{\partial C_{VV} \langle V \rangle \langle VH \rangle_G}{\partial y}\]</div>
+<div class="math notranslate nohighlight">
+\[+ gC_\zeta \langle H \rangle_G \frac{\partial \langle \zeta \rangle_W}{\partial y} = -\frac{C_{M,f} \langle V \rangle \langle VH \rangle_G}{\langle H \rangle_W} + f \langle UH \rangle_G\]</div>
+<div class="math notranslate nohighlight">
+\[- g \langle H \rangle_G \frac{\partial P_A}{\partial y} + \frac{\tau_{sy}}{\rho_0 \phi} + \frac{\partial}{\partial x}\left(E_h \frac{\partial \langle VH \rangle_G}{\partial x}\right) + \frac{\partial}{\partial y}\left(E_h \frac{\partial \langle VH \rangle_G}{\partial y}\right)\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\langle \cdot \rangle\)</span> denotes averaged variables</p></li>
+<li><p>Subscripts <span class="math notranslate nohighlight">\(W\)</span> and <span class="math notranslate nohighlight">\(G\)</span> indicate wet-averaging and grid-averaging respectively</p></li>
+<li><p><span class="math notranslate nohighlight">\(U, V\)</span> are depth-averaged velocities in x and y directions</p></li>
+<li><p><span class="math notranslate nohighlight">\(H\)</span> is total water depth</p></li>
+<li><p><span class="math notranslate nohighlight">\(\zeta\)</span> is water surface elevation</p></li>
+<li><p><span class="math notranslate nohighlight">\(\phi\)</span> is the wet area fraction (0 ≤ φ ≤ 1)</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_A\)</span> is atmospheric pressure</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau_{sx}, \tau_{sy}\)</span> are surface wind stresses</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho_0\)</span> is reference water density</p></li>
+<li><p><span class="math notranslate nohighlight">\(f\)</span> is Coriolis parameter</p></li>
+<li><p><span class="math notranslate nohighlight">\(E_h\)</span> is horizontal eddy viscosity</p></li>
+<li><p><span class="math notranslate nohighlight">\(g\)</span> is gravitational acceleration</p></li>
+</ul>
+<p><strong>Closure Coefficients:</strong></p>
+<p>The subgrid method introduces five key closure coefficients:</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(C_\zeta\)</span> - Surface gradient correction (typically set to 1.0)</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_{UU}, C_{VU}\)</span> - Advection correction terms (typically 1.06-1.10)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\phi\)</span> - Wet area fraction (0 ≤ φ ≤ 1)</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_{M,f}\)</span> - Bottom friction coefficient correction</p></li>
+</ol>
+<p><strong>Closure Approximation Levels:</strong></p>
+<p><strong>Level 0 Closure (Basic Implementation):</strong></p>
+<ul class="simple">
+<li><p>All advection corrections set to unity: <span class="math notranslate nohighlight">\(C_{UU} = C_{VU} = C_{UV} = C_{VV} = 1\)</span></p></li>
+<li><p>Bottom friction: <span class="math notranslate nohighlight">\(C_{M,f} = gn^2/H^{1/3}\)</span> (conventional Manning’s formula)</p></li>
+<li><p>Surface gradient: <span class="math notranslate nohighlight">\(C_\zeta = 1\)</span></p></li>
+</ul>
+<p><strong>Level 1 Closure (Enhanced Implementation):</strong></p>
+<ul class="simple">
+<li><p><strong>Bottom friction correction:</strong></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[C_{M,f} = \langle H \rangle_W R_v^2 \quad \text{where} \quad R_v = \frac{\langle H \rangle_W}{\langle H^{3/2}C_f^{-1/2} \rangle_W}\]</div>
+<ul class="simple">
+<li><p><strong>Advection corrections:</strong></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[C_{UU} = \frac{\langle U^2H \rangle_G}{\langle U \rangle \langle UH \rangle_G}\]</div>
+<p>Level 1 corrections provide significant accuracy improvements, particularly in shallow regions with complex topography and varying friction.</p>
+</section>
+</section>
+<section id="the-phi-factor">
+<h2>The Phi (φ) Factor<a class="headerlink" href="#the-phi-factor" title="Link to this heading"></a></h2>
+<section id="physical-interpretation">
+<h3>Physical Interpretation<a class="headerlink" href="#physical-interpretation" title="Link to this heading"></a></h3>
+<p>The φ factor represents the <strong>wet area fraction</strong> of a computational element or vertex at a given water surface elevation. This concept encapsulates several important physical processes:</p>
+<ol class="arabic simple">
+<li><p><strong>Partial Wetting</strong>: As water levels rise, different portions of a mesh element become submerged at different rates</p></li>
+<li><p><strong>Complex Topography</strong>: Sub-mesh topographic variability controls the wetting pattern</p></li>
+<li><p><strong>Flow Obstruction</strong>: Dry areas within an element impede flow, effectively reducing the wet cross-sectional area</p></li>
+<li><p><strong>Discrete Values</strong>: φ ranges from 0 (fully dry) to 1 (fully wet) in discrete increments</p></li>
+</ol>
+<p><strong>Vertex-Averaged Approach:</strong></p>
+<p>Current implementations use <strong>vertex-averaged areas</strong> rather than element-averaged areas. This approach:</p>
+<ul class="simple">
+<li><p>Aligns more closely with conventional ADCIRC’s numerical scheme</p></li>
+<li><p>Reduces lookup table size by approximately factor of 4</p></li>
+<li><p>Improves computational performance and memory usage</p></li>
+</ul>
+</section>
+<section id="mathematical-definition">
+<h3>Mathematical Definition<a class="headerlink" href="#mathematical-definition" title="Link to this heading"></a></h3>
+<p>For a computational element with area <span class="math notranslate nohighlight">\(A_{total}\)</span>, the φ factor is:</p>
+<div class="math notranslate nohighlight">
+\[\phi(\zeta) = \frac{A_{wet}(\zeta)}{A_{total}}\]</div>
+<p>Where <span class="math notranslate nohighlight">\(A_{wet}(\zeta)\)</span> is the area that is wet (submerged) when the water surface elevation is <span class="math notranslate nohighlight">\(\zeta\)</span>.</p>
+<p>Key properties of φ:</p>
+<ul class="simple">
+<li><p><strong>Bounds</strong>: <span class="math notranslate nohighlight">\(0 \leq \phi \leq 1\)</span></p></li>
+<li><p><strong>Monotonic</strong>: <span class="math notranslate nohighlight">\(\phi\)</span> increases monotonically with increasing <span class="math notranslate nohighlight">\(\zeta\)</span></p></li>
+<li><p><strong>Boundary Conditions</strong>:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\phi \to 0\)</span> as <span class="math notranslate nohighlight">\(\zeta \to -\infty\)</span> (completely dry)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\phi \to 1\)</span> as <span class="math notranslate nohighlight">\(\zeta \to +\infty\)</span> (completely wet)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="computational-algorithm">
+<h3>Computational Algorithm<a class="headerlink" href="#computational-algorithm" title="Link to this heading"></a></h3>
+<p>The φ factor is computed using high-resolution digital elevation models (DEMs):</p>
+<p><strong>Step 1: Element Elevation Sampling</strong></p>
+<p>For each computational mesh element, extract all DEM pixels that fall within the element boundaries:</p>
+<div class="math notranslate nohighlight">
+\[E = \{z_i : (x_i, y_i) \in \text{element}, i = 1, 2, ..., n\}\]</div>
+<p><strong>Step 2: Water Level Discretization</strong></p>
+<p>Create a series of water surface elevations spanning the range of interest:</p>
+<div class="math notranslate nohighlight">
+\[\zeta_j = \zeta_{min} + j \cdot \Delta\zeta, \quad j = 0, 1, ..., N_{levels}\]</div>
+<p><strong>Step 3: Wet Fraction Calculation</strong></p>
+<p>For each water level <span class="math notranslate nohighlight">\(\zeta_j\)</span>, compute the fraction of pixels that are submerged:</p>
+<div class="math notranslate nohighlight">
+\[\phi_j = \frac{1}{n} \sum_{i=1}^{n} H(\zeta_j - z_i)\]</div>
+<p>Where <span class="math notranslate nohighlight">\(H(\cdot)\)</span> is the Heaviside step function:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}H(x) = \begin{cases}
+1 &amp; \text{if } x &gt; 0 \\
+0 &amp; \text{if } x \leq 0
+\end{cases}\end{split}\]</div>
+</section>
+</section>
+<section id="bottom-friction-modifications">
+<h2>Bottom Friction Modifications<a class="headerlink" href="#bottom-friction-modifications" title="Link to this heading"></a></h2>
+<section id="manning-s-roughness-integration">
+<h3>Manning’s Roughness Integration<a class="headerlink" href="#manning-s-roughness-integration" title="Link to this heading"></a></h3>
+<p>Subgrid corrections also account for sub-mesh variability in bottom friction. The effective Manning’s coefficient is computed as an area-weighted average:</p>
+<div class="math notranslate nohighlight">
+\[n_{eff} = \frac{\sum_{i=1}^{n} n_i A_i}{\sum_{i=1}^{n} A_i}\]</div>
+<p>Where <span class="math notranslate nohighlight">\(n_i\)</span> is the Manning’s coefficient for land cover class <span class="math notranslate nohighlight">\(i\)</span>, and <span class="math notranslate nohighlight">\(A_i\)</span> is the area covered by that class within the element.</p>
+</section>
+<section id="friction-coefficient-calculation">
+<h3>Friction Coefficient Calculation<a class="headerlink" href="#friction-coefficient-calculation" title="Link to this heading"></a></h3>
+<p>The friction coefficient <span class="math notranslate nohighlight">\(C_f\)</span> is related to Manning’s coefficient:</p>
+<div class="math notranslate nohighlight">
+\[C_f = \frac{g n_{eff}^2}{H^{1/3}}\]</div>
+<p>In the subgrid formulation, this becomes:</p>
+<div class="math notranslate nohighlight">
+\[C_f = \frac{g n_{eff}^2}{(\phi H)^{1/3}}\]</div>
+<p>This modification accounts for the reduced effective depth due to partial wetting.</p>
+</section>
+</section>
+<section id="water-level-distribution-methods">
+<h2>Water Level Distribution Methods<a class="headerlink" href="#water-level-distribution-methods" title="Link to this heading"></a></h2>
+<section id="linear-distribution">
+<h3>Linear Distribution<a class="headerlink" href="#linear-distribution" title="Link to this heading"></a></h3>
+<p>The simplest approach distributes water levels evenly across a specified range:</p>
+<div class="math notranslate nohighlight">
+\[\zeta_j = \zeta_{min} + \frac{j}{N-1}(\zeta_{max} - \zeta_{min})\]</div>
+<p><strong>Advantages:</strong>
+- Simple implementation
+- Uniform coverage of water level range</p>
+<p><strong>Disadvantages:</strong>
+- May not capture critical transitions
+- Inefficient for topographically diverse areas</p>
+</section>
+<section id="histogram-based-distribution">
+<h3>Histogram-Based Distribution<a class="headerlink" href="#histogram-based-distribution" title="Link to this heading"></a></h3>
+<p>A more sophisticated approach bases water level distribution on the elevation histogram within each element:</p>
+<p><strong>Step 1: Elevation Histogram</strong></p>
+<p>Compute the histogram of elevations within each element:</p>
+<div class="math notranslate nohighlight">
+\[H(z_k) = \text{number of DEM pixels with elevation } z_k\]</div>
+<p><strong>Step 2: Cumulative Distribution</strong></p>
+<p>Calculate the cumulative distribution function:</p>
+<div class="math notranslate nohighlight">
+\[F(z) = \frac{\sum_{z_i \leq z} H(z_i)}{\sum_{i} H(z_i)}\]</div>
+<p><strong>Step 3: Quantile-Based Levels</strong></p>
+<p>Distribute water levels based on elevation quantiles:</p>
+<div class="math notranslate nohighlight">
+\[\zeta_j = F^{-1}\left(\frac{j}{N-1}\right)\]</div>
+<p><strong>Advantages:</strong>
+- Adaptive to local topography
+- Focuses resolution on critical elevation ranges
+- More efficient representation</p>
+</section>
+</section>
+<section id="lookup-table-optimization">
+<h2>Lookup Table Optimization<a class="headerlink" href="#lookup-table-optimization" title="Link to this heading"></a></h2>
+<p><strong>Table Size Reduction:</strong></p>
+<p>Modern subgrid implementations optimize lookup table sizes for computational efficiency:</p>
+<p><strong>Original Table Sizes:</strong></p>
+<div class="math notranslate nohighlight">
+\[N_\zeta \times N_{VE} \times N_E \quad \text{(element-averaged)}\]</div>
+<div class="math notranslate nohighlight">
+\[N_\zeta \times N_V \quad \text{(vertex-averaged)}\]</div>
+<p><strong>Optimized Table Size:</strong></p>
+<div class="math notranslate nohighlight">
+\[N_\phi \times N_V\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(N_\zeta\)</span> = number of water surface elevations (e.g., 401 for -20m to +20m at 0.1m increments)</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_{VE}\)</span> = number of sub-elements per vertex</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_E\)</span> = number of elements in mesh</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_V\)</span> = number of vertices in mesh</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_\phi\)</span> = number of φ values (typically 11)</p></li>
+</ul>
+<p><strong>Key Improvements:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Elimination of element-averaged tables</strong> - reduces memory requirements</p></li>
+<li><p><strong>Discrete φ values</strong> - <span class="math notranslate nohighlight">\(N_\phi = 11\)</span> instead of <span class="math notranslate nohighlight">\(N_\zeta = 401\)</span></p></li>
+<li><p><strong>Memory reduction factor</strong> - approximately 160× for high-resolution meshes</p></li>
+</ol>
+</section>
+<section id="implementation-details">
+<h2>Implementation Details<a class="headerlink" href="#implementation-details" title="Link to this heading"></a></h2>
+<section id="wetting-and-drying-criteria">
+<h3>Wetting and Drying Criteria<a class="headerlink" href="#wetting-and-drying-criteria" title="Link to this heading"></a></h3>
+<p><strong>Updated Approach:</strong></p>
+<p>Modern implementations use <strong>total water depth criteria</strong> instead of minimum wet area fraction:</p>
+<div class="math notranslate nohighlight">
+\[\langle H \rangle_G &gt; \langle H \rangle_{G,min}\]</div>
+<p>Where <span class="math notranslate nohighlight">\(\langle H \rangle_{G,min} = 0.1\)</span> m (typical threshold).</p>
+<p><strong>Benefits:</strong></p>
+<ul class="simple">
+<li><p>Improved numerical stability</p></li>
+<li><p>Avoids extremely small water depths that cause computational instabilities</p></li>
+<li><p>Uses robust conventional ADCIRC wetting/drying scheme</p></li>
+<li><p>For triangular elements: all 3 vertices must meet minimum criteria</p></li>
+</ul>
+</section>
+<section id="numerical-algorithms">
+<h3>Numerical Algorithms<a class="headerlink" href="#numerical-algorithms" title="Link to this heading"></a></h3>
+<p><strong>Raster Processing Pipeline:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Mesh Element Identification</strong>: For each mesh node, identify the surrounding element(s)</p></li>
+<li><p><strong>DEM Intersection</strong>: Extract DEM pixels within element boundaries using spatial indexing</p></li>
+<li><p><strong>Land Cover Assignment</strong>: Map land cover classes to Manning’s coefficients</p></li>
+<li><p><strong>Statistical Computation</strong>: Calculate elevation statistics and φ relationships</p></li>
+<li><p><strong>Lookup Table Generation</strong>: Create optimized φ-based lookup tables</p></li>
+</ol>
+<p><strong>Memory Management:</strong></p>
+<p>The algorithm processes large raster datasets efficiently using:</p>
+<ul class="simple">
+<li><p><strong>Windowed Reading</strong>: Process raster data in memory-efficient chunks</p></li>
+<li><p><strong>Optimized Lookup Tables</strong>: Reduced memory footprint through φ-based indexing</p></li>
+<li><p><strong>Spatial Indexing</strong>: Use R-tree or similar structures for fast spatial queries</p></li>
+<li><p><strong>Caching</strong>: Cache frequently accessed data to minimize I/O</p></li>
+</ul>
+<p><strong>Parallel Processing:</strong></p>
+<p>Subgrid calculations are inherently parallel:</p>
+<ul class="simple">
+<li><p><strong>Vertex Independence</strong>: Each mesh vertex can be processed independently</p></li>
+<li><p><strong>Thread Safety</strong>: Algorithms designed for multi-threaded execution</p></li>
+<li><p><strong>Load Balancing</strong>: Distribute computational load based on vertex complexity</p></li>
+</ul>
+</section>
+</section>
+<section id="quality-control-and-validation">
+<h2>Quality Control and Validation<a class="headerlink" href="#quality-control-and-validation" title="Link to this heading"></a></h2>
+<section id="physical-consistency-checks">
+<h3>Physical Consistency Checks<a class="headerlink" href="#physical-consistency-checks" title="Link to this heading"></a></h3>
+<p><strong>Monotonicity Verification:</strong></p>
+<p>Ensure that φ increases monotonically with water level:</p>
+<div class="math notranslate nohighlight">
+\[\phi(\zeta_{j+1}) \geq \phi(\zeta_j) \quad \forall j\]</div>
+<p><strong>Boundary Condition Verification:</strong></p>
+<p>Check that φ approaches appropriate limits:</p>
+<div class="math notranslate nohighlight">
+\[\lim_{\zeta \to \zeta_{min}} \phi(\zeta) = 0\]</div>
+<div class="math notranslate nohighlight">
+\[\lim_{\zeta \to \zeta_{max}} \phi(\zeta) = 1\]</div>
+</section>
+<section id="conservation-properties">
+<h3>Conservation Properties<a class="headerlink" href="#conservation-properties" title="Link to this heading"></a></h3>
+<p><strong>Volume Conservation:</strong></p>
+<p>The subgrid method should preserve volume conservation in the discrete system:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d}{dt} \int_{\Omega} \zeta \, dA + \oint_{\partial\Omega} \phi uH \cdot \mathbf{n} \, dl = 0\]</div>
+<p><strong>Mass Conservation:</strong></p>
+<p>Verify that the modified equations maintain mass conservation properties of the original system.</p>
+</section>
+</section>
+<section id="error-analysis">
+<h2>Error Analysis<a class="headerlink" href="#error-analysis" title="Link to this heading"></a></h2>
+<section id="sources-of-error">
+<h3>Sources of Error<a class="headerlink" href="#sources-of-error" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Discretization Error</strong>: Finite resolution of DEM and computational mesh</p></li>
+<li><p><strong>Averaging Error</strong>: Spatial averaging within computational elements</p></li>
+<li><p><strong>Interpolation Error</strong>: Temporal interpolation of φ values during simulation</p></li>
+<li><p><strong>Data Quality Error</strong>: Uncertainties in input DEM and land cover data</p></li>
+</ol>
+</section>
+<section id="error-quantification">
+<h3>Error Quantification<a class="headerlink" href="#error-quantification" title="Link to this heading"></a></h3>
+<p><strong>Convergence Analysis:</strong></p>
+<p>Study convergence behavior as:
+- DEM resolution increases
+- Number of φ levels increases
+- Computational mesh resolution changes</p>
+<p><strong>Validation Against High-Resolution Results:</strong></p>
+<p>Compare subgrid results with high-resolution simulations:</p>
+<div class="math notranslate nohighlight">
+\[\text{Error} = \frac{|\zeta_{subgrid} - \zeta_{high-res}|}{\zeta_{high-res}}\]</div>
+<p><strong>Sensitivity Analysis:</strong></p>
+<p>Evaluate sensitivity to:
+- Manning’s coefficient variations
+- DEM uncertainty
+- φ level distribution choices</p>
+</section>
+</section>
+<section id="performance-characteristics">
+<h2>Performance Characteristics<a class="headerlink" href="#performance-characteristics" title="Link to this heading"></a></h2>
+<section id="computational-complexity">
+<h3>Computational Complexity<a class="headerlink" href="#computational-complexity" title="Link to this heading"></a></h3>
+<p><strong>Preprocessing Cost:</strong></p>
+<ul class="simple">
+<li><p><strong>Time Complexity</strong>: O(N_elements × N_pixels × N_levels)</p></li>
+<li><p><strong>Space Complexity</strong>: O(N_elements × N_levels)</p></li>
+</ul>
+<p>Where:
+- N_elements = number of mesh elements
+- N_pixels = average DEM pixels per element
+- N_levels = number of φ levels</p>
+<p><strong>Runtime Cost in ADCIRC:</strong></p>
+<ul class="simple">
+<li><p><strong>Additional Memory</strong>: ~20-30% increase for subgrid arrays</p></li>
+<li><p><strong>Computational Overhead</strong>: ~10-20% increase in runtime</p></li>
+<li><p><strong>I/O Overhead</strong>: Initial reading of subgrid file</p></li>
+</ul>
+</section>
+<section id="scaling-properties">
+<h3>Scaling Properties<a class="headerlink" href="#scaling-properties" title="Link to this heading"></a></h3>
+<p><strong>Mesh Resolution Scaling:</strong></p>
+<p>Subgrid benefit increases with decreasing mesh resolution:</p>
+<div class="math notranslate nohighlight">
+\[\text{Benefit} \propto \left(\frac{\text{DEM resolution}}{\text{Mesh resolution}}\right)^2\]</div>
+<p><strong>Domain Size Scaling:</strong></p>
+<p>Processing time scales approximately linearly with domain size for fixed resolution ratios.</p>
+</section>
+</section>
+<section id="applications-and-limitations">
+<h2>Applications and Limitations<a class="headerlink" href="#applications-and-limitations" title="Link to this heading"></a></h2>
+<section id="optimal-application-domains">
+<h3>Optimal Application Domains<a class="headerlink" href="#optimal-application-domains" title="Link to this heading"></a></h3>
+<p>Subgrid corrections are most effective for:</p>
+<ol class="arabic simple">
+<li><p><strong>Coastal Storm Surge</strong>: Complex nearshore bathymetry and topography</p></li>
+<li><p><strong>Real-time Forecasting</strong>: Requiring rapid computation with maximum accuracy</p></li>
+<li><p><strong>Urban Flooding</strong>: Built environment with significant sub-mesh features</p></li>
+<li><p><strong>Wetland Modeling</strong>: Areas with complex channel and vegetation patterns</p></li>
+<li><p><strong>Large-Scale Simulations</strong>: Where uniform high resolution is computationally prohibitive</p></li>
+<li><p><strong>Hurricane Storm Surge</strong>: Combining operational time constraints with accuracy requirements</p></li>
+</ol>
+<p><strong>Validated Performance Ranges:</strong></p>
+<ul class="simple">
+<li><p><strong>Coarsening factors</strong>: 3-20× (up to 50× in some applications)</p></li>
+<li><p><strong>Minimum nearshore resolution</strong>: 60-400m (depending on coastal complexity)</p></li>
+<li><p><strong>Domain scales</strong>: From regional bays (O(10 km)) to ocean basins (O(1000+ km))</p></li>
+<li><p><strong>Computational speedup</strong>: 10-50× compared to equivalent-accuracy fine meshes</p></li>
+</ul>
+</section>
+<section id="resolution-guidelines-and-limitations">
+<h3>Resolution Guidelines and Limitations<a class="headerlink" href="#resolution-guidelines-and-limitations" title="Link to this heading"></a></h3>
+<p><strong>Critical Resolution Thresholds:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Barrier Island Aliasing</strong>: Primary limitation occurs when mesh resolution becomes coarser than critical flow-blocking features</p></li>
+<li><p><strong>Recommended minimum</strong>: Resolve primary barrier islands and major flow channels in underlying DEM</p></li>
+<li><p><strong>Practical limits</strong>: Beyond 400-1000m nearshore resolution, important coastal features become aliased</p></li>
+<li><p><strong>Connectivity issues</strong>: Over-connectivity in protected areas when barriers are under-resolved</p></li>
+</ol>
+<p><strong>Physical Process Limitations:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Unidirectional Approximation</strong>: Assumes φ depends only on local water level</p></li>
+<li><p><strong>Flow Direction Independence</strong>: Does not account for flow direction effects on wetting patterns</p></li>
+<li><p><strong>Static Topography</strong>: Does not account for morphodynamic changes</p></li>
+<li><p><strong>Simplified Wetting/Drying</strong>: May not capture complex hysteresis effects</p></li>
+<li><p><strong>Sub-element Assumptions</strong>: Requires all three sub-elements to be wet for proper channel flow representation</p></li>
+</ol>
+</section>
+<section id="future-research-directions">
+<h3>Future Research Directions<a class="headerlink" href="#future-research-directions" title="Link to this heading"></a></h3>
+<p>Potential improvements include:</p>
+<ol class="arabic simple">
+<li><p><strong>Dynamic φ Factors</strong>: Account for flow-dependent wetting patterns</p></li>
+<li><p><strong>Momentum Subgrid Terms</strong>: Develop correction terms for advection and viscosity</p></li>
+<li><p><strong>Morphodynamic Coupling</strong>: Integrate with sediment transport and bed evolution</p></li>
+<li><p><strong>Machine Learning Enhancement</strong>: Use ML techniques for improved parameterizations</p></li>
+</ol>
+<p>This scientific foundation provides the theoretical understanding necessary for effective application of subgrid methods in ADCIRC modeling.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples and Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="visualization.html" class="btn btn-neutral float-right" title="Visualization and Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The Water Institute of the Gulf.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
