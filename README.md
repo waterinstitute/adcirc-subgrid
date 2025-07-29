@@ -15,15 +15,21 @@ This work is an adaptation of the original ADCIRC subgrid code [here](https://gi
 > Once this package is stable, it will be distributed via normal Python package channels. Until then, it can only
 > be installed manually using the instructions below.
 
-The ADCIRC Subgrid Preprocessor can be installed via pip from the root directory of the repository:
+The ADCIRC Subgrid Preprocessor requires a conda environment with the necessary dependencies prior to installing. 
+Note that the package requires GDAL to be installed on your system. It will likely be much easier to create a conda environment with the necessary dependencies:
+```bash
+conda create -n adcirc-subgrid -c conda-forge python=3 gdal geopandas pandas netcdf4 pyyaml numba scipy schema numpy shapely xarray pyproj matplotlib rasterio rioxarray tqdm
+```
+
+Alternatively, the conda environment can be created from the environment.yaml file located in the requirements folder of the repository:  
+```bash
+conda env create -n adcirc-subgrid -f environment.yaml
+```
+
+After creating and activating the conda environment, the ADCIRC Subgrid Preprocessor can be installed via pip from the root directory of the repository:
 ```bash
 pip install .
 ```
-Note that the package requires GDAL to be installed on your system. It will likely be much easier to create a conda environment with the necessary dependencies:
-```bash
-conda create -n adcirc-subgrid -c conda-forge python=3 gdal geopandas pandas netcdf4 pyyaml numba scipy schema numpy shapely xarray pyproj matplotlib rasterio rioxarray tdqm
-```
-
 The conda solver, even with `libmamba` can sometimes take a while. For our CI environment, we use `conda-lock` to create a
 static environment file that can be used to quickly create the environment. You can do this by running:
 ```bash
