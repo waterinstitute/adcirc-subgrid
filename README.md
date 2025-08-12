@@ -96,5 +96,3 @@ options:
   subgrid_level_distribution: histogram # Either 'histogram' or 'linear'
 ```
 Run the ```prep``` again as you did before, but with new yaml file.
-
-
