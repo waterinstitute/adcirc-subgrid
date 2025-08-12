@@ -19,7 +19,7 @@ The ADCIRC Subgrid Preprocessor requires a conda environment with the necessary 
 ```bash
 conda create -n adcirc-subgrid -c conda-forge python=3 gdal geopandas pandas netcdf4 pyyaml numba scipy schema numpy shapely xarray pyproj matplotlib rasterio rioxarray tqdm
 ```
-Alternatively, the conda environment can be created from the environment.yaml file located in the requirements folder of the repository:  
+Alternatively, the conda environment can be created from the environment.yaml file located in the requirements folder of the repository:
 ```bash
 conda env create -n adcirc-subgrid -f environment.yaml
 ```
@@ -96,4 +96,5 @@ options:
   subgrid_level_distribution: histogram # Either 'histogram' or 'linear'
 ```
 Run the ```prep``` again as you did before, but with new yaml file.
+
 
