@@ -102,9 +102,7 @@ After completion of Step 1, it should generate the subgrid.nc in the same folder
 Run subgrid preprocessor with `input_update_existing.yaml`. The updated yaml
 contains an extra optional input line called "existing subgrid" where you add the filepath of the existing subgrid. The `input_update_existing.yaml` now uses the second DEM and as the name suggests, it updates the existing information from Step 1 with the new information from the second DEM.
 
-So, running the preprocessor code again will use the second DEM file, but the 
-same landcover file and mesh file to build and update the lookup table with 
-subgrid values for the first and second DEMs included.
+So, running the preprocessor code again will use the second DEM file, but the same landcover file and mesh file to build and update the lookup table with subgrid values for the first and second DEMs included.
 
 To run adcirc subgrid in step 2, use the following code:
 ```bash
@@ -116,7 +114,7 @@ After completion of Step 2, the results should be stored in the netCDF file
 # Step 3: View the Results
 
 The results from the netCDF file from Steps 1 and 2 can be viewed using the 
-provided codes in the source folder (../src/AdcircSubgrid).  
+provided codes in the source folder (../src/AdcircSubgrid).
 
 The command to view the percent wet at each element from Step 1, can be viewed
  using the following command:
@@ -127,10 +125,10 @@ import mesh_plot
 
 mesh_plot.plot_mesh('subgrid.nc','percent_wet', 2 , True, 'after_percent_wet2')
 ```
-After running the code, it should generate the percentage wet or the wet fraction 
+After running the code, it should generate the percentage wet or the wet fraction
 at each element of the ADCIRC mesh as shown in _Figure 4_. The subgrid code recalculates
-what fraction of an element is wet, for each element in the mesh, based on the 
-DEM (in this case DEM 1) specified in the yaml file, i.e. used in Step 1. There are 
+what fraction of an element is wet, for each element in the mesh, based on the
+DEM (in this case DEM 1) specified in the yaml file, i.e. used in Step 1. There are
 other parameters recalculated and you are encouraged to explore.
 
 <p align="center">
@@ -140,8 +138,8 @@ other parameters recalculated and you are encouraged to explore.
   corresponding to the first DEM after Step 1.</em>
 </p>
 
-Fig 5 shows the results after Step 2, the wet fraction at each element. This step only 
-recalculates the wet fraction of an element using data from DEM 2 and appends the results 
+Fig 5 shows the results after Step 2, the wet fraction at each element. This step only
+recalculates the wet fraction of an element using data from DEM 2 and appends the results
 Step 1. So the _Figure 5_ has the complete data from both the DEMs.
 
 <p align="center">
