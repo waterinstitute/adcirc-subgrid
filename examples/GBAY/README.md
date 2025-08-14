@@ -1,7 +1,6 @@
 OBJECTIVE:
 
-The objective of this exercise is to become familiar with the ADCIRC-Subgrid modeling system.
-You will work with the ADCIRC mesh or grid, illustrated in _Figure 1_, where elevation is represented
+The objective of this exercise is to become familiar with the ADCIRC-Subgrid modeling system. You will work with the ADCIRC mesh or grid, illustrated in _Figure 1_, where elevation is represented
 through a color-coded bar, overlaid with triangular grid elements. Upon executing the ADCIRC-Subgrid
 model, this grid will use high-resolution elevation and land use data. The simulation  in this example
 integrates and interpolates detailed information from two separate TIF files, enhancing the grid with
