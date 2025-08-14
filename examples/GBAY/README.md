@@ -113,7 +113,7 @@ After completion of Step 2, the results should be stored in the netCDF file
 
 # Step 3: View the Results
 
-The results from the netCDF file from Steps 1 and 2 can be viewed using the 
+The results from the netCDF file from Steps 1 and 2 can be viewed using the
 provided codes in the source folder (../src/AdcircSubgrid).
 
 The command to view the percent wet at each element from Step 1, can be viewed
