@@ -40,9 +40,9 @@ gunzip fort.14.gz
 
 There should be 3 TIF files:
 
-0. 2021_CCAP_J1139301_4326.tif 
+0. 2021_CCAP_J1139301_4326.tif
   This is a land use map from the 2021 Coastal Change Analysis Program [C-CAP](https://coast.noaa.gov/digitalcoast/data/ccaphighres.html)
-  near Houston, Texas. This file is in Geographic Co-ordinates WGS 1984 (EPSG:4326), which, when projected, would have a cell size of ~30m. 
+  near Houston, Texas. This file is in Geographic Co-ordinates WGS 1984 (EPSG:4326), which, when projected, would have a cell size of ~30m.
   The file, shown in _Figure 2_ will be used in both runs.
   
 <p align="center">
@@ -69,11 +69,7 @@ Both these files are labeld and shown in _Figure 3_.
 
 # Step 1: Run Preprocessor Pass 1
 
-Before this, you should have an adcirc-subgrid Python environment created with
-the required packages. Activate the environment and run the subgrid preprocessor 
-with `input.yaml` as input. This will use one of the DEM files, landcover file, 
-and the mesh file to build a subgrid lookup table. The yaml file should look like 
-this:
+Before this, you should have an adcirc-subgrid Python environment created with the required packages. Activate the environment and run the subgrid preprocessor with `input.yaml` as input. This will use one of the DEM files, landcover file, and the mesh file to build a subgrid lookup table. The yaml file should look like this:
 
 ```yaml
 input:
@@ -99,16 +95,12 @@ To run adcirc subgrid in step 1, use the following code:
 ```bash
 adcirc-subgrid prep input.yaml
 ```
-After completion of Step 1, it should generate the subgrid.nc in the same folder the data
-is in. 
+After completion of Step 1, it should generate the subgrid.nc in the same folder the data is in. 
 
 # Step 2: Run Preprocessor Pass 2
 
 Run subgrid preprocessor with `input_update_existing.yaml`. The updated yaml
-contains an extra optional input line called "existing subgrid" where you
-add the filepath of the existing subgrid. The `input_update_existing.yaml` 
-now uses the second DEM and as the name suggests, it updates the existing 
-information from Step 1 with the new information from the second DEM. 
+contains an extra optional input line called "existing subgrid" where you add the filepath of the existing subgrid. The `input_update_existing.yaml` now uses the second DEM and as the name suggests, it updates the existing information from Step 1 with the new information from the second DEM.
 
 So, running the preprocessor code again will use the second DEM file, but the 
 same landcover file and mesh file to build and update the lookup table with 
