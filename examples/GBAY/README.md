@@ -44,7 +44,7 @@ There should be 3 TIF files:
   This is a land use map from the 2021 Coastal Change Analysis Program [C-CAP](https://coast.noaa.gov/digitalcoast/data/ccaphighres.html)
   near Houston, Texas. This file is in Geographic Co-ordinates WGS 1984 (EPSG:4326), which, when projected, would have a cell size of ~30m.
   The file, shown in _Figure 2_ will be used in both runs.
-  
+
 <p align="center">
   <img src="images/landcover.png" alt="Screenshot" width="500">
   <br>
