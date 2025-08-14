@@ -95,7 +95,7 @@ To run adcirc subgrid in step 1, use the following code:
 ```bash
 adcirc-subgrid prep input.yaml
 ```
-After completion of Step 1, it should generate the subgrid.nc in the same folder the data is in. 
+After completion of Step 1, it should generate the subgrid.nc in the same folder the data is in.
 
 # Step 2: Run Preprocessor Pass 2
 
