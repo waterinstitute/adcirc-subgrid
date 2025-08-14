@@ -5,7 +5,7 @@ You will work with the ADCIRC mesh or grid, illustrated in _Figure 1_, where ele
 through a color-coded bar, overlaid with triangular grid elements. Upon executing the ADCIRC-Subgrid
 model, this grid will use high-resolution elevation and land use data. The simulation  in this example
 integrates and interpolates detailed information from two separate TIF files, enhancing the grid with
-subgrid-scale resolution and lookup tables derived from the input datasets
+subgrid-scale resolution and lookup tables derived from the input datasets.
 
 GOALS of this example:
 - download and set-up ADCIRC-Subgrid
