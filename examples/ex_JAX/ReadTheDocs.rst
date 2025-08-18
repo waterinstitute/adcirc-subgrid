@@ -47,7 +47,7 @@ Clone the Subgrid repository and download the associated files from Git LFS:
    git lfs pull
    git lfs checkout
 
-Download the larger files from the CCHT Google Drive: 
+Download the larger files from the CCHT Google Drive:
 
 .. code-block:: bash
 
@@ -160,13 +160,13 @@ You can compare the results from each run using the ``mesh_plot.py`` script loca
    :width: 600
    :align: center
 
-   Fig 2: Friction coefficient computed using default C-CAP Manning’s *n* at 1m 
+   Fig 2: Friction coefficient computed using default C-CAP Manning’s *n* at 1m
 
 .. figure:: images/nlcd_cf.png
    :width: 600
    :align: center
 
-   Fig 3: Friction coefficient computed using custom NLCD Manning’s *n* at 1m 
+   Fig 3: Friction coefficient computed using custom NLCD Manning’s *n* at 1m
 
 
 Discussion of Results
@@ -174,6 +174,6 @@ Discussion of Results
 
 With the higher Manning’s *n* values in the NLCD-based scenario, the computed friction coefficients (*cf*) increase, which is visualized by the warmer color gradients in the figures.
 
-The most notable difference appears in the open water regions. Under the default C-CAP case, Manning’s *n* is set to 0.025, whereas in the NLCD-based alternative, the value is doubled to 0.05. This increase results in a significantly higher *cf*, which is clearly visible in the comparison between Figures 2 and 3.  
+The most notable difference appears in the open water regions. Under the default C-CAP case, Manning’s *n* is set to 0.025, whereas in the NLCD-based alternative, the value is doubled to 0.05. This increase results in a significantly higher *cf*, which is clearly visible in the comparison between Figures 2 and 3.
 
 It is important to emphasize that these Manning’s n values are not intended for practical application. Instead, they are selected as an extreme test case to demonstrate how a user could run the Subgrid Preprocessor with alternate land cover data and Manning’s n values. This exercise highlights how sensitive the subgrid outputs can be to the choice of surface roughness.
