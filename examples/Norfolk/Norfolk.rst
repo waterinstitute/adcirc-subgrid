@@ -56,7 +56,5 @@ Explore the following sections to walk through the full preprocessing and analys
 Next Steps
 ==========
 
-Continue to the Process_Norfolk.ipynb section to see how the ADCIRC-Subgrid tool was run with each DEM resolution.
-
-After, go to the PostProc_Norfolk.ipynb to analyze the differences in both mesh data and nodes due to the change in DEM resolution.
-
+- Start with :doc:`Process_Norfolk.ipynb <Norfolk_Subgrid_Preprocessing>` to see how the subgrid generation was performed.
+- Then continue to :doc:`PostProc_Norfolk.ipynb` to analyze differences in subgrid output across DEM resolutions.
