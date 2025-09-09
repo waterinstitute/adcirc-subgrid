@@ -56,5 +56,7 @@ Explore the following sections to walk through the full preprocessing and analys
 Next Steps
 ==========
 
-- Start with `Process_Norfolk.ipynb <Process_Norfolk.ipynb>`_ to see how the subgrid generation was performed.
-- Then continue to `PostProc_Norfolk.ipynb <PostProc_Norfolk.ipynb>`_ to analyze differences in subgrid output across DEM resolutions.
+- Start by reading the `Preprocessing Introduction <Preprocessing_intro.rst>`_ to get a detailed overview of the preprocessing steps.
+- Next, open `Process_Norfolk.ipynb <Process_Norfolk.ipynb>`_ to see how the subgrid generation was executed.
+- Then, read the `Post Processing Introduction <PostProcessing_intro.rst>`_ to get an overview of the post-processing steps.
+- Finally, explore `PostProc_Norfolk.ipynb <PostProc_Norfolk.ipynb>`_ to analyze differences in subgrid output across the different DEM resolutions.
