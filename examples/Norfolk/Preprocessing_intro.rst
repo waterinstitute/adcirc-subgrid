@@ -30,7 +30,7 @@ What This Notebook Does
 Next Steps
 ----------
 
-Continue to the `PostProcessing_intro.rst <PostProcessing_intro.rst>`_ or open the `PostProc_Norfolk.ipynb <PostProc_Norfolk.ipynb>`_ notebook to:
+Continue to the `Process_Norfolk.ipynb <Process_Norfolk.ipynb>`_ notebook to:
 
 - Analyze runtime trends
 - Visualize subgrid output differences
