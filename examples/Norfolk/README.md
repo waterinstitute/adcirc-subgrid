@@ -10,7 +10,7 @@ This example explores how varying **Digital Elevation Model (DEM) resolution** i
 
 Norfolk is a low-lying coastal city with complex shorelines, tidal inlets, and urban development — making it an ideal candidate for testing the effects of spatial resolution in subgrid modeling. High-resolution topographic and land cover data are available for this region, allowing for meaningful comparisons across multiple DEM scales.
 
-![Map of Norfolk region used in ADCIRC-Subgrid](Norfolk/figures/DEM.png)
+![Map of Norfolk region used in ADCIRC-Subgrid](figures/DEM.png)
 
 ---
 
