@@ -53,6 +53,7 @@ Explore the following sections to walk through the full preprocessing and analys
 
 ## Next Steps
 
+- First, download the missing files from the go link: https://go.ncsu.edu/subgrid-nsn.zip (keep file structure and naming convention)
 - Start by reading the [Preprocessing Introduction](Preprocessing_intro.rst) to get a detailed overview of the preprocessing steps.  
 - Next, open [Process_Norfolk.ipynb](Process_Norfolk.ipynb) to see how the subgrid generation was executed.  
 - Then, read the [Post Processing Introduction](PostProcessing_intro.rst) to get an overview of the post-processing steps.  
