@@ -64,7 +64,7 @@ The example includes:
   <p align="center">
     <img src="images/landuse_map.png" width="40%" alt="The land-use map of the modeled region." />
     <br>
-    <em>Figure 4: The land-use map of the modeled region in Florida..</em>
+    <em>Figure 4: The land-use map of the modeled region in Florida.</em>
   </p>
 
 **link to the DEM data and landcover data**: `Download subgrid-fl.zip <https://go.ncsu.edu/subgrid-fl.zip>`_ to get the DEM file for this example as **FL.zip**
@@ -81,11 +81,11 @@ The example includes:
      manning_lookup: ccap # Either a lookup file or 'ccap' to use the default table
      dem: ./DEM3_wgs.tif
      land_cover: ./landusemap_wgs.tif
-   
+
    output:
      filename: subgrid_lin.nc
      progress_bar_increment: 5
-   
+
    options:
      # Control for the number of subgrid levels for calculation and output
      n_subgrid_levels: 50 # Controls the number of levels the calculation is performed on
@@ -121,9 +121,8 @@ Execute the subgrid generation:
    [2025-07-31 12:44:12,914] :: INFO :: AdcircSubgrid.preprocessor ::  20%|███████████▊                                               | 1421/7090 [01:37<02:47, 33.92it/s]
    [2025-07-31 12:44:20,696] :: INFO :: AdcircSubgrid.preprocessor ::  25%|██████████████▊                                            | 1776/7090 [01:45<01:48, 49.01it/s]
    [2025-07-31 12:44:29,053] :: INFO :: AdcircSubgrid.preprocessor ::  30%|█████████████████▋                                         | 2131/7090 [01:53<01:53, 43.57it/s]
-   
    ...
-   
+
    [2025-07-31 12:45:17,174] :: INFO :: AdcircSubgrid.preprocessor ::  85%|█████████████████████████████████████████████████▍        | 6036/7090 [02:42<00:07, 132.55it/s]
    [2025-07-31 12:45:21,672] :: INFO :: AdcircSubgrid.preprocessor ::  90%|█████████████████████████████████████████████████████▏     | 6391/7090 [02:46<00:17, 39.08it/s]
    [2025-07-31 12:45:26,615] :: INFO :: AdcircSubgrid.preprocessor ::  95%|████████████████████████████████████████████████████████▏  | 6746/7090 [02:51<00:04, 72.85it/s]
@@ -142,7 +141,7 @@ The results can be viewed by using Python, specifically the mesh_plot function p
    import os
    sys.path.append(path to <\src\AdcircSubgrid>)
    import mesh_plot
-   
+
    ncpath = <path to netCDF results folder>
    ncf = os.path.join(ncpath,'subgrid_lin.nc') # subgrid_hist.nc
    level = 0
@@ -191,6 +190,7 @@ more clearly near the river source or the edges near the land. The statistics ar
 In this example, we see that the histogram method works better for river estuaries (like in the GBAY case). For flatter areas, such as barrier islands, both the linear and histogram methods give similar results.
 
 The reason is that the histogram method adjusts elevation levels based on cell numbers at each elevation level, which captures the elevation changes, or high elevation gradient, near the river mouth more accurately. In contrast, the linear method spreads elevations evenly from high to low, which misses some of these elevation gradients. This enhances the histogram method's resolution near the river mouth, making it more effective at modeling the narrow edges of the river mouth for domains with river estuaries.
+
 
 
 
