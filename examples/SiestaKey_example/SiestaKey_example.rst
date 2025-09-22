@@ -8,17 +8,12 @@ ADCIRC-Subgrid Feature: subgrid_level_distribution
 Objective
 ~~~~~~~~~~~~~~~~
 
-Subgrid distributes the wet percentage in the DEM (based on the phi-levels) linearly or via a histogram. The source code
-``calculation_levels.py`` is used to compute the levels of subgrid calculations or calculation intervals for water surface 
+Subgrid distributes the wet percentage in the DEM (based on the phi-levels) linearly or via a histogram. The source code ``calculation_levels.py`` is used to compute the levels of subgrid calculations or calculation intervals for water surface 
 elevations. This example is designed to understand: 
 
 **How significant are the lookup table results when you choose histogram vs linear distribution for levels?**
 
-For this, two different regions will be investigated. We will investigate the results of the GBAY example with both linear and 
-histogram distribution levels and compare with a comparatively less complex topo-bathy in South-west Florida, also using the 
-two different levels of distribution. We will run the ADCIRC-Subgrid for a small section of the coast in the southwest part of
-Florida, shown in _Figure 1_, and compare the results to understand which distribution best describes specific topography. This 
-example assumes the ADCIRC-Subgrid system is already downloaded and set up.
+For this, two different regions will be investigated. We will investigate the results of the GBAY example with both linear and histogram distribution levels and compare them with a comparatively less complex topobathy in South-west Florida, also using the two different distribution levels. We will run the ADCIRC-Subgrid model for a small section of the coast in the southwest part of Florida, as shown in _Figure 1_, and compare the results to determine which distribution best describes the specific topography. This example assumes the ADCIRC-Subgrid system is already downloaded and set up.
 
 **Disclaimer**: The differences in water level or water depths using linear and histogram distribution levels are very subtle.
 
@@ -40,7 +35,7 @@ Dataset Overview
 ~~~~~~~~~~~~~~~~
 The example includes:
 
-1. **ADCIRC Mesh**: ``fort.14`` - Computational grid for south west region of Florida. This is a clipped version of the ADCIRC EGOM mesh, extracted for the area of interest. 
+1. **ADCIRC Mesh**: ``fort.14`` - Computational grid for south west region of Florida. This is a clipped version of the ADCIRC EGOM mesh, extracted for the area of interest.
 
 .. raw:: html
 
@@ -52,7 +47,7 @@ The example includes:
 
 
 2. **DEM File**: The digital elevation file for the run area. It should have the same coordinate system as the fort.14, i.e., EPSG 4326
-``dem3_wgs.TIF`` - 1m resolution with a geographical spatial resolution of WGS 1984.  
+``dem3_wgs.TIF`` - 1m resolution with a geographical spatial resolution of WGS 1984.
 
 .. raw:: html
 
@@ -63,7 +58,7 @@ The example includes:
   </p>
 
 
-3. **Land Cover**: ``landusemap_wgs.tif`` - CCAP classification data High-resolution (1m) land-use map of Tampa, Florida, for 2021. The provided land-use map is for the modeled region.  
+3. **Land Cover**: ``landusemap_wgs.tif`` - CCAP classification data High-resolution (1m) land-use map of Tampa, Florida, for 2021. The provided land-use map is for the modeled region.
 
 .. raw:: html
 
@@ -75,7 +70,7 @@ The example includes:
 
 **link to the DEM data and landcover data**: `Download subgrid-fl.zip <https://go.ncsu.edu/subgrid-fl.zip>`_ to get the DEM file for this example as **FL.zip**
 
-4. **Configuration Files**: The yaml file should have the following configuration specifying the input data, the output data name, and the run options used. The 'subgrid_level_distribution' will be changed between histogram and linear in this example. 
+4. **Configuration Files**: The yaml file should have the following configuration specifying the input data, the output data name, and the run options used. The 'subgrid_level_distribution' will be changed between histogram and linear in this example.
 
   * ``input.yaml`` - Run Configuration
 
@@ -197,5 +192,6 @@ more clearly near the river source or the edges near the land. The statistics ar
 In this example, we see that the histogram method works better for river estuaries (like in the GBAY case). For flatter areas, such as barrier islands, both the linear and histogram methods give similar results.
 
 The reason is that the histogram method adjusts elevation levels based on cell numbers at each elevation level, which captures the elevation changes, or high elevation gradient, near the river mouth more accurately. In contrast, the linear method spreads elevations evenly from high to low, which misses some of these elevation gradients. This enhances the histogram method's resolution near the river mouth, making it more effective at modeling the narrow edges of the river mouth for domains with river estuaries.
+
 
 
