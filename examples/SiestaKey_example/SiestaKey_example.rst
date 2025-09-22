@@ -8,8 +8,7 @@ ADCIRC-Subgrid Feature: subgrid_level_distribution
 Objective
 ~~~~~~~~~~~~~~~~
 
-Subgrid distributes the wet percentage in the DEM (based on the phi-levels) linearly or via a histogram. The source code ``calculation_levels.py`` is used to compute the levels of subgrid calculations or calculation intervals for water surface 
-elevations. This example is designed to understand: 
+Subgrid distributes the wet percentage in the DEM (based on the phi-levels) linearly or via a histogram. The source code ``calculation_levels.py`` is used to compute the levels of subgrid calculations or calculation intervals for water surface elevations. This example is designed to understand: 
 
 **How significant are the lookup table results when you choose histogram vs linear distribution for levels?**
 
@@ -192,6 +191,7 @@ more clearly near the river source or the edges near the land. The statistics ar
 In this example, we see that the histogram method works better for river estuaries (like in the GBAY case). For flatter areas, such as barrier islands, both the linear and histogram methods give similar results.
 
 The reason is that the histogram method adjusts elevation levels based on cell numbers at each elevation level, which captures the elevation changes, or high elevation gradient, near the river mouth more accurately. In contrast, the linear method spreads elevations evenly from high to low, which misses some of these elevation gradients. This enhances the histogram method's resolution near the river mouth, making it more effective at modeling the narrow edges of the river mouth for domains with river estuaries.
+
 
 
 
