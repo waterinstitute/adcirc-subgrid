@@ -57,5 +57,4 @@ We expect different DEM representations between the histogram and linear distrib
 
 ## Delivery Method
 
-This example will be delivered via a GitHub `README.md`, similar to the previous GBAY example.
-
+This example will be delivered via a GitHub `.rst`file, follow along similar to the previous GBAY example.
