@@ -32,6 +32,9 @@ GOALS of this example:
 
 Dataset Overview
 ~~~~~~~~~~~~~~~~
+
+**link to the DEM data and landcover data**: `Download subgrid-fl.zip <https://go.ncsu.edu/subgrid-fl.zip>`_ to get the DEM file for this example as **FL.zip**
+
 The example includes:
 
 1. **ADCIRC Mesh**: ``fort.14`` - Computational grid for south west region of Florida. This is a clipped version of the ADCIRC EGOM mesh, extracted for the area of interest.
@@ -56,7 +59,6 @@ The example includes:
     <em> Figure 3: DEM of the region in Florida.</em>
   </p>
 
-
 3. **Land Cover**: ``landusemap_wgs.tif`` - CCAP classification data High-resolution (1m) land-use map of Tampa, Florida, for 2021. The provided land-use map is for the modeled region.
 
 .. raw:: html
@@ -67,12 +69,10 @@ The example includes:
     <em>Figure 4: The land-use map of the modeled region in Florida.</em>
   </p>
 
-**link to the DEM data and landcover data**: `Download subgrid-fl.zip <https://go.ncsu.edu/subgrid-fl.zip>`_ to get the DEM file for this example as **FL.zip**
 
 4. **Configuration Files**: The yaml file should have the following configuration specifying the input data, the output data name, and the run options used. The 'subgrid_level_distribution' will be changed between histogram and linear in this example.
 
   * ``input.yaml`` - Run Configuration
-
 
 .. code-block:: yaml
 
@@ -190,3 +190,5 @@ more clearly near the river source or the edges near the land. The statistics ar
 In this example, we see that the histogram method works better for river estuaries (like in the GBAY case). For flatter areas, such as barrier islands, both the linear and histogram methods give similar results.
 
 The reason is that the histogram method adjusts elevation levels based on cell numbers at each elevation level, which captures the elevation changes, or high elevation gradient, near the river mouth more accurately. In contrast, the linear method spreads elevations evenly from high to low, which misses some of these elevation gradients. This enhances the histogram method's resolution near the river mouth, making it more effective at modeling the narrow edges of the river mouth for domains with river estuaries.
+
+
